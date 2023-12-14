@@ -15,6 +15,7 @@ linters:
     - revive
     - unused
     - staticcheck
+    - testifylint
 
 linters-settings:
   gofmt:
