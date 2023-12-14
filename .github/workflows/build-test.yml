@@ -27,7 +27,7 @@ jobs:
           rm -rf golangci-lint-$GOLANGCI_LINT_VERSION-linux-amd64*
         env:
           GOLANGCI_LINT_VERSION: '1.55.2'
-          GOLANGCI_LINT_SHA256: '4de479eb9d9bc29da51aec1834e7c255b333723d38dbd56781c68e5dddc6a90b'
+          GOLANGCI_LINT_SHA256: 'dcecf2fd82b38841a5c21d1e8651b99eca09d1428f1b7ecd64d8166776c8249d'
       - name: Test style
         run: make test-style
       - name: Run unit tests
