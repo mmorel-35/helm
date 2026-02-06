@@ -133,7 +133,7 @@ type hookExecutionJSON struct {
 // It handles empty string time fields by treating them as zero values.
 func (h *HookExecution) UnmarshalJSON(data []byte) error {
 	// First try to unmarshal into a map to handle empty string time fields
-	var raw map[string]interface{}
+	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
