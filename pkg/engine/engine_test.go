@@ -1357,7 +1357,7 @@ NestedHelperFunctions/charts/common/templates/_helpers_2.tpl:1:49
 	}
 	_, err := Render(c, vals)
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, expectedErrorMessage, err.Error())
 }
 
@@ -1391,7 +1391,7 @@ template: no template "nested_helper.name" associated with template "gotpl"`
 	}
 	_, err := Render(c, vals)
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, expectedErrorMessage, err.Error())
 }
 

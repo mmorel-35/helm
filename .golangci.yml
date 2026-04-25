@@ -101,7 +101,6 @@ linters:
         - empty
         - encoded-compare
         - equal-values
-        - error-nil
         - expected-actual
         - float-compare
         - go-require
