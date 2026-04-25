@@ -17,7 +17,6 @@ limitations under the License.
 package registry
 
 import (
-	"errors"
 	"os"
 	"testing"
 
@@ -69,7 +68,7 @@ func (suite *HTTPRegistryClientTestSuite) Test_4_ManInTheMiddle() {
 	// returns content that does not match the expected digest
 	_, err := suite.RegistryClient.Pull(ref)
 	suite.NotNil(err)
-	suite.True(errors.Is(err, content.ErrMismatchedDigest))
+	suite.ErrorIs(err, content.ErrMismatchedDigest)
 }
 
 func (suite *HTTPRegistryClientTestSuite) Test_5_ImageIndex() {
