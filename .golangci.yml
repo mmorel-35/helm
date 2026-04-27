@@ -98,7 +98,6 @@ linters:
 
     testifylint:
       disable:
-        - empty
         - encoded-compare
         - equal-values
         - error-is-as
@@ -106,7 +105,6 @@ linters:
         - expected-actual
         - float-compare
         - go-require
-        - len
         - nil-compare
         - require-error
         - suite-dont-use-pkg
