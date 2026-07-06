@@ -148,12 +148,13 @@ func getAPIResourceForGVK(gvk schema.GroupVersionKind, config *rest.Config) (met
 	}
 	for _, resource := range resList.APIResources {
 		// if a resource contains a "/" it's referencing a subresource. we don't support subresource for now.
-		if resource.Kind == gvk.Kind && !strings.Contains(resource.Name, "/") {
-			res = resource
-			res.Group = gvk.Group
-			res.Version = gvk.Version
-			break
+		if !(resource.Kind == gvk.Kind && !strings.Contains(resource.Name, "/")) {
+			continue
 		}
+		res = resource
+		res.Group = gvk.Group
+		res.Version = gvk.Version
+		break
 	}
 	return res, nil
 }

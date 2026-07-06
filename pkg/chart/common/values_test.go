@@ -197,9 +197,11 @@ chapter:
 	if _, err := d.PathValue(""); err == nil {
 		t.Error("Asking for the value from an empty path should yield an error")
 	}
-	if v, err := d.PathValue("title"); err == nil {
-		if v != "Moby Dick" {
-			t.Error("Failed to return values for root key title")
-		}
+	v, err := d.PathValue("title")
+	if err != nil {
+		return
+	}
+	if v != "Moby Dick" {
+		t.Error("Failed to return values for root key title")
 	}
 }

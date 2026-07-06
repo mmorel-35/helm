@@ -292,12 +292,14 @@ func TestMemoryDelete(t *testing.T) {
 	}
 	endLen := len(end)
 
-	if startLen-2 != endLen {
-		t.Errorf("expected end to be %d instead of %d", startLen-2, endLen)
-		for _, ee := range end {
-			rac, err := release.NewAccessor(ee)
-			assert.NoError(t, err, "unable to get release accessor")
-			t.Logf("Name: %s, Version: %d", rac.Name(), rac.Version())
-		}
+	if startLen-2 == endLen {
+		return
+
+	}
+	t.Errorf("expected end to be %d instead of %d", startLen-2, endLen)
+	for _, ee := range end {
+		rac, err := release.NewAccessor(ee)
+		assert.NoError(t, err, "unable to get release accessor")
+		t.Logf("Name: %s, Version: %d", rac.Name(), rac.Version())
 	}
 }

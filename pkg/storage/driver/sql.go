@@ -404,12 +404,12 @@ func (s *SQL) Query(labels map[string]string) ([]release.Releaser, error) {
 	}
 	sort.Strings(keys)
 	for _, key := range keys {
-		if _, ok := labelMap[key]; ok {
-			sb = sb.Where(sq.Eq{key: labels[key]})
-		} else {
+		_, ok := labelMap[key]
+		if !ok {
 			s.Logger().Debug("unknown label", "key", key)
 			return nil, fmt.Errorf("unknown label %s", key)
 		}
+		sb = sb.Where(sq.Eq{key: labels[key]})
 	}
 
 	// If a namespace was specified, we only list releases from that namespace
@@ -563,11 +563,13 @@ func (s *SQL) Create(key string, rel release.Releaser) error {
 			return err
 		}
 
-		if _, err := transaction.Exec(insertLabelsQuery, args...); err != nil {
-			defer transaction.Rollback()
-			s.Logger().Debug("failed to write Labels", slog.Any("error", err))
-			return err
+		_, err = transaction.Exec(insertLabelsQuery, args...)
+		if err == nil {
+			continue
 		}
+		defer transaction.Rollback()
+		s.Logger().Debug("failed to write Labels", slog.Any("error", err))
+		return err
 	}
 	defer transaction.Commit()
 

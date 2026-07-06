@@ -295,12 +295,13 @@ func Test_logResponseBody(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, logResponseBody(tt.resp))
 			// validate the response body
-			if tt.resp.Body != nil {
-				readBytes, err := io.ReadAll(tt.resp.Body)
-				require.NoError(t, err, "failed to read body after logResponseBody()")
-				assert.True(t, bytes.Equal(tt.wantData, readBytes), "resp.Body after logResponseBody()")
-				assert.NoError(t, tt.resp.Body.Close(), "failed to close body after logResponseBody()")
+			if tt.resp.Body == nil {
+				return
 			}
+			readBytes, err := io.ReadAll(tt.resp.Body)
+			require.NoError(t, err, "failed to read body after logResponseBody()")
+			assert.True(t, bytes.Equal(tt.wantData, readBytes), "resp.Body after logResponseBody()")
+			assert.NoError(t, tt.resp.Body.Close(), "failed to close body after logResponseBody()")
 		})
 	}
 }

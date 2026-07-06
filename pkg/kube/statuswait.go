@@ -266,14 +266,15 @@ func statusObserver(cancel context.CancelFunc, desired status.Status, logger *sl
 			return
 		}
 
-		if len(nonDesiredResources) > 0 {
-			// Log a single resource so the user knows what they're waiting for without an overwhelming amount of output
-			sort.Slice(nonDesiredResources, func(i, j int) bool {
-				return nonDesiredResources[i].Identifier.Name < nonDesiredResources[j].Identifier.Name
-			})
-			first := nonDesiredResources[0]
-			logger.Debug("waiting for resource", "namespace", first.Identifier.Namespace, "name", first.Identifier.Name, "kind", first.Identifier.GroupKind.Kind, "expectedStatus", desired, "actualStatus", first.Status)
+		if !(len(nonDesiredResources) > 0) {
+			return
 		}
+		// Log a single resource so the user knows what they're waiting for without an overwhelming amount of output
+		sort.Slice(nonDesiredResources, func(i, j int) bool {
+			return nonDesiredResources[i].Identifier.Name < nonDesiredResources[j].Identifier.Name
+		})
+		first := nonDesiredResources[0]
+		logger.Debug("waiting for resource", "namespace", first.Identifier.Namespace, "name", first.Identifier.Name, "kind", first.Identifier.GroupKind.Kind, "expectedStatus", desired, "actualStatus", first.Status)
 	}
 }
 

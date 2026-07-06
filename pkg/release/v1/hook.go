@@ -140,10 +140,12 @@ func (h *HookExecution) UnmarshalJSON(data []byte) error {
 
 	// Replace empty string time fields with nil
 	for _, field := range []string{"started_at", "completed_at"} {
-		if val, ok := raw[field]; ok {
-			if str, ok := val.(string); ok && str == "" {
-				raw[field] = nil
-			}
+		val, ok := raw[field]
+		if !ok {
+			continue
+		}
+		if str, ok := val.(string); ok && str == "" {
+			raw[field] = nil
 		}
 	}
 

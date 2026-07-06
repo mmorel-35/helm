@@ -58,29 +58,31 @@ func TestBadChartV3(t *testing.T) {
 				w = true
 			}
 		}
-		if msg.Severity == support.ErrorSev {
-			if strings.Contains(msg.Err.Error(), "version '0.0.0.0' is not a valid SemVerV2") {
-				e = true
-			}
-			if strings.Contains(msg.Err.Error(), "name is required") {
-				e2 = true
-			}
+		if msg.Severity != support.ErrorSev {
+			continue
 
-			if strings.Contains(msg.Err.Error(), "apiVersion is required. The value must be \"v3\"") {
-				e3 = true
-			}
+		}
+		if strings.Contains(msg.Err.Error(), "version '0.0.0.0' is not a valid SemVerV2") {
+			e = true
+		}
+		if strings.Contains(msg.Err.Error(), "name is required") {
+			e2 = true
+		}
 
-			if strings.Contains(msg.Err.Error(), "chart type is not valid in apiVersion") {
-				e4 = true
-			}
+		if strings.Contains(msg.Err.Error(), "apiVersion is required. The value must be \"v3\"") {
+			e3 = true
+		}
 
-			if strings.Contains(msg.Err.Error(), "dependencies are not valid in the Chart file with apiVersion") {
-				e5 = true
-			}
-			// This comes from the dependency check, which loads dependency info from the Chart.yaml
-			if strings.Contains(msg.Err.Error(), "unable to load chart") {
-				e6 = true
-			}
+		if strings.Contains(msg.Err.Error(), "chart type is not valid in apiVersion") {
+			e4 = true
+		}
+
+		if strings.Contains(msg.Err.Error(), "dependencies are not valid in the Chart file with apiVersion") {
+			e5 = true
+		}
+		// This comes from the dependency check, which loads dependency info from the Chart.yaml
+		if strings.Contains(msg.Err.Error(), "unable to load chart") {
+			e6 = true
 		}
 	}
 	if !e || !e2 || !e3 || !e4 || !e5 || !i || !e6 || !w {

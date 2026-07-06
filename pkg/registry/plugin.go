@@ -108,16 +108,18 @@ func (c *Client) processPluginPull(genericResult *GenericPullResult, pluginName 
 	for _, layer := range manifest.Layers {
 		d := layer
 		// Check for title annotation
-		if title, exists := d.Annotations[ocispec.AnnotationTitle]; exists {
-			// Check if this looks like a plugin tarball: {pluginName}-{version}.tgz
-			if pluginDescriptor == nil && strings.HasPrefix(title, pluginName+"-") && strings.HasSuffix(title, ".tgz") {
-				pluginDescriptor = &d
-			}
-			// Check if this looks like a plugin provenance: {pluginName}-{version}.tgz.prov
-			if provenanceDescriptor == nil && strings.HasPrefix(title, pluginName+"-") && strings.HasSuffix(title, ".tgz.prov") {
-				provenanceDescriptor = &d
-				foundProvenanceName = title
-			}
+		title, exists := d.Annotations[ocispec.AnnotationTitle]
+		if !exists {
+			continue
+		}
+		// Check if this looks like a plugin tarball: {pluginName}-{version}.tgz
+		if pluginDescriptor == nil && strings.HasPrefix(title, pluginName+"-") && strings.HasSuffix(title, ".tgz") {
+			pluginDescriptor = &d
+		}
+		// Check if this looks like a plugin provenance: {pluginName}-{version}.tgz.prov
+		if provenanceDescriptor == nil && strings.HasPrefix(title, pluginName+"-") && strings.HasSuffix(title, ".tgz.prov") {
+			provenanceDescriptor = &d
+			foundProvenanceName = title
 		}
 	}
 

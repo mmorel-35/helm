@@ -123,14 +123,15 @@ func TestBomTestData(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Error reading archive frobnitz_with_bom.tgz: %s", err)
 			}
-			if file != nil && strings.EqualFold(file.Name, testFile) {
-				_, err := tr.Read(data)
-				if err != nil {
-					t.Fatalf("Error reading archive frobnitz_with_bom.tgz: %s", err)
-				} else {
-					break
-				}
+			if !(file != nil && strings.EqualFold(file.Name, testFile)) {
+				continue
+
 			}
+			_, err = tr.Read(data)
+			if err == nil {
+				break
+			}
+			t.Fatalf("Error reading archive frobnitz_with_bom.tgz: %s", err)
 		}
 		if !bytes.Equal(data, utf8bom) {
 			t.Fatalf("Test file has no BOM or is invalid: frobnitz_with_bom.tgz/%s", testFile)

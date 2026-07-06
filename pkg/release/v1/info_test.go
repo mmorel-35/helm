@@ -340,12 +340,13 @@ func TestInfoRollbackRevisionRoundTrip(t *testing.T) {
 			assert.Equal(t, tt.info.Description, decoded.Description)
 
 			// Verify omitempty behavior: zero rollback_revision should not appear in JSON
-			if tt.info.RollbackRevision == 0 {
-				var raw map[string]any
-				err = json.Unmarshal(data, &raw)
-				require.NoError(t, err)
-				assert.NotContains(t, raw, "rollback_revision")
+			if tt.info.RollbackRevision != 0 {
+				return
 			}
+			var raw map[string]any
+			err = json.Unmarshal(data, &raw)
+			require.NoError(t, err)
+			assert.NotContains(t, raw, "rollback_revision")
 		})
 	}
 }

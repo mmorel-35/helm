@@ -235,10 +235,12 @@ func calculateHookWeight(entry SimpleHead) int {
 
 // operateAnnotationValues finds the given annotation and runs the operate function with the value of that annotation
 func operateAnnotationValues(entry SimpleHead, annotation string, operate func(p string)) {
-	if dps, ok := entry.Metadata.Annotations[annotation]; ok {
-		for dp := range strings.SplitSeq(dps, ",") {
-			dp = strings.ToLower(strings.TrimSpace(dp))
-			operate(dp)
-		}
+	dps, ok := entry.Metadata.Annotations[annotation]
+	if !ok {
+		return
+	}
+	for dp := range strings.SplitSeq(dps, ",") {
+		dp = strings.ToLower(strings.TrimSpace(dp))
+		operate(dp)
 	}
 }

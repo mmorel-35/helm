@@ -90,14 +90,15 @@ func (c *ReadyChecker) IsReady(ctx context.Context, v *resource.Info) (bool, err
 			return false, err
 		}
 	case *batchv1.Job:
-		if c.checkJobs {
-			job, err := c.client.BatchV1().Jobs(v.Namespace).Get(ctx, v.Name, metav1.GetOptions{})
-			if err != nil {
-				return false, err
-			}
-			ready, err := c.jobReady(job)
-			return ready, err
+		if !c.checkJobs {
+			break
 		}
+		job, err := c.client.BatchV1().Jobs(v.Namespace).Get(ctx, v.Name, metav1.GetOptions{})
+		if err != nil {
+			return false, err
+		}
+		ready, err := c.jobReady(job)
+		return ready, err
 	case *appsv1.Deployment:
 		currentDeployment, err := c.client.AppsV1().Deployments(v.Namespace).Get(ctx, v.Name, metav1.GetOptions{})
 		if err != nil {

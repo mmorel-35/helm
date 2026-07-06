@@ -50,10 +50,12 @@ func TestRecordsAdd(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if err := rs.Add(tt.rec); err != nil {
-			if !tt.ok {
-				t.Fatalf("failed: %q: %s\n", tt.desc, err)
-			}
+		err := rs.Add(tt.rec)
+		if err == nil {
+			continue
+		}
+		if !tt.ok {
+			t.Fatalf("failed: %q: %s\n", tt.desc, err)
 		}
 	}
 }
@@ -77,14 +79,17 @@ func TestRecordsRemove(t *testing.T) {
 	startLen := rs.Len()
 
 	for _, tt := range tests {
-		if r := rs.Remove(tt.key); r == nil {
-			if !tt.ok {
-				t.Fatalf("Failed to %q (key = %s). Expected nil, got %v",
-					tt.desc,
-					tt.key,
-					r,
-				)
-			}
+		r := rs.Remove(tt.key)
+		if r != nil {
+			continue
+
+		}
+		if !tt.ok {
+			t.Fatalf("Failed to %q (key = %s). Expected nil, got %v",
+				tt.desc,
+				tt.key,
+				r,
+			)
 		}
 	}
 

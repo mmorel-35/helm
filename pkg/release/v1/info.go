@@ -67,10 +67,12 @@ func (i *Info) UnmarshalJSON(data []byte) error {
 
 	// Replace empty string time fields with nil
 	for _, field := range []string{"first_deployed", "last_deployed", "deleted"} {
-		if val, ok := raw[field]; ok {
-			if str, ok := val.(string); ok && str == "" {
-				raw[field] = nil
-			}
+		val, ok := raw[field]
+		if !ok {
+			continue
+		}
+		if str, ok := val.(string); ok && str == "" {
+			raw[field] = nil
 		}
 	}
 
