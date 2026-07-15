@@ -1289,14 +1289,14 @@ func TestWaitOptionFunctions(t *testing.T) {
 		t.Parallel()
 		opts := &waitOptions{}
 		WithStatusComputeWorkers(-1)(opts)
-		assert.Equal(t, 0, opts.statusComputeWorkers,
+		assert.Equalf(t, 0, opts.statusComputeWorkers,
 			"negative worker counts must not propagate to the underlying watcher")
 	})
 
 	t.Run("waitOptions.statusComputeWorkers defaults to zero", func(t *testing.T) {
 		t.Parallel()
 		opts := &waitOptions{}
-		assert.Equal(t, 0, opts.statusComputeWorkers,
+		assert.Equalf(t, 0, opts.statusComputeWorkers,
 			"SDK consumers must opt in to concurrent status computation")
 	})
 }

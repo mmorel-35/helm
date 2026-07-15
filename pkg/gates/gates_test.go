@@ -27,11 +27,11 @@ const name string = "HELM_EXPERIMENTAL_FEATURE"
 func TestIsEnabled(t *testing.T) {
 	g := Gate(name)
 
-	assert.False(t, g.IsEnabled(), "feature gate shows as available, but the environment variable %s was not set", name)
+	assert.Falsef(t, g.IsEnabled(), "feature gate shows as available, but the environment variable %s was not set", name)
 
 	t.Setenv(name, "1")
 
-	assert.True(t, g.IsEnabled(), "feature gate shows as disabled, but the environment variable %s was set", name)
+	assert.Truef(t, g.IsEnabled(), "feature gate shows as disabled, but the environment variable %s was set", name)
 }
 
 func TestError(t *testing.T) {

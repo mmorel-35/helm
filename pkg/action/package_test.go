@@ -34,12 +34,12 @@ func TestPassphraseFileFetcher(t *testing.T) {
 	testPkg := NewPackage()
 
 	fetcher, err := testPkg.passphraseFileFetcher(path.Join(directory, "passphrase-file"), nil)
-	require.NoError(t, err, "Unable to create passphraseFileFetcher")
+	require.NoErrorf(t, err, "Unable to create passphraseFileFetcher")
 
 	passphrase, err := fetcher("key")
-	require.NoError(t, err, "Unable to fetch passphrase")
+	require.NoErrorf(t, err, "Unable to fetch passphrase")
 
-	assert.Equal(t, secret, string(passphrase), "Expected %s got %s", secret, string(passphrase))
+	assert.Equalf(t, secret, string(passphrase), "Expected %s got %s", secret, string(passphrase))
 }
 
 func TestPassphraseFileFetcher_WithLineBreak(t *testing.T) {
@@ -48,12 +48,12 @@ func TestPassphraseFileFetcher_WithLineBreak(t *testing.T) {
 	testPkg := NewPackage()
 
 	fetcher, err := testPkg.passphraseFileFetcher(path.Join(directory, "passphrase-file"), nil)
-	require.NoError(t, err, "Unable to create passphraseFileFetcher")
+	require.NoErrorf(t, err, "Unable to create passphraseFileFetcher")
 
 	passphrase, err := fetcher("key")
-	require.NoError(t, err, "Unable to fetch passphrase")
+	require.NoErrorf(t, err, "Unable to fetch passphrase")
 
-	assert.Equal(t, secret, string(passphrase), "Expected %s got %s", secret, string(passphrase))
+	assert.Equalf(t, secret, string(passphrase), "Expected %s got %s", secret, string(passphrase))
 }
 
 func TestPassphraseFileFetcher_WithInvalidStdin(t *testing.T) {
@@ -61,16 +61,16 @@ func TestPassphraseFileFetcher_WithInvalidStdin(t *testing.T) {
 	testPkg := NewPackage()
 
 	stdin, err := os.CreateTemp(directory, "non-existing")
-	require.NoError(t, err, "Unable to create test file")
+	require.NoErrorf(t, err, "Unable to create test file")
 
 	_, err = testPkg.passphraseFileFetcher("-", stdin)
-	assert.Error(t, err, "Expected passphraseFileFetcher returning an error")
+	assert.Errorf(t, err, "Expected passphraseFileFetcher returning an error")
 }
 
 func TestPassphraseFileFetcher_WithStdinAndMultipleFetches(t *testing.T) {
 	testPkg := NewPackage()
 	stdin, w, err := os.Pipe()
-	require.NoError(t, err, "Unable to create pipe")
+	require.NoErrorf(t, err, "Unable to create pipe")
 
 	passphrase := "secret-from-stdin"
 
@@ -81,12 +81,12 @@ func TestPassphraseFileFetcher_WithStdinAndMultipleFetches(t *testing.T) {
 
 	for range 4 {
 		fetcher, err := testPkg.passphraseFileFetcher("-", stdin)
-		require.NoError(t, err, "Expected passphraseFileFetcher to not return an error")
+		require.NoErrorf(t, err, "Expected passphraseFileFetcher to not return an error")
 
 		pass, err := fetcher("key")
-		require.NoError(t, err, "Expected passphraseFileFetcher invocation to succeed")
+		require.NoErrorf(t, err, "Expected passphraseFileFetcher invocation to succeed")
 
-		assert.Equal(t, string(passphrase), string(pass), "Expected multiple passphrase fetch to return %q, got %q", passphrase, pass)
+		assert.Equalf(t, string(passphrase), string(pass), "Expected multiple passphrase fetch to return %q, got %q", passphrase, pass)
 	}
 }
 

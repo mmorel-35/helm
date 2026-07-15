@@ -36,10 +36,10 @@ func TestSearch(t *testing.T) {
 	defer ts.Close()
 
 	c, err := New(ts.URL)
-	require.NoError(t, err, "unable to create monocular client")
+	require.NoErrorf(t, err, "unable to create monocular client")
 
 	results, err := c.SearchWithContext(t.Context(), "phpmyadmin")
-	require.NoError(t, err, "unable to search monocular")
+	require.NoErrorf(t, err, "unable to search monocular")
 
 	assert.Len(t, results, 2)
 }

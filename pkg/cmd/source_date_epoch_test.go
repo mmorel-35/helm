@@ -27,8 +27,8 @@ func TestSourceDateEpochFromEnv(t *testing.T) {
 	t.Setenv("SOURCE_DATE_EPOCH", "1609459200")
 
 	got, err := sourceDateEpochFromEnv()
-	require.NoError(t, err, "sourceDateEpochFromEnv()")
-	require.NotNil(t, got, "expected non-nil epoch")
+	require.NoErrorf(t, err, "sourceDateEpochFromEnv()")
+	require.NotNilf(t, got, "expected non-nil epoch")
 	want := time.Unix(1609459200, 0).UTC()
 	require.Truef(t, got.Equal(want), "expected %v, got %v", want, *got)
 }
@@ -37,30 +37,30 @@ func TestSourceDateEpochFromEnvUnset(t *testing.T) {
 	t.Setenv("SOURCE_DATE_EPOCH", "")
 
 	got, err := sourceDateEpochFromEnv()
-	require.NoError(t, err, "sourceDateEpochFromEnv()")
-	require.Nil(t, got, "expected nil epoch")
+	require.NoErrorf(t, err, "sourceDateEpochFromEnv()")
+	require.Nilf(t, got, "expected nil epoch")
 }
 
 func TestSourceDateEpochFromEnvInvalid(t *testing.T) {
 	t.Setenv("SOURCE_DATE_EPOCH", "not-a-number")
 
 	_, err := sourceDateEpochFromEnv()
-	require.Error(t, err, "expected error for invalid SOURCE_DATE_EPOCH")
+	require.Errorf(t, err, "expected error for invalid SOURCE_DATE_EPOCH")
 }
 
 func TestSourceDateEpochFromEnvNegative(t *testing.T) {
 	t.Setenv("SOURCE_DATE_EPOCH", "-1")
 
 	_, err := sourceDateEpochFromEnv()
-	require.Error(t, err, "expected error for negative SOURCE_DATE_EPOCH")
+	require.Errorf(t, err, "expected error for negative SOURCE_DATE_EPOCH")
 }
 
 func TestSourceDateEpochFromEnvZero(t *testing.T) {
 	t.Setenv("SOURCE_DATE_EPOCH", "0")
 
 	got, err := sourceDateEpochFromEnv()
-	require.NoError(t, err, "sourceDateEpochFromEnv() error")
-	require.NotNil(t, got, "expected non-nil epoch")
+	require.NoErrorf(t, err, "sourceDateEpochFromEnv() error")
+	require.NotNilf(t, got, "expected non-nil epoch")
 	want := time.Unix(0, 0).UTC()
 	require.Truef(t, got.Equal(want), "expected %v, got %v", want, *got)
 }

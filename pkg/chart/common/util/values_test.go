@@ -77,13 +77,13 @@ func TestToRenderValues(t *testing.T) {
 	assert.Equalf(t, "default", namespace.(string), "Expected namespace 'default', got %q", namespace)
 	revision := relmap["Revision"]
 	assert.Equalf(t, 1, revision.(int), "Expected revision '1', got %d", revision)
-	assert.False(t, relmap["IsUpgrade"].(bool), "Expected upgrade to be false.")
-	assert.True(t, relmap["IsInstall"].(bool), "Expected install to be true.")
-	assert.True(t, res["Capabilities"].(*common.Capabilities).APIVersions.Has("v1"), "Expected Capabilities to have v1 as an API")
-	assert.Equal(t, "1", res["Capabilities"].(*common.Capabilities).KubeVersion.Major, "Expected Capabilities to have a Kube version")
+	assert.Falsef(t, relmap["IsUpgrade"].(bool), "Expected upgrade to be false.")
+	assert.Truef(t, relmap["IsInstall"].(bool), "Expected install to be true.")
+	assert.Truef(t, res["Capabilities"].(*common.Capabilities).APIVersions.Has("v1"), "Expected Capabilities to have v1 as an API")
+	assert.Equalf(t, "1", res["Capabilities"].(*common.Capabilities).KubeVersion.Major, "Expected Capabilities to have a Kube version")
 
 	vals := res["Values"].(common.Values)
-	assert.Equal(t, "Haroun", vals["name"], "Expected 'Haroun', got %q (%v)", vals["name"], vals)
+	assert.Equalf(t, "Haroun", vals["name"], "Expected 'Haroun', got %q (%v)", vals["name"], vals)
 	where := vals["where"].(map[string]any)
 	expects := map[string]string{
 		"city":  "Baghdad",

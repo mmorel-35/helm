@@ -69,9 +69,9 @@ func TestMemoryCreate(t *testing.T) {
 		err := ts.Create(key, rls)
 
 		if tt.err {
-			require.Error(t, err, "Did not get expected error for %q\n", tt.desc)
+			require.Errorf(t, err, "Did not get expected error for %q\n", tt.desc)
 		} else {
-			require.NoError(t, err, "failed to create %q", tt.desc)
+			require.NoErrorf(t, err, "failed to create %q", tt.desc)
 		}
 	}
 }
@@ -94,9 +94,9 @@ func TestMemoryGet(t *testing.T) {
 		ts.SetNamespace(tt.namespace)
 		_, err := ts.Get(tt.key)
 		if tt.err {
-			require.Error(t, err, "Did not get expected error for %q '%s'\n", tt.desc, tt.key)
+			require.Errorf(t, err, "Did not get expected error for %q '%s'\n", tt.desc, tt.key)
 		} else {
-			require.NoError(t, err, "Failed %q to get '%s'", tt.desc, tt.key)
+			require.NoErrorf(t, err, "Failed %q to get '%s'", tt.desc, tt.key)
 		}
 	}
 }
@@ -111,8 +111,8 @@ func TestMemoryList(t *testing.T) {
 		return rls.Info.Status == common.StatusDeployed
 	})
 	// check
-	require.NoError(t, err, "Failed to list deployed releases")
-	assert.Len(t, dpl, 2, "Expected 2 deployed, got %d", len(dpl))
+	require.NoErrorf(t, err, "Failed to list deployed releases")
+	assert.Lenf(t, dpl, 2, "Expected 2 deployed, got %d", len(dpl))
 
 	// list all superseded releases
 	ssd, err := ts.List(func(rel release.Releaser) bool {
@@ -120,8 +120,8 @@ func TestMemoryList(t *testing.T) {
 		return rls.Info.Status == common.StatusSuperseded
 	})
 	// check
-	require.NoError(t, err, "Failed to list superseded releases")
-	assert.Len(t, ssd, 6, "Expected 6 superseded, got %d", len(ssd))
+	require.NoErrorf(t, err, "Failed to list superseded releases")
+	assert.Lenf(t, ssd, 6, "Expected 6 superseded, got %d", len(ssd))
 
 	// list all deleted releases
 	del, err := ts.List(func(rel release.Releaser) bool {
@@ -129,8 +129,8 @@ func TestMemoryList(t *testing.T) {
 		return rls.Info.Status == common.StatusUninstalled
 	})
 	// check
-	require.NoError(t, err, "Failed to list deleted releases")
-	assert.Empty(t, del, "Expected 0 deleted, got %d", len(del))
+	require.NoErrorf(t, err, "Failed to list deleted releases")
+	assert.Emptyf(t, del, "Expected 0 deleted, got %d", len(del))
 }
 
 func TestMemoryQuery(t *testing.T) {
@@ -158,9 +158,9 @@ func TestMemoryQuery(t *testing.T) {
 	for _, tt := range tests {
 		ts.SetNamespace(tt.namespace)
 		l, err := ts.Query(tt.lbs)
-		require.NoError(t, err, "Failed to query")
+		require.NoErrorf(t, err, "Failed to query")
 
-		require.Equal(t, len(l), tt.xlen, "Expected %d results, actual %d\n", tt.xlen, len(l))
+		require.Equalf(t, len(l), tt.xlen, "Expected %d results, actual %d\n", tt.xlen, len(l))
 	}
 }
 
@@ -202,14 +202,14 @@ func TestMemoryUpdate(t *testing.T) {
 		err := ts.Update(tt.key, tt.rls)
 
 		if tt.err {
-			require.Error(t, err, "Did not get expected error for %q '%s'\n", tt.desc, tt.key)
+			require.Errorf(t, err, "Did not get expected error for %q '%s'\n", tt.desc, tt.key)
 		} else {
-			require.NoError(t, err, "Failed %q", tt.desc)
+			require.NoErrorf(t, err, "Failed %q", tt.desc)
 
 			ts.SetNamespace(tt.rls.Namespace)
 
 			r, err := ts.Get(tt.key)
-			require.NoError(t, err, "Failed to get")
+			require.NoErrorf(t, err, "Failed to get")
 			require.Truef(t, reflect.DeepEqual(r, tt.rls), "Expected %v, actual %v\n", tt.rls, r)
 		}
 	}
@@ -233,7 +233,7 @@ func TestMemoryDelete(t *testing.T) {
 	ts := tsFixtureMemory(t)
 	ts.SetNamespace("")
 	start, err := ts.Query(map[string]string{"status": "deployed"})
-	require.NoError(t, err, "Query failed")
+	require.NoErrorf(t, err, "Query failed")
 	startLen := len(start)
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
@@ -248,21 +248,21 @@ func TestMemoryDelete(t *testing.T) {
 				require.Equalf(t, tt.key, fmt.Sprintf("%s.v%d", rls.Name, rls.Version), "Asked for delete on %s, but deleted %d", tt.key, rls.Version)
 			}
 			_, err = ts.Get(tt.key)
-			require.Error(t, err, "Expected an error when asking for a deleted key")
+			require.Errorf(t, err, "Expected an error when asking for a deleted key")
 		})
 	}
 
 	// Make sure that the deleted records are gone.
 	ts.SetNamespace("")
 	end, err := ts.Query(map[string]string{"status": "deployed"})
-	require.NoError(t, err, "Query failed")
+	require.NoErrorf(t, err, "Query failed")
 	endLen := len(end)
 
 	if startLen-2 != endLen {
 		t.Errorf("expected end to be %d instead of %d", startLen-2, endLen)
 		for _, ee := range end {
 			rac, err := release.NewAccessor(ee)
-			require.NoError(t, err, "unable to get release accessor")
+			require.NoErrorf(t, err, "unable to get release accessor")
 			t.Logf("Name: %s, Version: %d", rac.Name(), rac.Version())
 		}
 	}

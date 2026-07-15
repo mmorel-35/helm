@@ -202,5 +202,5 @@ func TestValidate_sanitize(t *testing.T) {
 	md := &Metadata{APIVersion: "3", Name: "test", Version: "1.0", Description: "\adescr\u0081iption\rtest", Maintainers: []*Maintainer{{Name: "\r"}}}
 	require.NoError(t, md.Validate())
 	require.Equalf(t, "description test", md.Description, "description was not sanitized: %q", md.Description)
-	require.Equal(t, " ", md.Maintainers[0].Name, "maintainer name was not sanitized")
+	require.Equalf(t, " ", md.Maintainers[0].Name, "maintainer name was not sanitized")
 }

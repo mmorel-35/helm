@@ -66,17 +66,17 @@ func TestPluginPackageWithoutSigning(t *testing.T) {
 	// Check that tarball was created with plugin name and version
 	tarballPath := filepath.Join(tempDir, "test-plugin-1.0.0.tgz")
 	_, err := os.Stat(tarballPath)
-	assert.False(t, os.IsNotExist(err), "tarball should exist when sign=false")
+	assert.Falsef(t, os.IsNotExist(err), "tarball should exist when sign=false")
 
 	// Check that no .prov file was created
 	provPath := tarballPath + ".prov"
 	_, err = os.Stat(provPath)
-	assert.True(t, os.IsNotExist(err), "provenance file should not exist when sign=false")
+	assert.Truef(t, os.IsNotExist(err), "provenance file should not exist when sign=false")
 
 	// Output should contain warning about skipping signing
 	output := out.String()
-	assert.Contains(t, output, "WARNING: Skipping plugin signing", "should print warning when signing is skipped")
-	assert.Contains(t, output, "Successfully packaged", "should print success message")
+	assert.Containsf(t, output, "WARNING: Skipping plugin signing", "should print warning when signing is skipped")
+	assert.Containsf(t, output, "Successfully packaged", "should print success message")
 }
 
 func TestPluginPackageDefaultRequiresSigning(t *testing.T) {
@@ -100,12 +100,12 @@ func TestPluginPackageDefaultRequiresSigning(t *testing.T) {
 	out := &bytes.Buffer{}
 
 	// Should fail because signing is required by default
-	require.Error(t, o.run(out), "expected error when signing fails with default settings")
+	require.Errorf(t, o.run(out), "expected error when signing fails with default settings")
 
 	// Check that no tarball was created
 	tarballPath := filepath.Join(tempDir, "test-plugin.tgz")
 	_, err := os.Stat(tarballPath)
-	assert.True(t, os.IsNotExist(err), "tarball should not exist when signing fails")
+	assert.Truef(t, os.IsNotExist(err), "tarball should not exist when signing fails")
 }
 
 func TestPluginPackageSigningFailure(t *testing.T) {
@@ -129,13 +129,13 @@ func TestPluginPackageSigningFailure(t *testing.T) {
 	out := &bytes.Buffer{}
 
 	// Should get an error
-	require.Error(t, o.run(out), "expected error when signing fails, got nil")
+	require.Errorf(t, o.run(out), "expected error when signing fails, got nil")
 
 	// Check that no tarball was created
 	tarballPath := filepath.Join(tempDir, "test-plugin.tgz")
 	_, err := os.Stat(tarballPath)
-	assert.True(t, os.IsNotExist(err), "tarball should not exist when signing fails")
+	assert.Truef(t, os.IsNotExist(err), "tarball should not exist when signing fails")
 
 	// Output should not contain success message
-	assert.False(t, bytes.Contains(out.Bytes(), []byte("Successfully packaged")), "should not print success message when signing fails")
+	assert.Falsef(t, bytes.Contains(out.Bytes(), []byte("Successfully packaged")), "should not print success message when signing fails")
 }

@@ -27,13 +27,13 @@ func TestVersionSet(t *testing.T) {
 	d := len(vs)
 	assert.Equalf(t, 2, d, "Expected 2 versions, got %d", d)
 
-	assert.True(t, vs.Has("apps/v1"), "Expected to find apps/v1")
+	assert.Truef(t, vs.Has("apps/v1"), "Expected to find apps/v1")
 
-	assert.False(t, vs.Has("Spanish/inquisition"), "No one expects the Spanish/inquisition")
+	assert.Falsef(t, vs.Has("Spanish/inquisition"), "No one expects the Spanish/inquisition")
 }
 
 func TestDefaultVersionSet(t *testing.T) {
-	assert.True(t, DefaultVersionSet.Has("v1"), "Expected core v1 version set")
+	assert.Truef(t, DefaultVersionSet.Has("v1"), "Expected core v1 version set")
 }
 
 func TestDefaultCapabilities(t *testing.T) {
@@ -51,7 +51,7 @@ func TestDefaultCapabilities(t *testing.T) {
 
 func TestParseKubeVersion(t *testing.T) {
 	kv, err := ParseKubeVersion("v1.16.0")
-	require.NoError(t, err, "Expected v1.16.0 to parse successfully")
+	require.NoErrorf(t, err, "Expected v1.16.0 to parse successfully")
 	assert.Equalf(t, "v1.16.0", kv.Version, "Expected parsed KubeVersion.Version to be v1.16.0, got %q", kv.String())
 	assert.Equalf(t, "1", kv.Major, "Expected parsed KubeVersion.Major to be 1, got %q", kv.Major)
 	assert.Equalf(t, "16", kv.Minor, "Expected parsed KubeVersion.Minor to be 16, got %q", kv.Minor)

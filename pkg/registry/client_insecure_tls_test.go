@@ -38,11 +38,11 @@ func (suite *InsecureTLSRegistryClientTestSuite) TearDownSuite() {
 }
 
 func (suite *InsecureTLSRegistryClientTestSuite) Test_0_Login() {
-	suite.Require().Error(suite.RegistryClient.Login(suite.DockerRegistryHost,
+	suite.Require().Errorf(suite.RegistryClient.Login(suite.DockerRegistryHost,
 		LoginOptBasicAuth("badverybad", "ohsobad"),
 		LoginOptInsecure(true)), "error logging into registry with bad credentials")
 
-	suite.Require().NoError(suite.RegistryClient.Login(suite.DockerRegistryHost,
+	suite.Require().NoErrorf(suite.RegistryClient.Login(suite.DockerRegistryHost,
 		LoginOptBasicAuth(testUsername, testPassword),
 		LoginOptInsecure(true)), "no error logging into registry with good credentials")
 }
@@ -63,10 +63,10 @@ func (suite *InsecureTLSRegistryClientTestSuite) Test_4_Logout() {
 	err := suite.RegistryClient.Logout("this-host-aint-real:5000")
 	if err != nil {
 		// credential backend for mac generates an error
-		suite.Require().Error(err, "failed to delete the credential for this-host-aint-real:5000")
+		suite.Require().Errorf(err, "failed to delete the credential for this-host-aint-real:5000")
 	}
 
-	suite.Require().NoError(suite.RegistryClient.Logout(suite.DockerRegistryHost), "no error logging out of registry")
+	suite.Require().NoErrorf(suite.RegistryClient.Logout(suite.DockerRegistryHost), "no error logging out of registry")
 }
 
 func TestInsecureTLSRegistryClientTestSuite(t *testing.T) {

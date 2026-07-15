@@ -46,7 +46,7 @@ func BasicAuthMiddleware(t *testing.T) http.HandlerFunc {
 	t.Helper()
 	return http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 		username, password, ok := r.BasicAuth()
-		assert.True(t, ok && username == "username" && password == "password",
+		assert.Truef(t, ok && username == "username" && password == "password",
 			"Expected request to use basic auth and for username == 'username' and password == 'password', got '%v', '%s', '%s'", ok, username, password)
 	})
 }
@@ -165,16 +165,16 @@ func NewOCIServer(t *testing.T, dir string) (*OCIServer, error) {
 	testUsername, testPassword := "username", "password"
 
 	pwBytes, err := bcrypt.GenerateFromPassword([]byte(testPassword), bcrypt.DefaultCost)
-	require.NoError(t, err, "error generating bcrypt password for test htpasswd file")
+	require.NoErrorf(t, err, "error generating bcrypt password for test htpasswd file")
 	htpasswdPath := filepath.Join(dir, testHtpasswdFileBasename)
 	err = os.WriteFile(htpasswdPath, fmt.Appendf(nil, "%s:%s\n", testUsername, string(pwBytes)), 0o644)
-	require.NoError(t, err, "error creating test htpasswd file")
+	require.NoErrorf(t, err, "error creating test htpasswd file")
 
 	// Registry config
 	config := &configuration.Configuration{}
 	lnCfg := net.ListenConfig{}
 	ln, err := lnCfg.Listen(t.Context(), "tcp", "127.0.0.1:0")
-	require.NoError(t, err, "error finding free port for test registry")
+	require.NoErrorf(t, err, "error finding free port for test registry")
 	defer ln.Close()
 
 	port := ln.Addr().(*net.TCPAddr).Port
@@ -225,14 +225,14 @@ func (srv *OCIServer) RunWithReturn(t *testing.T, opts ...OCIServerOpt) *OCIServ
 		ociRegistry.ClientOptWriter(os.Stdout),
 		ociRegistry.ClientOptCredentialsFile(credentialsFile),
 	)
-	require.NoError(t, err, "error creating registry client")
+	require.NoErrorf(t, err, "error creating registry client")
 
 	err = registryClient.Login(
 		srv.RegistryURL,
 		ociRegistry.LoginOptBasicAuth(srv.TestUsername, srv.TestPassword),
 		ociRegistry.LoginOptInsecure(true),
 		ociRegistry.LoginOptPlainText(true))
-	require.NoError(t, err, "error logging into registry with good credentials")
+	require.NoErrorf(t, err, "error logging into registry with good credentials")
 
 	ref := srv.RegistryURL + "/u/ocitestuser/oci-dependent-chart:0.1.0"
 
@@ -241,21 +241,21 @@ func (srv *OCIServer) RunWithReturn(t *testing.T, opts ...OCIServerOpt) *OCIServ
 
 	// valid chart
 	ch, err := loader.LoadDir(filepath.Join(srv.Dir, "oci-dependent-chart"))
-	require.NoError(t, err, "error loading chart")
+	require.NoErrorf(t, err, "error loading chart")
 
 	err = os.RemoveAll(filepath.Join(srv.Dir, "oci-dependent-chart"))
-	require.NoError(t, err, "error removing chart before push")
+	require.NoErrorf(t, err, "error removing chart before push")
 
 	// save it back to disk..
 	absPath, err := chartutil.Save(ch, srv.Dir)
-	require.NoError(t, err, "could not create chart archive")
+	require.NoErrorf(t, err, "could not create chart archive")
 
 	// load it into memory...
 	contentBytes, err := os.ReadFile(absPath)
-	require.NoError(t, err, "could not load chart into memory")
+	require.NoErrorf(t, err, "could not load chart into memory")
 
 	result, err := registryClient.Push(contentBytes, ref)
-	require.NoError(t, err, "error pushing dependent chart")
+	require.NoErrorf(t, err, "error pushing dependent chart")
 	t.Logf("Manifest.Digest: %s, Manifest.Size: %d, "+
 		"Config.Digest: %s, Config.Size: %d, "+
 		"Chart.Digest: %s, Chart.Size: %d",
@@ -278,10 +278,10 @@ func (srv *OCIServer) RunWithReturn(t *testing.T, opts ...OCIServerOpt) *OCIServ
 	absPath = filepath.Join(srv.Dir,
 		fmt.Sprintf("%s-%s.tgz", c.Metadata.Name, c.Metadata.Version))
 	contentBytes, err = os.ReadFile(absPath)
-	require.NoError(t, err, "could not load chart into memory")
+	require.NoErrorf(t, err, "could not load chart into memory")
 
 	result, err = registryClient.Push(contentBytes, dependingRef)
-	require.NoError(t, err, "error pushing depending chart")
+	require.NoErrorf(t, err, "error pushing depending chart")
 	t.Logf("Manifest.Digest: %s, Manifest.Size: %d, "+
 		"Config.Digest: %s, Config.Size: %d, "+
 		"Chart.Digest: %s, Chart.Size: %d",

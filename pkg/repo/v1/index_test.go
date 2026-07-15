@@ -103,13 +103,13 @@ func TestIndexFile(t *testing.T) {
 
 	i.SortEntries()
 
-	assert.Equal(t, APIVersionV1, i.APIVersion, "Expected API version v1")
+	assert.Equalf(t, APIVersionV1, i.APIVersion, "Expected API version v1")
 
 	assert.Lenf(t, i.Entries, 3, "Expected 3 charts. Got %d", len(i.Entries))
 
 	assert.Equalf(t, "clipper", i.Entries["clipper"][0].Name, "Expected clipper, got %s", i.Entries["clipper"][0].Name)
 
-	assert.Len(t, i.Entries["cutter"], 3, "Expected three cutters.")
+	assert.Lenf(t, i.Entries["cutter"], 3, "Expected three cutters.")
 
 	// Test that the sort worked. 0.2 should be at the first index for Cutter.
 	v := i.Entries["cutter"][0].Version
@@ -121,12 +121,12 @@ func TestIndexFile(t *testing.T) {
 	}
 
 	cv, err = i.Get("setter", "0.1.9+alpha")
-	require.NoError(t, err, "Expected version: 0.1.9+alpha")
-	assert.Equal(t, "0.1.9+alpha", cv.Version, "Expected version: 0.1.9+alpha")
+	require.NoErrorf(t, err, "Expected version: 0.1.9+alpha")
+	assert.Equalf(t, "0.1.9+alpha", cv.Version, "Expected version: 0.1.9+alpha")
 
 	cv, err = i.Get("setter", "0.1.8")
-	require.NoError(t, err, "Expected version: 0.1.8")
-	assert.Equal(t, "0.1.8", cv.Version, "Expected version: 0.1.8")
+	require.NoErrorf(t, err, "Expected version: 0.1.8")
+	assert.Equalf(t, "0.1.8", cv.Version, "Expected version: 0.1.8")
 }
 
 func TestLoadIndex(t *testing.T) {
@@ -161,7 +161,7 @@ func TestLoadIndex(t *testing.T) {
 // TestLoadIndex_Duplicates is a regression to make sure that we don't non-deterministically allow duplicate packages.
 func TestLoadIndex_Duplicates(t *testing.T) {
 	_, err := loadIndex([]byte(indexWithDuplicates), "indexWithDuplicates")
-	assert.Error(t, err, "Expected an error when duplicate entries are present")
+	assert.Errorf(t, err, "Expected an error when duplicate entries are present")
 }
 
 func TestLoadIndex_EmptyEntry(t *testing.T) {
@@ -171,7 +171,7 @@ func TestLoadIndex_EmptyEntry(t *testing.T) {
 
 func TestLoadIndex_Empty(t *testing.T) {
 	_, err := loadIndex([]byte(""), "indexWithEmpty")
-	assert.Error(t, err, "Expected an error when index.yaml is empty.")
+	assert.Errorf(t, err, "Expected an error when index.yaml is empty.")
 }
 
 func TestLoadIndexFileAnnotations(t *testing.T) {
@@ -180,7 +180,7 @@ func TestLoadIndexFileAnnotations(t *testing.T) {
 	verifyLocalIndex(t, i)
 
 	require.Lenf(t, i.Annotations, 1, "Expected 1 annotation but got %d", len(i.Annotations))
-	assert.Equal(t, "foo bar", i.Annotations["helm.sh/test"], "Did not get expected value for helm.sh/test annotation")
+	assert.Equalf(t, "foo bar", i.Annotations["helm.sh/test"], "Did not get expected value for helm.sh/test annotation")
 }
 
 func TestLoadUnorderedIndex(t *testing.T) {
@@ -298,7 +298,7 @@ func verifyLocalIndex(t *testing.T, i *IndexFile) {
 	assert.Equalf(t, 3, numEntries, "Expected 3 entries in index file but got %d", numEntries)
 
 	alpine, ok := i.Entries["alpine"]
-	require.True(t, ok, "'alpine' section not found.")
+	require.Truef(t, ok, "'alpine' section not found.")
 
 	l := len(alpine)
 	require.Equalf(t, 1, l, "'alpine' should have 1 chart, got %d", l)
@@ -439,7 +439,7 @@ func TestIndexAdd(t *testing.T) {
 	assert.Equalf(t, "http://example.com/charts/deis-0.1.0.tgz", i.Entries["deis"][0].URLs[0], "Expected http://example.com/charts/deis-0.1.0.tgz, got %s", i.Entries["deis"][0].URLs[0])
 
 	// test error condition
-	require.Error(t, i.MustAdd(&chart.Metadata{}, "error-0.1.0.tgz", "", ""), "expected error adding to index")
+	require.Errorf(t, i.MustAdd(&chart.Metadata{}, "error-0.1.0.tgz", "", ""), "expected error adding to index")
 }
 
 func TestIndexWrite(t *testing.T) {
@@ -451,7 +451,7 @@ func TestIndexWrite(t *testing.T) {
 
 	got, err := os.ReadFile(testpath)
 	require.NoError(t, err)
-	require.Contains(t, string(got), "clipper-0.1.0.tgz", "Index files doesn't contain expected content")
+	require.Containsf(t, string(got), "clipper-0.1.0.tgz", "Index files doesn't contain expected content")
 }
 
 func TestIndexJSONWrite(t *testing.T) {
@@ -463,8 +463,8 @@ func TestIndexJSONWrite(t *testing.T) {
 
 	got, err := os.ReadFile(testpath)
 	require.NoError(t, err)
-	require.True(t, json.Valid(got), "Index files doesn't contain valid JSON")
-	require.Contains(t, string(got), "clipper-0.1.0.tgz", "Index files doesn't contain expected content")
+	require.Truef(t, json.Valid(got), "Index files doesn't contain valid JSON")
+	require.Containsf(t, string(got), "clipper-0.1.0.tgz", "Index files doesn't contain expected content")
 }
 
 func TestAddFileIndexEntriesNil(t *testing.T) {
@@ -479,7 +479,7 @@ func TestAddFileIndexEntriesNil(t *testing.T) {
 	}{
 		{&chart.Metadata{APIVersion: "v2", Name: " ", Version: "8033-5.apinie+s.r"}, "setter-0.1.9+beta.tgz", "http://example.com/charts", "sha256:1234567890abc"},
 	} {
-		assert.Error(t, i.MustAdd(x.md, x.filename, x.baseURL, x.digest), "expected err to be non-nil when entries not initialized")
+		assert.Errorf(t, i.MustAdd(x.md, x.filename, x.baseURL, x.digest), "expected err to be non-nil when entries not initialized")
 	}
 }
 
@@ -509,16 +509,16 @@ func TestIgnoreSkippableChartValidationError(t *testing.T) {
 			result := ignoreSkippableChartValidationError(tc.Input)
 
 			if tc.Input == nil {
-				assert.NoError(t, result, "expected nil result for nil input")
+				assert.NoErrorf(t, result, "expected nil result for nil input")
 				return
 			}
 
 			if tc.ErrorSkipped {
-				assert.NoError(t, result, "expected nil result for skipped error")
+				assert.NoErrorf(t, result, "expected nil result for skipped error")
 				return
 			}
 
-			assert.ErrorIs(t, tc.Input, result, "expected the result equal to input")
+			assert.ErrorIsf(t, tc.Input, result, "expected the result equal to input")
 		})
 	}
 }
@@ -581,9 +581,9 @@ func TestLoadIndex_DuplicateChartDeps(t *testing.T) {
 			idx, err := loadIndex([]byte(tc.data), tc.source)
 			require.NoError(t, err)
 			cvs := idx.Entries["nginx"]
-			assert.NotNil(t, cvs, "expected one chart version not to be filtered out")
+			assert.NotNilf(t, cvs, "expected one chart version not to be filtered out")
 			for _, v := range cvs {
-				assert.NotEqual(t, "alpine", v.Name, "malformed version was not filtered out")
+				assert.NotEqualf(t, "alpine", v.Name, "malformed version was not filtered out")
 			}
 		})
 	}

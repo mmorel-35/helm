@@ -39,14 +39,14 @@ baz/bar/foo.txt
 one/more
 `
 	r, err := parseString(rules)
-	require.NoError(t, err, "Error parsing rules")
+	require.NoErrorf(t, err, "Error parsing rules")
 
 	require.Len(t, r.patterns, 4)
 
 	expects := []string{"foo", "bar/*", "baz/bar/foo.txt", "one/more"}
 	for i, p := range r.patterns {
 		assert.Equal(t, expects[i], p.raw)
-		assert.NotNil(t, p.match, "Expected %s to have a matcher function.", p.raw)
+		assert.NotNilf(t, p.match, "Expected %s to have a matcher function.", p.raw)
 	}
 }
 
@@ -54,17 +54,17 @@ func TestParseFail(t *testing.T) {
 	shouldFail := []string{"foo/**/bar", "[z-"}
 	for _, fail := range shouldFail {
 		_, err := parseString(fail)
-		assert.Error(t, err, "Rule %q should have failed", fail)
+		assert.Errorf(t, err, "Rule %q should have failed", fail)
 	}
 }
 
 func TestParseFile(t *testing.T) {
 	f := filepath.Join(testdata, HelmIgnore)
 	_, err := os.Stat(f)
-	require.NoError(t, err, "Fixture %s missing", f)
+	require.NoErrorf(t, err, "Fixture %s missing", f)
 
 	r, err := ParseFile(f)
-	require.NoError(t, err, "Failed to parse rules file")
+	require.NoErrorf(t, err, "Failed to parse rules file")
 
 	assert.Len(t, r.patterns, 3)
 }
@@ -114,11 +114,11 @@ func TestIgnore(t *testing.T) {
 
 	for _, test := range tests {
 		r, err := parseString(test.pattern)
-		require.NoError(t, err, "Failed to parse: %s", test.pattern)
+		require.NoErrorf(t, err, "Failed to parse: %s", test.pattern)
 		fi, err := os.Stat(filepath.Join(testdata, test.name))
-		require.NoError(t, err, "Fixture missing: %s", test.name)
+		require.NoErrorf(t, err, "Fixture missing: %s", test.name)
 
-		assert.Equal(t, test.expect, r.Ignore(test.name, fi), "Expected %q to be %v for pattern %q", test.name, test.expect, test.pattern)
+		assert.Equalf(t, test.expect, r.Ignore(test.name, fi), "Expected %q to be %v for pattern %q", test.name, test.expect, test.pattern)
 	}
 }
 

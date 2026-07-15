@@ -66,7 +66,7 @@ func TestRepoRemove(t *testing.T) {
 	b.Reset()
 
 	require.NoErrorf(t, rmOpts.run(b), "Error removing %s from repositories", testRepoName)
-	assert.Contains(t, b.String(), "has been removed", "Unexpected output: %s", b.String())
+	assert.Containsf(t, b.String(), "has been removed", "Unexpected output: %s", b.String())
 
 	testCacheFiles(t, cacheIndexFile, cacheChartsFile, testRepoName)
 
@@ -107,7 +107,7 @@ func TestRepoRemove(t *testing.T) {
 	require.NoErrorf(t, multiRmOpts.run(b), "Error removing list of repos from repositories: %q", testRepoNames)
 
 	// Check that stuff were removed
-	assert.Contains(t, b.String(), "has been removed", "Unexpected output: %s", b.String())
+	assert.Containsf(t, b.String(), "has been removed", "Unexpected output: %s", b.String())
 
 	for _, repoName := range testRepoNames {
 		f, err := repo.LoadFile(repoFile)

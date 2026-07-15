@@ -50,11 +50,11 @@ func TestTagManifestTransformsReferences(t *testing.T) {
 	require.NoError(t, err)
 
 	transformedDesc, err := memStore.Resolve(ctx, expectedRef)
-	require.NoError(t, err, "Should find the reference with _ instead of +")
+	require.NoErrorf(t, err, "Should find the reference with _ instead of +")
 	require.Equal(t, desc.Digest, transformedDesc.Digest)
 
 	_, err = memStore.Resolve(ctx, refWithPlus)
-	require.Error(t, err, "Should NOT find the reference with the original +")
+	require.Errorf(t, err, "Should NOT find the reference with the original +")
 }
 
 // Verifies that Login always restores ForceAttemptOAuth2 to false on success.
@@ -78,15 +78,15 @@ func TestLogin_ResetsForceAttemptOAuth2_OnSuccess(t *testing.T) {
 		ClientOptWriter(io.Discard),
 		ClientOptCredentialsFile(credFile),
 	)
-	require.NoError(t, err, "NewClient error")
+	require.NoErrorf(t, err, "NewClient error")
 
 	require.NotNil(t, c.authorizer)
-	require.False(t, c.authorizer.ForceAttemptOAuth2, "expected ForceAttemptOAuth2 default to be false")
+	require.Falsef(t, c.authorizer.ForceAttemptOAuth2, "expected ForceAttemptOAuth2 default to be false")
 
 	// Call Login with plain HTTP against our test server
-	require.NoError(t, c.Login(host, LoginOptPlainText(true), LoginOptBasicAuth("u", "p")), "Login error")
+	require.NoErrorf(t, c.Login(host, LoginOptPlainText(true), LoginOptBasicAuth("u", "p")), "Login error")
 
-	assert.False(t, c.authorizer.ForceAttemptOAuth2, "ForceAttemptOAuth2 should be false after successful Login")
+	assert.Falsef(t, c.authorizer.ForceAttemptOAuth2, "ForceAttemptOAuth2 should be false after successful Login")
 }
 
 // Verifies that Login restores ForceAttemptOAuth2 to false even when ping fails.
@@ -103,12 +103,12 @@ func TestLogin_ResetsForceAttemptOAuth2_OnFailure(t *testing.T) {
 		ClientOptWriter(io.Discard),
 		ClientOptCredentialsFile(credFile),
 	)
-	require.NoError(t, err, "NewClient error")
+	require.NoErrorf(t, err, "NewClient error")
 
 	// Invoke Login, expect an error but ForceAttemptOAuth2 must end false
 	_ = c.Login(host, LoginOptPlainText(true), LoginOptBasicAuth("u", "p"))
 
-	assert.False(t, c.authorizer.ForceAttemptOAuth2, "ForceAttemptOAuth2 should be false after failed Login")
+	assert.Falsef(t, c.authorizer.ForceAttemptOAuth2, "ForceAttemptOAuth2 should be false after failed Login")
 }
 
 // TestWarnIfHostHasPath verifies that warnIfHostHasPath correctly detects path components.

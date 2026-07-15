@@ -38,17 +38,17 @@ func TestResourceList(t *testing.T) {
 	r1 = []*resource.Info{info("foo"), info("bar")}
 	r2 = []*resource.Info{info("bar")}
 
-	assert.Equal(t, "pod", r1.Get(info("bar")).Mapping.Resource.Resource, "expected get pod")
+	assert.Equalf(t, "pod", r1.Get(info("bar")).Mapping.Resource.Resource, "expected get pod")
 
 	diff := r1.Difference(r2)
-	assert.Len(t, diff, 1, "expected 1 result")
+	assert.Lenf(t, diff, 1, "expected 1 result")
 
-	assert.True(t, diff.Contains(info("foo")), "expected diff to return foo")
+	assert.Truef(t, diff.Contains(info("foo")), "expected diff to return foo")
 
 	inter := r1.Intersect(r2)
-	assert.Len(t, inter, 1, "expected 1 result")
+	assert.Lenf(t, inter, 1, "expected 1 result")
 
-	assert.True(t, inter.Contains(info("bar")), "expected intersect to return bar")
+	assert.Truef(t, inter.Contains(info("bar")), "expected intersect to return bar")
 }
 
 func TestIsMatchingInfo(t *testing.T) {
@@ -57,23 +57,23 @@ func TestIsMatchingInfo(t *testing.T) {
 
 	gvkDiffGroup := schema.GroupVersionKind{Group: "diff", Version: "version1", Kind: "pod"}
 	resourceInfoDiffGroup := resource.Info{Name: "name1", Namespace: "namespace1", Mapping: &meta.RESTMapping{GroupVersionKind: gvkDiffGroup}}
-	assert.False(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffGroup), "expected resources not equal")
+	assert.Falsef(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffGroup), "expected resources not equal")
 
 	gvkDiffVersion := schema.GroupVersionKind{Group: "group1", Version: "diff", Kind: "pod"}
 	resourceInfoDiffVersion := resource.Info{Name: "name1", Namespace: "namespace1", Mapping: &meta.RESTMapping{GroupVersionKind: gvkDiffVersion}}
-	assert.True(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffVersion), "expected resources with different versions but same group and kind to be equal")
+	assert.Truef(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffVersion), "expected resources with different versions but same group and kind to be equal")
 
 	gvkDiffKind := schema.GroupVersionKind{Group: "group1", Version: "version1", Kind: "deployment"}
 	resourceInfoDiffKind := resource.Info{Name: "name1", Namespace: "namespace1", Mapping: &meta.RESTMapping{GroupVersionKind: gvkDiffKind}}
-	assert.False(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffKind), "expected resources not equal")
+	assert.Falsef(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffKind), "expected resources not equal")
 
 	resourceInfoDiffName := resource.Info{Name: "diff", Namespace: "namespace1", Mapping: &meta.RESTMapping{GroupVersionKind: gvk}}
-	assert.False(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffName), "expected resources not equal")
+	assert.Falsef(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffName), "expected resources not equal")
 
 	resourceInfoDiffNamespace := resource.Info{Name: "name1", Namespace: "diff", Mapping: &meta.RESTMapping{GroupVersionKind: gvk}}
-	assert.False(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffNamespace), "expected resources not equal")
+	assert.Falsef(t, isMatchingInfo(&resourceInfo, &resourceInfoDiffNamespace), "expected resources not equal")
 
 	gvkEqual := schema.GroupVersionKind{Group: "group1", Version: "version1", Kind: "pod"}
 	resourceInfoEqual := resource.Info{Name: "name1", Namespace: "namespace1", Mapping: &meta.RESTMapping{GroupVersionKind: gvkEqual}}
-	assert.True(t, isMatchingInfo(&resourceInfo, &resourceInfoEqual), "expected resources to be equal")
+	assert.Truef(t, isMatchingInfo(&resourceInfo, &resourceInfoEqual), "expected resources to be equal")
 }

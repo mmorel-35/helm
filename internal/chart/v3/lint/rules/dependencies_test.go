@@ -66,13 +66,13 @@ func chartWithBadDependencies() chart.Chart {
 func TestValidateDependencyInChartsDir(t *testing.T) {
 	c := chartWithBadDependencies()
 
-	assert.Error(t, validateDependencyInChartsDir(&c), "chart should have been flagged for missing deps in chart directory")
+	assert.Errorf(t, validateDependencyInChartsDir(&c), "chart should have been flagged for missing deps in chart directory")
 }
 
 func TestValidateDependencyInMetadata(t *testing.T) {
 	c := chartWithBadDependencies()
 
-	assert.Error(t, validateDependencyInMetadata(&c), "chart should have been flagged for missing deps in chart metadata")
+	assert.Errorf(t, validateDependencyInMetadata(&c), "chart should have been flagged for missing deps in chart metadata")
 }
 
 func TestValidateDependenciesUnique(t *testing.T) {
@@ -130,7 +130,7 @@ func TestValidateDependenciesUnique(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		assert.Error(t, validateDependenciesUnique(&tt.chart), "chart should have been flagged for dependency shadowing")
+		assert.Errorf(t, validateDependenciesUnique(&tt.chart), "chart should have been flagged for dependency shadowing")
 	}
 }
 
@@ -142,7 +142,7 @@ func TestDependencies(t *testing.T) {
 	linter := support.Linter{ChartDir: filepath.Join(tmp, c.Metadata.Name)}
 
 	Dependencies(&linter)
-	if !assert.Len(t, linter.Messages, 2, "expected 2 linter errors for bad chart dependencies") {
+	if !assert.Lenf(t, linter.Messages, 2, "expected 2 linter errors for bad chart dependencies") {
 		for i, msg := range linter.Messages {
 			t.Logf("Message: %d, Error: %#v", i, msg)
 		}

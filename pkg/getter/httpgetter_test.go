@@ -41,7 +41,7 @@ func TestHTTPGetter(t *testing.T) {
 	require.NoError(t, err)
 
 	_, ok := g.(*HTTPGetter)
-	require.True(t, ok, "Expected NewHTTPGetter to produce an *HTTPGetter")
+	require.Truef(t, ok, "Expected NewHTTPGetter to produce an *HTTPGetter")
 
 	cd := "../../testdata"
 	join := filepath.Join
@@ -63,17 +63,17 @@ func TestHTTPGetter(t *testing.T) {
 	require.NoError(t, err)
 
 	hg, ok := g.(*HTTPGetter)
-	require.True(t, ok, "expected NewHTTPGetter to produce an *HTTPGetter")
-	assert.Equal(t, "I", hg.opts.username, "Expected NewHTTPGetter to contain %q as the username, got %q", "I", hg.opts.username)
-	assert.Equal(t, "Am", hg.opts.password, "Expected NewHTTPGetter to contain %q as the password, got %q", "Am", hg.opts.password)
-	assert.False(t, hg.opts.passCredentialsAll, "Expected NewHTTPGetter to contain %t as PassCredentialsAll, got %t", false, hg.opts.passCredentialsAll)
-	assert.Equal(t, "Groot", hg.opts.userAgent, "Expected NewHTTPGetter to contain %q as the user agent, got %q", "Groot", hg.opts.userAgent)
-	assert.Equal(t, pub, hg.opts.certFile, "Expected NewHTTPGetter to contain %q as the public key file, got %q", pub, hg.opts.certFile)
-	assert.Equal(t, priv, hg.opts.keyFile, "Expected NewHTTPGetter to contain %q as the private key file, got %q", priv, hg.opts.keyFile)
-	assert.Equal(t, ca, hg.opts.caFile, "Expected NewHTTPGetter to contain %q as the CA file, got %q", ca, hg.opts.caFile)
-	assert.Equal(t, insecure, hg.opts.insecureSkipVerifyTLS, "Expected NewHTTPGetter to contain %t as InsecureSkipVerifyTLs flag, got %t", false, hg.opts.insecureSkipVerifyTLS)
-	assert.Equal(t, timeout, hg.opts.timeout, "Expected NewHTTPGetter to contain %s as Timeout flag, got %s", timeout, hg.opts.timeout)
-	assert.Same(t, transport, hg.opts.transport, "Expected NewHTTPGetter to contain %p as Transport, got %p", transport, hg.opts.transport)
+	require.Truef(t, ok, "expected NewHTTPGetter to produce an *HTTPGetter")
+	assert.Equalf(t, "I", hg.opts.username, "Expected NewHTTPGetter to contain %q as the username, got %q", "I", hg.opts.username)
+	assert.Equalf(t, "Am", hg.opts.password, "Expected NewHTTPGetter to contain %q as the password, got %q", "Am", hg.opts.password)
+	assert.Falsef(t, hg.opts.passCredentialsAll, "Expected NewHTTPGetter to contain %t as PassCredentialsAll, got %t", false, hg.opts.passCredentialsAll)
+	assert.Equalf(t, "Groot", hg.opts.userAgent, "Expected NewHTTPGetter to contain %q as the user agent, got %q", "Groot", hg.opts.userAgent)
+	assert.Equalf(t, pub, hg.opts.certFile, "Expected NewHTTPGetter to contain %q as the public key file, got %q", pub, hg.opts.certFile)
+	assert.Equalf(t, priv, hg.opts.keyFile, "Expected NewHTTPGetter to contain %q as the private key file, got %q", priv, hg.opts.keyFile)
+	assert.Equalf(t, ca, hg.opts.caFile, "Expected NewHTTPGetter to contain %q as the CA file, got %q", ca, hg.opts.caFile)
+	assert.Equalf(t, insecure, hg.opts.insecureSkipVerifyTLS, "Expected NewHTTPGetter to contain %t as InsecureSkipVerifyTLs flag, got %t", false, hg.opts.insecureSkipVerifyTLS)
+	assert.Equalf(t, timeout, hg.opts.timeout, "Expected NewHTTPGetter to contain %s as Timeout flag, got %s", timeout, hg.opts.timeout)
+	assert.Samef(t, transport, hg.opts.transport, "Expected NewHTTPGetter to contain %p as Transport, got %p", transport, hg.opts.transport)
 
 	// Test if setting insecureSkipVerifyTLS is being passed to the ops
 	insecure = true
@@ -84,11 +84,11 @@ func TestHTTPGetter(t *testing.T) {
 	require.NoError(t, err)
 
 	hg, ok = g.(*HTTPGetter)
-	require.True(t, ok, "expected NewHTTPGetter to produce an *HTTPGetter")
-	assert.Equal(t, insecure, hg.opts.insecureSkipVerifyTLS, "Expected NewHTTPGetter to contain %t as InsecureSkipVerifyTLs flag, got %t", insecure, hg.opts.insecureSkipVerifyTLS)
+	require.Truef(t, ok, "expected NewHTTPGetter to produce an *HTTPGetter")
+	assert.Equalf(t, insecure, hg.opts.insecureSkipVerifyTLS, "Expected NewHTTPGetter to contain %t as InsecureSkipVerifyTLs flag, got %t", insecure, hg.opts.insecureSkipVerifyTLS)
 
 	// Checking false by default
-	assert.False(t, hg.opts.passCredentialsAll, "Expected NewHTTPGetter to contain %t as PassCredentialsAll, got %t", false, hg.opts.passCredentialsAll)
+	assert.Falsef(t, hg.opts.passCredentialsAll, "Expected NewHTTPGetter to contain %t as PassCredentialsAll, got %t", false, hg.opts.passCredentialsAll)
 
 	// Test setting PassCredentialsAll
 	g, err = NewHTTPGetter(
@@ -98,15 +98,15 @@ func TestHTTPGetter(t *testing.T) {
 	require.NoError(t, err)
 
 	hg, ok = g.(*HTTPGetter)
-	require.True(t, ok, "expected NewHTTPGetter to produce an *HTTPGetter")
-	assert.True(t, hg.opts.passCredentialsAll, "Expected NewHTTPGetter to contain %t as PassCredentialsAll, got %t", true, hg.opts.passCredentialsAll)
+	require.Truef(t, ok, "expected NewHTTPGetter to produce an *HTTPGetter")
+	assert.Truef(t, hg.opts.passCredentialsAll, "Expected NewHTTPGetter to contain %t as PassCredentialsAll, got %t", true, hg.opts.passCredentialsAll)
 }
 
 func TestDownload(t *testing.T) {
 	expect := "Call me Ishmael"
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defaultUserAgent := version.GetUserAgent()
-		assert.Equal(t, defaultUserAgent, r.UserAgent(), "Expected '%s', got '%s'", defaultUserAgent, r.UserAgent())
+		assert.Equalf(t, defaultUserAgent, r.UserAgent(), "Expected '%s', got '%s'", defaultUserAgent, r.UserAgent())
 		fmt.Fprint(w, expect)
 	}))
 	defer srv.Close()
@@ -116,7 +116,7 @@ func TestDownload(t *testing.T) {
 	got, err := g.Get(srv.URL, WithURL(srv.URL))
 	require.NoError(t, err)
 
-	assert.Equal(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
+	assert.Equalf(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
 
 	// test with http server
 	const expectedUserAgent = "I am Groot"
@@ -125,7 +125,7 @@ func TestDownload(t *testing.T) {
 		if !ok || username != "username" || password != "password" {
 			t.Errorf("Expected request to use basic auth and for username == 'username' and password == 'password', got '%v', '%s', '%s'", ok, username, password)
 		}
-		assert.Equal(t, expectedUserAgent, r.UserAgent(), "Expected '%s', got '%s'", expectedUserAgent, r.UserAgent())
+		assert.Equalf(t, expectedUserAgent, r.UserAgent(), "Expected '%s', got '%s'", expectedUserAgent, r.UserAgent())
 		fmt.Fprint(w, expect)
 	}))
 
@@ -142,7 +142,7 @@ func TestDownload(t *testing.T) {
 	got, err = httpgetter.Get(u.String())
 	require.NoError(t, err)
 
-	assert.Equal(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
+	assert.Equalf(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
 
 	// test with Get URL differing from withURL
 	crossAuthSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -171,7 +171,7 @@ func TestDownload(t *testing.T) {
 	got, err = httpgetter.Get(u.String())
 	require.NoError(t, err)
 
-	assert.Equal(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
+	assert.Equalf(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
 
 	// test with Get URL differing from withURL and should pass creds
 	crossAuthSrv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -200,12 +200,12 @@ func TestDownload(t *testing.T) {
 	got, err = httpgetter.Get(u.String())
 	require.NoError(t, err)
 
-	assert.Equal(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
+	assert.Equalf(t, expect, got.String(), "Expected %q, got %q", expect, got.String())
 
 	// test server with varied Accept Header
 	const expectedAcceptHeader = "application/gzip,application/octet-stream"
 	acceptHeaderSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assert.Equal(t, expectedAcceptHeader, r.Header.Get("Accept"), "Expected '%s', got '%s'", expectedAcceptHeader, r.Header.Get("Accept"))
+		assert.Equalf(t, expectedAcceptHeader, r.Header.Get("Accept"), "Expected '%s', got '%s'", expectedAcceptHeader, r.Header.Get("Accept"))
 		fmt.Fprint(w, expect)
 	}))
 
@@ -231,7 +231,7 @@ func TestDownloadTLS(t *testing.T) {
 		tlsutil.WithCertKeyPairFiles(pub, priv),
 		tlsutil.WithCAFile(ca),
 	)
-	require.NoError(t, err, "can't create TLS config for client")
+	require.NoErrorf(t, err, "can't create TLS config for client")
 	tlsConf.ServerName = "helm.sh"
 	tlsSrv.TLS = tlsConf
 	tlsSrv.StartTLS()
@@ -275,7 +275,7 @@ func TestDownloadTLSWithRedirect(t *testing.T) {
 		tlsutil.WithInsecureSkipVerify(insecureSkipTLSVerify),
 	)
 
-	require.NoError(t, err, "can't create TLS config for client")
+	require.NoErrorf(t, err, "can't create TLS config for client")
 
 	tlsSrv2 := httptest.NewUnstartedServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
 		rw.Header().Set("Content-Type", "text/plain")
@@ -294,7 +294,7 @@ func TestDownloadTLSWithRedirect(t *testing.T) {
 		tlsutil.WithInsecureSkipVerify(insecureSkipTLSVerify),
 	)
 
-	require.NoError(t, err, "can't create TLS config for client")
+	require.NoErrorf(t, err, "can't create TLS config for client")
 
 	tlsSrv1 := httptest.NewUnstartedServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		u, _ := url.ParseRequestURI(tlsSrv2.URL)
@@ -329,7 +329,7 @@ func TestDownloadTLSWithRedirect(t *testing.T) {
 		b, err := io.ReadAll(buf)
 		require.NoError(t, err)
 
-		assert.Equal(t, srv2Resp, string(b), "expected response from Server2 to be '%s', instead got: %s", srv2Resp, string(b))
+		assert.Equalf(t, srv2Resp, string(b), "expected response from Server2 to be '%s', instead got: %s", srv2Resp, string(b))
 	})
 
 	t.Run("Test with TLS config being passed along in .Get (see #6635)", func(t *testing.T) {
@@ -342,7 +342,7 @@ func TestDownloadTLSWithRedirect(t *testing.T) {
 		b, err := io.ReadAll(buf)
 		require.NoError(t, err)
 
-		assert.Equal(t, srv2Resp, string(b), "expected response from Server2 to be '%s', instead got: %s", srv2Resp, string(b))
+		assert.Equalf(t, srv2Resp, string(b), "expected response from Server2 to be '%s', instead got: %s", srv2Resp, string(b))
 	})
 
 	t.Run("Test with only the CA file (see also #6635)", func(t *testing.T) {
@@ -355,7 +355,7 @@ func TestDownloadTLSWithRedirect(t *testing.T) {
 		b, err := io.ReadAll(buf)
 		require.NoError(t, err)
 
-		assert.Equal(t, srv2Resp, string(b), "expected response from Server2 to be '%s', instead got: %s", srv2Resp, string(b))
+		assert.Equalf(t, srv2Resp, string(b), "expected response from Server2 to be '%s', instead got: %s", srv2Resp, string(b))
 	})
 }
 
@@ -413,7 +413,7 @@ func TestHTTPGetterTarDownload(t *testing.T) {
 	mimeType := http.DetectContentType(data.Bytes())
 
 	expectedMimeType := "application/x-gzip"
-	require.Equal(t, expectedMimeType, mimeType, "Expected response with MIME type %s, but got %s", expectedMimeType, mimeType)
+	require.Equalf(t, expectedMimeType, mimeType, "Expected response with MIME type %s, but got %s", expectedMimeType, mimeType)
 }
 
 func TestHttpClientInsecureSkipVerify(t *testing.T) {
@@ -437,7 +437,7 @@ func TestHttpClientInsecureSkipVerify(t *testing.T) {
 	g.opts.keyFile = "testdata/client.key"
 	g.opts.insecureSkipVerifyTLS = true
 	transport := verifyInsecureSkipVerify(t, &g, "HTTPGetter with 2 way ssl", true)
-	require.NotEmpty(t, transport.TLSClientConfig.Certificates, "transport.TLSClientConfig.Certificates is not present")
+	require.NotEmptyf(t, transport.TLSClientConfig.Certificates, "transport.TLSClientConfig.Certificates is not present")
 }
 
 func verifyInsecureSkipVerify(t *testing.T, g *HTTPGetter, caseName string, expectedValue bool) *http.Transport {
@@ -446,13 +446,13 @@ func verifyInsecureSkipVerify(t *testing.T, g *HTTPGetter, caseName string, expe
 
 	require.NoError(t, err)
 
-	require.NotNil(t, returnVal, "Expected non nil value for http client")
+	require.NotNilf(t, returnVal, "Expected non nil value for http client")
 	transport := (returnVal.Transport).(*http.Transport)
 	gotValue := false
 	if transport.TLSClientConfig != nil {
 		gotValue = transport.TLSClientConfig.InsecureSkipVerify
 	}
-	require.Equal(t, expectedValue, gotValue, "Case Name = %s\nInsecureSkipVerify did not come as expected. Expected = %t; Got = %v", caseName, expectedValue, gotValue)
+	require.Equalf(t, expectedValue, gotValue, "Case Name = %s\nInsecureSkipVerify did not come as expected. Expected = %t; Got = %v", caseName, expectedValue, gotValue)
 	return transport
 }
 
@@ -463,7 +463,7 @@ func TestDefaultHTTPTransportReuse(t *testing.T) {
 
 	require.NoError(t, err)
 
-	require.NotNil(t, httpClient1, "Expected non nil value for http client")
+	require.NotNilf(t, httpClient1, "Expected non nil value for http client")
 
 	transport1 := (httpClient1.Transport).(*http.Transport)
 
@@ -471,11 +471,11 @@ func TestDefaultHTTPTransportReuse(t *testing.T) {
 
 	require.NoError(t, err)
 
-	require.NotNil(t, httpClient2, "Expected non nil value for http client")
+	require.NotNilf(t, httpClient2, "Expected non nil value for http client")
 
 	transport2 := (httpClient2.Transport).(*http.Transport)
 
-	require.Equal(t, transport2, transport1, "Expected default transport to be reused")
+	require.Equalf(t, transport2, transport1, "Expected default transport to be reused")
 }
 
 func TestHTTPTransportOption(t *testing.T) {
@@ -487,21 +487,21 @@ func TestHTTPTransportOption(t *testing.T) {
 
 	require.NoError(t, err)
 
-	require.NotNil(t, httpClient1, "Expected non nil value for http client")
+	require.NotNilf(t, httpClient1, "Expected non nil value for http client")
 
 	transport1 := (httpClient1.Transport).(*http.Transport)
 
-	require.Equal(t, transport, transport1, "Expected transport option to be applied")
+	require.Equalf(t, transport, transport1, "Expected transport option to be applied")
 
 	httpClient2, err := g.httpClient(g.opts)
 
 	require.NoError(t, err)
 
-	require.NotNil(t, httpClient2, "Expected non nil value for http client")
+	require.NotNilf(t, httpClient2, "Expected non nil value for http client")
 
 	transport2 := (httpClient2.Transport).(*http.Transport)
 
-	require.Equal(t, transport2, transport1, "Expected applied transport to be reused")
+	require.Equalf(t, transport2, transport1, "Expected applied transport to be reused")
 
 	g = HTTPGetter{}
 	g.opts.url = "https://localhost"
@@ -510,5 +510,5 @@ func TestHTTPTransportOption(t *testing.T) {
 	g.opts.insecureSkipVerifyTLS = true
 	g.opts.transport = transport
 	usedTransport := verifyInsecureSkipVerify(t, &g, "HTTPGetter with 2 way ssl", false)
-	require.Nil(t, usedTransport.TLSClientConfig, "transport.TLSClientConfig should not be set")
+	require.Nilf(t, usedTransport.TLSClientConfig, "transport.TLSClientConfig should not be set")
 }

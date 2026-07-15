@@ -44,7 +44,7 @@ func getTestFiles() files {
 
 func TestNewFiles(t *testing.T) {
 	files := getTestFiles()
-	assert.Len(t, files, len(cases), "Expected len() = %d, got %d", len(cases), len(files))
+	assert.Lenf(t, files, len(cases), "Expected len() = %d, got %d", len(cases), len(files))
 
 	for i, f := range cases {
 		got := string(files.GetBytes(f.path))
@@ -61,7 +61,7 @@ func TestFileGlob(t *testing.T) {
 
 	matched := f.Glob("story/**")
 
-	as.Len(matched, 2, "Should be two files in glob story/**")
+	as.Lenf(matched, 2, "Should be two files in glob story/**")
 	as.Equal("Joseph Conrad", matched.Get("story/author.txt"))
 }
 

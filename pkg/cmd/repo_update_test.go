@@ -95,7 +95,7 @@ func TestUpdateCmdInvalid(t *testing.T) {
 		repoFile: "testdata/repositories.yaml",
 		names:    []string{"firstexample", "invalid"},
 	}
-	require.Error(t, o.run(&out), "expected error but did not get one")
+	require.Errorf(t, o.run(&out), "expected error but did not get one")
 }
 
 func TestUpdateCustomCacheCmd(t *testing.T) {
@@ -140,8 +140,8 @@ func TestUpdateCharts(t *testing.T) {
 	updateCharts([]*repo.ChartRepository{r}, b)
 
 	got := b.String()
-	assert.NotContains(t, got, "Unable to get an update", "Failed to get a repo: %q", got)
-	assert.Contains(t, got, "Update Complete.", "Update was not successful")
+	assert.NotContainsf(t, got, "Unable to get an update", "Failed to get a repo: %q", got)
+	assert.Containsf(t, got, "Update Complete.", "Update was not successful")
 }
 
 func TestRepoUpdateFileCompletion(t *testing.T) {
@@ -173,13 +173,13 @@ func TestUpdateChartsFailWithError(t *testing.T) {
 
 	b := bytes.NewBuffer(nil)
 	err = updateCharts([]*repo.ChartRepository{r1, r2}, b)
-	require.Error(t, err, "Repo update should return error because update of repository fails and 'fail-on-repo-update-fail' flag set")
+	require.Errorf(t, err, "Repo update should return error because update of repository fails and 'fail-on-repo-update-fail' flag set")
 	var expectedErr = "failed to update the following repositories"
 	var receivedErr = err.Error()
-	require.ErrorContains(t, err, expectedErr, "Expected error (%s) but got (%s) instead", expectedErr, receivedErr)
-	require.ErrorContains(t, err, invalidURL, "Expected invalid URL (%s) in error message but got (%s) instead", invalidURL, receivedErr)
+	require.ErrorContainsf(t, err, expectedErr, "Expected error (%s) but got (%s) instead", expectedErr, receivedErr)
+	require.ErrorContainsf(t, err, invalidURL, "Expected invalid URL (%s) in error message but got (%s) instead", invalidURL, receivedErr)
 
 	got := b.String()
-	assert.Contains(t, got, "Unable to get an update", "Repo should have failed update but instead got: %q", got)
-	assert.NotContains(t, got, "Update Complete.", "Update was not successful and should return error message because 'fail-on-repo-update-fail' flag set")
+	assert.Containsf(t, got, "Unable to get an update", "Repo should have failed update but instead got: %q", got)
+	assert.NotContainsf(t, got, "Update Complete.", "Update was not successful and should return error message because 'fail-on-repo-update-fail' flag set")
 }

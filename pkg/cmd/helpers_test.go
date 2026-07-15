@@ -61,9 +61,9 @@ func runTestCmd(t *testing.T, tests []cmdTestCase) {
 				t.Logf("running cmd (attempt %d): %s", i+1, tt.cmd)
 				_, out, err := executeActionCommandC(storage, tt.cmd)
 				if tt.wantError {
-					require.Error(t, err, "expected error, got success with the following output:\n%s", out)
+					require.Errorf(t, err, "expected error, got success with the following output:\n%s", out)
 				} else {
-					require.NoError(t, err, "expected no error")
+					require.NoErrorf(t, err, "expected no error")
 				}
 				if tt.golden != "" {
 					test.AssertGoldenString(t, out, tt.golden)

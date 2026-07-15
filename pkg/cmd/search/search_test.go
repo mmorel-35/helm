@@ -52,7 +52,7 @@ func TestSortScore(t *testing.T) {
 
 	// Test version of last two items
 	assert.Equalf(t, "1.2.4", in[5].Chart.Version, "Expected 1.2.4, got %s", in[5].Chart.Version)
-	assert.Equal(t, "1.2.3", in[6].Chart.Version, "Expected 1.2.3 to be last")
+	assert.Equalf(t, "1.2.3", in[6].Chart.Version, "Expected 1.2.3 to be last")
 }
 
 var indexfileEntries = map[string]repo.ChartVersions{

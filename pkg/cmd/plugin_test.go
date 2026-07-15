@@ -72,10 +72,10 @@ func TestManuallyProcessArgs(t *testing.T) {
 	known, unknown := manuallyProcessArgs(input)
 
 	for i, k := range known {
-		assert.Equal(t, expectKnown[i], k, "expected known flag %d to be %q, got %q", i, expectKnown[i], k)
+		assert.Equalf(t, expectKnown[i], k, "expected known flag %d to be %q, got %q", i, expectKnown[i], k)
 	}
 	for i, k := range unknown {
-		assert.Equal(t, expectUnknown[i], k, "expected unknown flag %d to be %q, got %q", i, expectUnknown[i], k)
+		assert.Equalf(t, expectUnknown[i], k, "expected unknown flag %d to be %q, got %q", i, expectUnknown[i], k)
 	}
 }
 
@@ -118,7 +118,7 @@ func TestLoadCLIPlugins(t *testing.T) {
 
 	pluginCmds := cmd.Commands()
 
-	require.Len(t, pluginCmds, len(tests), "Expected %d plugins, got %d", len(tests), len(pluginCmds))
+	require.Lenf(t, pluginCmds, len(tests), "Expected %d plugins, got %d", len(tests), len(pluginCmds))
 
 	for i := range pluginCmds {
 		out.Reset()
@@ -126,21 +126,21 @@ func TestLoadCLIPlugins(t *testing.T) {
 		pluginCmd := pluginCmds[i]
 		t.Run(fmt.Sprintf("%s-%d", pluginCmd.Name(), i), func(t *testing.T) {
 			out.Reset()
-			assert.Equal(t, tt.use, pluginCmd.Use, "%d: Expected Use=%q, got %q", i, tt.use, pluginCmd.Use)
-			assert.Equal(t, tt.short, pluginCmd.Short, "%d: Expected Use=%q, got %q", i, tt.short, pluginCmd.Short)
-			assert.Equal(t, tt.long, pluginCmd.Long, "%d: Expected Use=%q, got %q", i, tt.long, pluginCmd.Long)
+			assert.Equalf(t, tt.use, pluginCmd.Use, "%d: Expected Use=%q, got %q", i, tt.use, pluginCmd.Use)
+			assert.Equalf(t, tt.short, pluginCmd.Short, "%d: Expected Use=%q, got %q", i, tt.short, pluginCmd.Short)
+			assert.Equalf(t, tt.long, pluginCmd.Long, "%d: Expected Use=%q, got %q", i, tt.long, pluginCmd.Long)
 
 			// Currently, plugins assume a Linux subsystem. Skip the execution
 			// tests until this is fixed
 			if runtime.GOOS != "windows" {
 				if err := pluginCmd.RunE(pluginCmd, tt.args); err != nil {
-					if assert.Positive(t, tt.code, "Error running %s", tt.use) {
+					if assert.Positivef(t, tt.code, "Error running %s", tt.use) {
 						var cerr CommandError
-						require.ErrorAs(t, err, &cerr, "Expected %s to return pluginError", tt.use)
+						require.ErrorAsf(t, err, &cerr, "Expected %s to return pluginError", tt.use)
 						assert.Equalf(t, tt.code, cerr.ExitCode, "Expected %s to return %d: got %d", tt.use, tt.code, cerr.ExitCode)
 					}
 				}
-				assert.Equal(t, tt.expect, out.String(), "expected output for %q", tt.use)
+				assert.Equalf(t, tt.expect, out.String(), "expected output for %q", tt.use)
 			}
 		})
 	}
@@ -180,27 +180,27 @@ func TestLoadPluginsWithSpace(t *testing.T) {
 
 	plugins := cmd.Commands()
 
-	require.Len(t, plugins, len(tests), "Expected %d plugins, got %d", len(tests), len(plugins))
+	require.Lenf(t, plugins, len(tests), "Expected %d plugins, got %d", len(tests), len(plugins))
 
 	for i := range plugins {
 		out.Reset()
 		tt := tests[i]
 		pp := plugins[i]
-		assert.Equal(t, tt.use, pp.Use, "%d: Expected Use=%q, got %q", i, tt.use, pp.Use)
-		assert.Equal(t, tt.short, pp.Short, "%d: Expected Use=%q, got %q", i, tt.short, pp.Short)
-		assert.Equal(t, tt.long, pp.Long, "%d: Expected Use=%q, got %q", i, tt.long, pp.Long)
+		assert.Equalf(t, tt.use, pp.Use, "%d: Expected Use=%q, got %q", i, tt.use, pp.Use)
+		assert.Equalf(t, tt.short, pp.Short, "%d: Expected Use=%q, got %q", i, tt.short, pp.Short)
+		assert.Equalf(t, tt.long, pp.Long, "%d: Expected Use=%q, got %q", i, tt.long, pp.Long)
 
 		// Currently, plugins assume a Linux subsystem. Skip the execution
 		// tests until this is fixed
 		if runtime.GOOS != "windows" {
 			if err := pp.RunE(pp, tt.args); err != nil {
-				if assert.Positive(t, tt.code, "Error running %s", tt.use) {
+				if assert.Positivef(t, tt.code, "Error running %s", tt.use) {
 					var cerr CommandError
-					require.ErrorAs(t, err, &cerr, "Expected %s to return pluginError", tt.use)
+					require.ErrorAsf(t, err, &cerr, "Expected %s to return pluginError", tt.use)
 					assert.Equalf(t, tt.code, cerr.ExitCode, "Expected %s to return %d: got %d", tt.use, tt.code, cerr.ExitCode)
 				}
 			}
-			assert.Equal(t, tt.expect, out.String(), "expected output for %s", tt.use)
+			assert.Equalf(t, tt.expect, out.String(), "expected output for %s", tt.use)
 		}
 	}
 }
@@ -245,13 +245,13 @@ func TestLoadCLIPluginsForCompletion(t *testing.T) {
 
 func checkCommand(t *testing.T, plugins []*cobra.Command, tests []staticCompletionDetails) {
 	t.Helper()
-	require.Len(t, plugins, len(tests), "Expected commands %v, got %v", tests, plugins)
+	require.Lenf(t, plugins, len(tests), "Expected commands %v, got %v", tests, plugins)
 
 	is := assert.New(t)
 	for i := range plugins {
 		pp := plugins[i]
 		tt := tests[i]
-		is.Equal(pp.Use, tt.use, "Expected Use=%q, got %q", tt.use, pp.Use)
+		is.Equalf(pp.Use, tt.use, "Expected Use=%q, got %q", tt.use, pp.Use)
 
 		targs := tt.validArgs
 		pargs := pp.ValidArgs
@@ -316,7 +316,7 @@ func TestLoadCLIPlugins_HelmNoPlugins(t *testing.T) {
 	loadCLIPlugins(cmd, out)
 	plugins := cmd.Commands()
 
-	require.Empty(t, plugins, "Expected 0 plugins, got %d", len(plugins))
+	require.Emptyf(t, plugins, "Expected 0 plugins, got %d", len(plugins))
 }
 
 func TestPluginCmdsCompletion(t *testing.T) {

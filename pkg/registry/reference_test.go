@@ -25,13 +25,13 @@ import (
 
 func verify(t *testing.T, actual reference, registry, repository, tag, digest string) {
 	t.Helper()
-	assert.Equal(t, registry, actual.orasReference.Registry, "Oras reference registry")
-	assert.Equal(t, repository, actual.orasReference.Repository, "Oras reference repository")
-	assert.Equal(t, tag, actual.orasReference.Reference, "Oras reference reference")
-	assert.Equal(t, registry, actual.Registry, "Registry")
-	assert.Equal(t, repository, actual.Repository, "Repository")
-	assert.Equal(t, tag, actual.Tag, "Tag")
-	assert.Equal(t, digest, actual.Digest, "Digest")
+	assert.Equalf(t, registry, actual.orasReference.Registry, "Oras reference registry")
+	assert.Equalf(t, repository, actual.orasReference.Repository, "Oras reference repository")
+	assert.Equalf(t, tag, actual.orasReference.Reference, "Oras reference reference")
+	assert.Equalf(t, registry, actual.Registry, "Registry")
+	assert.Equalf(t, repository, actual.Repository, "Repository")
+	assert.Equalf(t, tag, actual.Tag, "Tag")
+	assert.Equalf(t, digest, actual.Digest, "Digest")
 	expectedString := registry
 	if repository != "" {
 		expectedString = expectedString + "/" + repository
@@ -41,7 +41,7 @@ func verify(t *testing.T, actual reference, registry, repository, tag, digest st
 	} else {
 		expectedString = expectedString + "@" + digest
 	}
-	assert.Equal(t, expectedString, actual.String(), "String")
+	assert.Equalf(t, expectedString, actual.String(), "String")
 }
 
 func TestNewReference(t *testing.T) {

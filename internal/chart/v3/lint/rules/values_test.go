@@ -56,7 +56,7 @@ func TestValidateValuesYamlNotDirectory(t *testing.T) {
 	_ = os.Mkdir(nonExistingValuesFilePath, os.ModePerm)
 	defer os.Remove(nonExistingValuesFilePath)
 
-	assert.Error(t, validateValuesFileExistence(nonExistingValuesFilePath), "validateValuesFileExistence to return a linter error, got no error")
+	assert.Errorf(t, validateValuesFileExistence(nonExistingValuesFilePath), "validateValuesFileExistence to return a linter error, got no error")
 }
 
 func TestValidateValuesFileWellFormed(t *testing.T) {
@@ -65,7 +65,7 @@ func TestValidateValuesFileWellFormed(t *testing.T) {
 	`
 	tmpdir := ensure.TempFile(t, "values.yaml", []byte(badYaml))
 	valfile := filepath.Join(tmpdir, "values.yaml")
-	require.Error(t, validateValuesFile(valfile, map[string]any{}, false), "expected values file to fail parsing")
+	require.Errorf(t, validateValuesFile(valfile, map[string]any{}, false), "expected values file to fail parsing")
 }
 
 func TestValidateValuesFileSchema(t *testing.T) {
@@ -74,7 +74,7 @@ func TestValidateValuesFileSchema(t *testing.T) {
 	createTestingSchema(t, tmpdir)
 
 	valfile := filepath.Join(tmpdir, "values.yaml")
-	require.NoError(t, validateValuesFile(valfile, map[string]any{}, false), "Failed validation")
+	require.NoErrorf(t, validateValuesFile(valfile, map[string]any{}, false), "Failed validation")
 }
 
 func TestValidateValuesFileSchemaFailure(t *testing.T) {
@@ -96,7 +96,7 @@ func TestValidateValuesFileSchemaFailureButWithSkipSchemaValidation(t *testing.T
 
 	valfile := filepath.Join(tmpdir, "values.yaml")
 
-	require.NoError(t, validateValuesFile(valfile, map[string]any{}, true), "expected values file to pass parsing because of skipSchemaValidation")
+	require.NoErrorf(t, validateValuesFile(valfile, map[string]any{}, true), "expected values file to pass parsing because of skipSchemaValidation")
 }
 
 func TestValidateValuesFileSchemaOverrides(t *testing.T) {
@@ -108,7 +108,7 @@ func TestValidateValuesFileSchemaOverrides(t *testing.T) {
 	createTestingSchema(t, tmpdir)
 
 	valfile := filepath.Join(tmpdir, "values.yaml")
-	require.NoError(t, validateValuesFile(valfile, overrides, false), "Failed validation")
+	require.NoErrorf(t, validateValuesFile(valfile, overrides, false), "Failed validation")
 }
 
 func TestValidateValuesFile(t *testing.T) {
@@ -146,9 +146,9 @@ func TestValidateValuesFile(t *testing.T) {
 			err := validateValuesFile(valfile, tt.overrides, false)
 
 			if tt.errorMessage == "" {
-				require.NoError(t, err, "Failed validation")
+				require.NoErrorf(t, err, "Failed validation")
 			} else {
-				require.Error(t, err, "expected values file to fail parsing")
+				require.Errorf(t, err, "expected values file to fail parsing")
 				assert.ErrorContains(t, err, tt.errorMessage)
 			}
 		})
@@ -158,6 +158,6 @@ func TestValidateValuesFile(t *testing.T) {
 func createTestingSchema(t *testing.T, dir string) string {
 	t.Helper()
 	schemafile := filepath.Join(dir, "values.schema.json")
-	require.NoError(t, os.WriteFile(schemafile, []byte(testSchema), 0o700), "Failed to write schema to tmpdir")
+	require.NoErrorf(t, os.WriteFile(schemafile, []byte(testSchema), 0o700), "Failed to write schema to tmpdir")
 	return schemafile
 }

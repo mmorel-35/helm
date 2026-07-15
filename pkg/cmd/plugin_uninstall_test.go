@@ -104,25 +104,25 @@ command: $HELM_PLUGIN_DIR/test-plugin
 
 	// Verify files exist before uninstall
 	_, err = os.Stat(tarballFile)
-	require.False(t, os.IsNotExist(err), "tarball file should exist before uninstall")
+	require.Falsef(t, os.IsNotExist(err), "tarball file should exist before uninstall")
 	_, err = os.Stat(provFile)
-	require.False(t, os.IsNotExist(err), "provenance file should exist before uninstall")
+	require.Falsef(t, os.IsNotExist(err), "provenance file should exist before uninstall")
 	_, err = os.Stat(otherVersionTarball)
-	require.False(t, os.IsNotExist(err), "other version tarball should exist before uninstall")
+	require.Falsef(t, os.IsNotExist(err), "other version tarball should exist before uninstall")
 
 	// Uninstall the plugin
 	require.NoError(t, testUninstallPlugin(p))
 
 	// Verify plugin directory is removed
 	_, err = os.Stat(pluginDir)
-	assert.True(t, os.IsNotExist(err), "plugin directory should be removed")
+	assert.Truef(t, os.IsNotExist(err), "plugin directory should be removed")
 
 	// Verify only exact version files are removed
 	_, err = os.Stat(tarballFile)
-	assert.True(t, os.IsNotExist(err), "versioned tarball file should be removed")
+	assert.Truef(t, os.IsNotExist(err), "versioned tarball file should be removed")
 	_, err = os.Stat(provFile)
-	assert.True(t, os.IsNotExist(err), "versioned provenance file should be removed")
+	assert.Truef(t, os.IsNotExist(err), "versioned provenance file should be removed")
 	// Verify other version files are NOT removed
 	_, err = os.Stat(otherVersionTarball)
-	assert.False(t, os.IsNotExist(err), "other version tarball should NOT be removed")
+	assert.Falsef(t, os.IsNotExist(err), "other version tarball should NOT be removed")
 }

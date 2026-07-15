@@ -66,7 +66,7 @@ func TestDependencyBuildCmd(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Contains(t, out, `update from the "test" chart repository`, "Repo did not get updated\n%s", out)
+	assert.Containsf(t, out, `update from the "test" chart repository`, "Repo did not get updated\n%s", out)
 
 	// Make sure the actual file got downloaded.
 	expect := filepath.Join(rootDir, chartname, "charts", "reqtest-0.1.0.tgz")
@@ -112,7 +112,7 @@ func TestDependencyBuildCmd(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.NotContains(t, out, `update from the "test" chart repository`, "Repo did get updated\n%s", out)
+	assert.NotContainsf(t, out, `update from the "test" chart repository`, "Repo did get updated\n%s", out)
 
 	// OCI dependencies
 	require.NoError(t, chartutil.SaveDir(c, dir()))

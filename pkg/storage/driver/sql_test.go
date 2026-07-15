@@ -61,7 +61,7 @@ func (recentUnixTimestampArgument) Match(value driver.Value) bool {
 
 func TestSQLName(t *testing.T) {
 	sqlDriver, _ := newTestFixtureSQL(t)
-	assert.Equal(t, SQLDriverName, sqlDriver.Name(), "Expected name to be %s, got %s", SQLDriverName, sqlDriver.Name())
+	assert.Equalf(t, SQLDriverName, sqlDriver.Name(), "Expected name to be %s, got %s", SQLDriverName, sqlDriver.Name())
 }
 
 func TestSQLGet(t *testing.T) {
@@ -97,7 +97,7 @@ func TestSQLGet(t *testing.T) {
 	mockGetReleaseCustomLabels(mock, key, namespace, rel.Labels)
 
 	got, err := sqlDriver.Get(key)
-	require.NoError(t, err, "Failed to get release")
+	require.NoErrorf(t, err, "Failed to get release")
 
 	assert.Truef(t, reflect.DeepEqual(rel, got), "Expected release {%v}, got {%v}", rel, got)
 	assert.NoErrorf(t, mock.ExpectationsWereMet(), "sql expectations weren't met")
@@ -150,8 +150,8 @@ func TestSQLList(t *testing.T) {
 		return rls.Info.Status == common.StatusUninstalled
 	})
 	// check
-	require.NoError(t, err, "Failed to list deleted")
-	assert.Len(t, del, 2, "Expected 2 deleted, got %d:\n%v\n", len(del), del)
+	require.NoErrorf(t, err, "Failed to list deleted")
+	assert.Lenf(t, del, 2, "Expected 2 deleted, got %d:\n%v\n", len(del), del)
 
 	// list all deployed releases
 	dpl, err := sqlDriver.List(func(rel release.Releaser) bool {
@@ -159,8 +159,8 @@ func TestSQLList(t *testing.T) {
 		return rls.Info.Status == common.StatusDeployed
 	})
 	// check
-	require.NoError(t, err, "Failed to list deployed")
-	assert.Len(t, dpl, 2, "Expected 2 deployed, got %d:\n%v\n", len(dpl), dpl)
+	require.NoErrorf(t, err, "Failed to list deployed")
+	assert.Lenf(t, dpl, 2, "Expected 2 deployed, got %d:\n%v\n", len(dpl), dpl)
 
 	// list all superseded releases
 	ssd, err := sqlDriver.List(func(rel release.Releaser) bool {
@@ -168,16 +168,16 @@ func TestSQLList(t *testing.T) {
 		return rls.Info.Status == common.StatusSuperseded
 	})
 	// check
-	require.NoError(t, err, "Failed to list superseded")
-	assert.Len(t, ssd, 2, "Expected 2 superseded, got %d:\n%v\n", len(ssd), ssd)
+	require.NoErrorf(t, err, "Failed to list superseded")
+	assert.Lenf(t, ssd, 2, "Expected 2 superseded, got %d:\n%v\n", len(ssd), ssd)
 	require.NoErrorf(t, mock.ExpectationsWereMet(), "sql expectations weren't met")
 
 	// Check if release having both system and custom labels, this is needed to ensure that selector filtering would work.
 	rls := convertReleaserToV1(t, ssd[0])
 	_, ok := rls.Labels["name"]
-	require.True(t, ok, "Expected 'name' label in results, actual %v", rls.Labels)
+	require.Truef(t, ok, "Expected 'name' label in results, actual %v", rls.Labels)
 	_, ok = rls.Labels["key1"]
-	require.True(t, ok, "Expected 'key1' label in results, actual %v", rls.Labels)
+	require.Truef(t, ok, "Expected 'key1' label in results, actual %v", rls.Labels)
 }
 
 func TestSqlCreate(t *testing.T) {
@@ -411,16 +411,16 @@ func TestSqlQuery(t *testing.T) {
 	require.ErrorIsf(t, err, ErrReleaseNotFound, "failed to query for unknown smug-pigeon release")
 
 	results, err := sqlDriver.Query(labelSetDeployed)
-	require.NoError(t, err, "failed to query for deployed smug-pigeon release")
+	require.NoErrorf(t, err, "failed to query for deployed smug-pigeon release")
 
 	for _, res := range results {
 		assert.Truef(t, reflect.DeepEqual(res, deployedRelease), "Expected release {%v}, got {%v}", deployedRelease, res)
 	}
 
 	results, err = sqlDriver.Query(labelSetAll)
-	require.NoError(t, err, "failed to query release history for smug-pigeon")
+	require.NoErrorf(t, err, "failed to query release history for smug-pigeon")
 
-	assert.Len(t, results, 2, "expected a resultset of size 2, got %d", len(results))
+	assert.Lenf(t, results, 2, "expected a resultset of size 2, got %d", len(results))
 
 	for _, res := range results {
 		if !reflect.DeepEqual(res, deployedRelease) && !reflect.DeepEqual(res, supersededRelease) {
@@ -493,7 +493,7 @@ func TestSqlDelete(t *testing.T) {
 	require.NoError(t, err)
 	err = mock.ExpectationsWereMet()
 	assert.NoErrorf(t, err, "sql expectations weren't met")
-	require.NoError(t, err, "failed to delete release with key %q", key)
+	require.NoErrorf(t, err, "failed to delete release with key %q", key)
 
 	assert.Truef(t, reflect.DeepEqual(rel, deletedRelease), "Expected release {%v}, got {%v}", rel, deletedRelease)
 }
@@ -563,6 +563,6 @@ func TestSqlCheckAppliedMigrations(t *testing.T) {
 			ExpectQuery("").
 			WillReturnRows(rows)
 		mock.ExpectCommit()
-		assert.Equal(t, c.expectedResult, sqlDriver.checkAlreadyApplied(c.migrationsToApply), "Test case: %v, Expected: %v, Have: %v, Explanation: %v", i, c.expectedResult, !c.expectedResult, c.errorExplanation)
+		assert.Equalf(t, c.expectedResult, sqlDriver.checkAlreadyApplied(c.migrationsToApply), "Test case: %v, Expected: %v, Have: %v, Explanation: %v", i, c.expectedResult, !c.expectedResult, c.errorExplanation)
 	}
 }

@@ -212,21 +212,21 @@ func TestCoalesceValues(t *testing.T) {
 	}
 
 	_, ok := v["nested"].(map[string]any)["boat"]
-	assert.False(t, ok, "Expected nested boat key to be removed, still present")
+	assert.Falsef(t, ok, "Expected nested boat key to be removed, still present")
 
 	subchart := v["pequod"].(map[string]any)
 	_, ok = subchart["boat"]
-	assert.False(t, ok, "Expected subchart boat key to be removed, still present")
+	assert.Falsef(t, ok, "Expected subchart boat key to be removed, still present")
 
 	subsubchart := subchart["ahab"].(map[string]any)
 	_, ok = subsubchart["boat"]
-	assert.False(t, ok, "Expected sub-subchart ahab boat key to be removed, still present")
+	assert.Falsef(t, ok, "Expected sub-subchart ahab boat key to be removed, still present")
 
 	_, ok = subsubchart["nested"].(map[string]any)["boat"]
-	assert.False(t, ok, "Expected sub-subchart nested boat key to be removed, still present")
+	assert.Falsef(t, ok, "Expected sub-subchart nested boat key to be removed, still present")
 
 	_, ok = subsubchart["object"]
-	assert.False(t, ok, "Expected sub-subchart object map to be removed, still present")
+	assert.Falsef(t, ok, "Expected sub-subchart object map to be removed, still present")
 
 	// CoalesceValues should not mutate the passed arguments
 	is.Equal(valsCopy, vals)
@@ -369,14 +369,14 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	_, ok := v["nested"].(map[string]any)["boat"]
-	assert.True(t, ok, "Expected nested boat key to be present but it was removed")
+	assert.Truef(t, ok, "Expected nested boat key to be present but it was removed")
 
 	subchart := v["pequod"].(map[string]any)["ahab"].(map[string]any)
 	_, ok = subchart["boat"]
-	assert.True(t, ok, "Expected subchart boat key to be present but it was removed")
+	assert.Truef(t, ok, "Expected subchart boat key to be present but it was removed")
 
 	_, ok = subchart["nested"].(map[string]any)["bar"]
-	assert.True(t, ok, "Expected subchart nested bar key to be present but it was removed")
+	assert.Truef(t, ok, "Expected subchart nested bar key to be present but it was removed")
 
 	// CoalesceValues should not mutate the passed arguments
 	is.Equal(valsCopy, vals)
@@ -414,27 +414,27 @@ func TestCoalesceTables(t *testing.T) {
 	// otherwise the values are coalesced.
 	CoalesceTables(dst, src)
 
-	assert.Equal(t, "Ishmael", dst["name"], "Unexpected name: %s", dst["name"])
-	assert.Equal(t, "whaler", dst["occupation"], "Unexpected occupation: %s", dst["occupation"])
+	assert.Equalf(t, "Ishmael", dst["name"], "Unexpected name: %s", dst["name"])
+	assert.Equalf(t, "whaler", dst["occupation"], "Unexpected occupation: %s", dst["occupation"])
 
 	addr, ok := dst["address"].(map[string]any)
-	require.True(t, ok, "Address went away.")
-	assert.Equal(t, "123 Spouter Inn Ct.", addr["street"].(string), "Unexpected address: %v", addr["street"])
-	assert.Equal(t, "Nantucket", addr["city"].(string), "Unexpected city: %v", addr["city"])
-	assert.Equal(t, "MA", addr["state"].(string), "Unexpected state: %v", addr["state"])
+	require.Truef(t, ok, "Address went away.")
+	assert.Equalf(t, "123 Spouter Inn Ct.", addr["street"].(string), "Unexpected address: %v", addr["street"])
+	assert.Equalf(t, "Nantucket", addr["city"].(string), "Unexpected city: %v", addr["city"])
+	assert.Equalf(t, "MA", addr["state"].(string), "Unexpected state: %v", addr["state"])
 
 	_, ok = addr["country"]
-	assert.False(t, ok, "The country is not left out.")
+	assert.Falsef(t, ok, "The country is not left out.")
 
 	det, ok := dst["details"].(map[string]any)
 	require.Truef(t, ok, "Details is the wrong type: %v", dst["details"])
 
 	_, ok = det["friends"]
-	assert.True(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
-	assert.Equal(t, "pequod", dst["boat"].(string), "Expected boat string, got %v", dst["boat"])
+	assert.Truef(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
+	assert.Equalf(t, "pequod", dst["boat"].(string), "Expected boat string, got %v", dst["boat"])
 
 	_, ok = dst["hole"]
-	assert.False(t, ok, "The hole still exists.")
+	assert.Falsef(t, ok, "The hole still exists.")
 
 	dst2 := map[string]any{
 		"name": "Ishmael",
@@ -454,21 +454,21 @@ func TestCoalesceTables(t *testing.T) {
 	// this happens when the --reuse-values flag is set but the chart has no modifications yet
 	CoalesceTables(dst2, nil)
 
-	assert.Equal(t, "Ishmael", dst2["name"], "Unexpected name: %s", dst2["name"])
+	assert.Equalf(t, "Ishmael", dst2["name"], "Unexpected name: %s", dst2["name"])
 
 	addr2, ok := dst2["address"].(map[string]any)
-	require.True(t, ok, "Address went away.")
-	assert.Equal(t, "123 Spouter Inn Ct.", addr2["street"].(string), "Unexpected address: %v", addr2["street"])
-	assert.Equal(t, "Nantucket", addr2["city"].(string), "Unexpected city: %v", addr2["city"])
-	assert.Equal(t, "US", addr2["country"].(string), "Unexpected Country: %v", addr2["country"])
+	require.Truef(t, ok, "Address went away.")
+	assert.Equalf(t, "123 Spouter Inn Ct.", addr2["street"].(string), "Unexpected address: %v", addr2["street"])
+	assert.Equalf(t, "Nantucket", addr2["city"].(string), "Unexpected city: %v", addr2["city"])
+	assert.Equalf(t, "US", addr2["country"].(string), "Unexpected Country: %v", addr2["country"])
 
 	det2, ok := dst2["details"].(map[string]any)
 	require.Truef(t, ok, "Details is the wrong type: %v", dst2["details"])
 
 	_, ok = det2["friends"]
-	assert.True(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
-	assert.Equal(t, "pequod", dst2["boat"].(string), "Expected boat string, got %v", dst2["boat"])
-	assert.Equal(t, "black", dst2["hole"].(string), "Expected hole string, got %v", dst2["boat"])
+	assert.Truef(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
+	assert.Equalf(t, "pequod", dst2["boat"].(string), "Expected boat string, got %v", dst2["boat"])
+	assert.Equalf(t, "black", dst2["hole"].(string), "Expected hole string, got %v", dst2["boat"])
 }
 
 func TestMergeTables(t *testing.T) {
@@ -503,31 +503,31 @@ func TestMergeTables(t *testing.T) {
 	// otherwise the values are coalesced.
 	MergeTables(dst, src)
 
-	assert.Equal(t, "Ishmael", dst["name"], "Unexpected name: %s", dst["name"])
-	assert.Equal(t, "whaler", dst["occupation"], "Unexpected occupation: %s", dst["occupation"])
+	assert.Equalf(t, "Ishmael", dst["name"], "Unexpected name: %s", dst["name"])
+	assert.Equalf(t, "whaler", dst["occupation"], "Unexpected occupation: %s", dst["occupation"])
 
 	addr, ok := dst["address"].(map[string]any)
-	require.True(t, ok, "Address went away.")
-	assert.Equal(t, "123 Spouter Inn Ct.", addr["street"].(string), "Unexpected address: %v", addr["street"])
-	assert.Equal(t, "Nantucket", addr["city"].(string), "Unexpected city: %v", addr["city"])
-	assert.Equal(t, "MA", addr["state"].(string), "Unexpected state: %v", addr["state"])
+	require.Truef(t, ok, "Address went away.")
+	assert.Equalf(t, "123 Spouter Inn Ct.", addr["street"].(string), "Unexpected address: %v", addr["street"])
+	assert.Equalf(t, "Nantucket", addr["city"].(string), "Unexpected city: %v", addr["city"])
+	assert.Equalf(t, "MA", addr["state"].(string), "Unexpected state: %v", addr["state"])
 
 	// This is one test that is different from CoalesceTables. Because country
 	// is a nil value and it's not removed it's still present.
 	_, ok = addr["country"]
-	assert.True(t, ok, "The country is left out.")
+	assert.Truef(t, ok, "The country is left out.")
 
 	det, ok := dst["details"].(map[string]any)
 	require.Truef(t, ok, "Details is the wrong type: %v", dst["details"])
 
 	_, ok = det["friends"]
-	assert.True(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
-	assert.Equal(t, "pequod", dst["boat"].(string), "Expected boat string, got %v", dst["boat"])
+	assert.Truef(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
+	assert.Equalf(t, "pequod", dst["boat"].(string), "Expected boat string, got %v", dst["boat"])
 
 	// This is one test that is different from CoalesceTables. Because hole
 	// is a nil value and it's not removed it's still present.
 	_, ok = dst["hole"]
-	assert.True(t, ok, "The hole no longer exists.")
+	assert.Truef(t, ok, "The hole no longer exists.")
 
 	dst2 := map[string]any{
 		"name": "Ishmael",
@@ -548,22 +548,22 @@ func TestMergeTables(t *testing.T) {
 	// this happens when the --reuse-values flag is set but the chart has no modifications yet
 	MergeTables(dst2, nil)
 
-	assert.Equal(t, "Ishmael", dst2["name"], "Unexpected name: %s", dst2["name"])
+	assert.Equalf(t, "Ishmael", dst2["name"], "Unexpected name: %s", dst2["name"])
 
 	addr2, ok := dst2["address"].(map[string]any)
-	require.True(t, ok, "Address went away.")
-	assert.Equal(t, "123 Spouter Inn Ct.", addr2["street"].(string), "Unexpected address: %v", addr2["street"])
-	assert.Equal(t, "Nantucket", addr2["city"].(string), "Unexpected city: %v", addr2["city"])
-	assert.Equal(t, "US", addr2["country"].(string), "Unexpected Country: %v", addr2["country"])
+	require.Truef(t, ok, "Address went away.")
+	assert.Equalf(t, "123 Spouter Inn Ct.", addr2["street"].(string), "Unexpected address: %v", addr2["street"])
+	assert.Equalf(t, "Nantucket", addr2["city"].(string), "Unexpected city: %v", addr2["city"])
+	assert.Equalf(t, "US", addr2["country"].(string), "Unexpected Country: %v", addr2["country"])
 
 	det2, ok := dst2["details"].(map[string]any)
 	require.Truef(t, ok, "Details is the wrong type: %v", dst2["details"])
 
 	_, ok = det2["friends"]
-	assert.True(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
-	assert.Equal(t, "pequod", dst2["boat"].(string), "Expected boat string, got %v", dst2["boat"])
-	assert.Equal(t, "black", dst2["hole"].(string), "Expected hole string, got %v", dst2["hole"])
-	assert.Nil(t, dst2["nilval"], "Expected nilvalue to have nil value but it does not")
+	assert.Truef(t, ok, "Could not find your friends. Maybe you don't have any. :-(")
+	assert.Equalf(t, "pequod", dst2["boat"].(string), "Expected boat string, got %v", dst2["boat"])
+	assert.Equalf(t, "black", dst2["hole"].(string), "Expected hole string, got %v", dst2["hole"])
+	assert.Nilf(t, dst2["nilval"], "Expected nilvalue to have nil value but it does not")
 }
 
 func TestCoalesceValuesWarnings(t *testing.T) {
@@ -653,15 +653,15 @@ func TestCoalesceValuesEmptyMapWithNils(t *testing.T) {
 	req.NoError(err)
 
 	data, ok := v["data"].(map[string]any)
-	is.True(ok, "data is not a map")
+	is.Truef(ok, "data is not a map")
 
 	// "foo" should be preserved
 	is.Equal("bar", data["foo"])
 
 	// "baz" should be preserved with nil value since it wasn't in chart defaults
 	_, ok = data["baz"]
-	is.True(ok, "Expected data.baz key to be present but it was removed")
-	is.Nil(data["baz"], "Expected data.baz key to be nil but it is not")
+	is.Truef(ok, "Expected data.baz key to be present but it was removed")
+	is.Nilf(data["baz"], "Expected data.baz key to be nil but it is not")
 }
 
 // TestCoalesceValuesSubchartDefaultNilsCleaned tests that nil values in subchart defaults
@@ -693,14 +693,14 @@ func TestCoalesceValuesSubchartDefaultNilsCleaned(t *testing.T) {
 	req.NoError(err)
 
 	childVals, ok := v["child"].(map[string]any)
-	is.True(ok, "child values should be a map")
+	is.Truef(ok, "child values should be a map")
 
 	keyMapping, ok := childVals["keyMapping"].(map[string]any)
-	is.True(ok, "keyMapping should be a map")
+	is.Truef(ok, "keyMapping should be a map")
 
 	// The nil "password" key from chart defaults should be cleaned up
 	_, ok = keyMapping["password"]
-	is.False(ok, "Expected keyMapping.password (nil from chart defaults) to be removed, but it is still present")
+	is.Falsef(ok, "Expected keyMapping.password (nil from chart defaults) to be removed, but it is still present")
 }
 
 // TestCoalesceValuesUserNullErasesSubchartDefault tests that a user-supplied null
@@ -733,11 +733,11 @@ func TestCoalesceValuesUserNullErasesSubchartDefault(t *testing.T) {
 	req.NoError(err)
 
 	childVals, ok := v["child"].(map[string]any)
-	is.True(ok, "child values should be a map")
+	is.Truef(ok, "child values should be a map")
 
 	// someKey should be erased — user null overrides subchart default
 	_, ok = childVals["someKey"]
-	is.False(ok, "Expected someKey to be removed by user null override, but it is still present")
+	is.Falsef(ok, "Expected someKey to be removed by user null override, but it is still present")
 }
 
 // TestCoalesceValuesSubchartNilDoesNotShadowGlobal tests that a nil value in
@@ -774,15 +774,15 @@ func TestCoalesceValuesSubchartNilDoesNotShadowGlobal(t *testing.T) {
 	req.NoError(err)
 
 	childVals, ok := v["child"].(map[string]any)
-	is.True(ok, "child values should be a map")
+	is.Truef(ok, "child values should be a map")
 
 	ingress, ok := childVals["ingress"].(map[string]any)
-	is.True(ok, "ingress should be a map")
+	is.Truef(ok, "ingress should be a map")
 
 	// The nil "feature" from subchart defaults should be cleaned up,
 	// so that pluck can fall through to the global value
 	_, ok = ingress["feature"]
-	is.False(ok, "Expected ingress.feature (nil from chart defaults) to be removed so global can be used via pluck, but it is still present")
+	is.Falsef(ok, "Expected ingress.feature (nil from chart defaults) to be removed so global can be used via pluck, but it is still present")
 }
 
 // TestCoalesceValuesSubchartNilCleanedWhenUserPartiallyOverrides tests that nil
@@ -820,12 +820,12 @@ func TestCoalesceValuesSubchartNilCleanedWhenUserPartiallyOverrides(t *testing.T
 	req.NoError(err)
 
 	childVals, ok := v["child"].(map[string]any)
-	is.True(ok, "child values should be a map")
+	is.Truef(ok, "child values should be a map")
 
 	keyMapping, ok := childVals["keyMapping"].(map[string]any)
-	is.True(ok, "keyMapping should be a map")
-	is.Equal("sha256", keyMapping["format"], "User override should be preserved")
+	is.Truef(ok, "keyMapping should be a map")
+	is.Equalf("sha256", keyMapping["format"], "User override should be preserved")
 
 	_, ok = keyMapping["password"]
-	is.False(ok, "Expected keyMapping.password (nil from chart defaults) to be removed even when user partially overrides the map")
+	is.Falsef(ok, "Expected keyMapping.password (nil from chart defaults) to be removed even when user partially overrides the map")
 }

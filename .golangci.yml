@@ -140,6 +140,8 @@ linters:
     testifylint:
       # Intentionally enable all testifylint rules so new checks are adopted automatically.
       enable-all: true
+      formatter:
+        require-f-funcs: true
 
 run:
   timeout: 10m

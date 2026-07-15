@@ -249,13 +249,13 @@ func TestPullCmd(t *testing.T) {
 
 			if tt.expectVerify {
 				outString := helmTestKeyOut + tt.expectSha + "\n"
-				assert.Equal(t, outString, out, "%q: expected verification output %q, got %q", tt.name, outString, out)
+				assert.Equalf(t, outString, out, "%q: expected verification output %q, got %q", tt.name, outString, out)
 			}
 
 			ef := filepath.Join(outdir, tt.expectFile)
 			fi, err := os.Stat(ef)
-			require.NoError(t, err, "%q: expected a file at %s.", tt.name, ef)
-			assert.Equal(t, tt.expectDir, fi.IsDir(), "%q: expected directory=%t, but it's not.", tt.name, tt.expectDir)
+			require.NoErrorf(t, err, "%q: expected a file at %s.", tt.name, ef)
+			assert.Equalf(t, tt.expectDir, fi.IsDir(), "%q: expected directory=%t, but it's not.", tt.name, tt.expectDir)
 		})
 	}
 }
@@ -294,16 +294,16 @@ func runPullTests(t *testing.T, tests []struct {
 			}
 			_, _, err := executeActionCommand(cmd)
 			if tt.wantError {
-				require.Error(t, err, "%q: expected error but got none", tt.name)
+				require.Errorf(t, err, "%q: expected error but got none", tt.name)
 				if tt.wantErrorMsg != "" {
 					require.EqualErrorf(t, err, tt.wantErrorMsg, "Actual error '%s', not equal to expected error '%s'", err, tt.wantErrorMsg)
 				}
 			} else {
-				require.NoError(t, err, "%q reported error", tt.name)
+				require.NoErrorf(t, err, "%q reported error", tt.name)
 				ef := filepath.Join(outdir, tt.expectFile)
 				fi, err := os.Stat(ef)
-				require.NoError(t, err, "%q: expected a file at %s.", tt.name, ef)
-				assert.Equal(t, tt.expectDir, fi.IsDir(), "%q: expected directory=%t, but it's not.", tt.name, tt.expectDir)
+				require.NoErrorf(t, err, "%q: expected a file at %s.", tt.name, ef)
+				assert.Equalf(t, tt.expectDir, fi.IsDir(), "%q: expected directory=%t, but it's not.", tt.name, tt.expectDir)
 			}
 		})
 	}
@@ -502,7 +502,7 @@ func TestPullOCIWithTagAndDigest(t *testing.T) {
 	)
 
 	_, _, err = executeActionCommand(cmd)
-	require.NoError(t, err, "pull with tag+digest failed")
+	require.NoErrorf(t, err, "pull with tag+digest failed")
 
 	// Verify the file was downloaded
 	// When digest is present, the filename uses the digest format (e.g. chart@sha256-hex.tgz)
@@ -510,7 +510,7 @@ func TestPullOCIWithTagAndDigest(t *testing.T) {
 	if _, err := os.Stat(expectedFile); err != nil {
 		// Try the digest-based filename; parse algorithm:hex to avoid fixed-offset assumptions
 		algorithm, digestPart, ok := strings.Cut(result.PushedChart.Manifest.Digest, ":")
-		require.True(t, ok, "digest must be in algorithm:hex format, got %q", result.PushedChart.Manifest.Digest)
+		require.Truef(t, ok, "digest must be in algorithm:hex format, got %q", result.PushedChart.Manifest.Digest)
 		expectedFile = filepath.Join(outdir, fmt.Sprintf("oci-dependent-chart@%s-%s.tgz", algorithm, digestPart))
 		_, err := os.Stat(expectedFile)
 		assert.NoErrorf(t, err, "expected chart file not found")

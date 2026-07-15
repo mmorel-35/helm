@@ -55,7 +55,7 @@ func TestRecordsAdd(t *testing.T) {
 	for _, tt := range tests {
 		err := rs.Add(tt.rec)
 		if !tt.ok {
-			require.NoError(t, err, "failed: %q:", tt.desc)
+			require.NoErrorf(t, err, "failed: %q:", tt.desc)
 		} else {
 			require.Error(t, err)
 		}
@@ -83,7 +83,7 @@ func TestRecordsRemove(t *testing.T) {
 	for _, tt := range tests {
 		r := rs.Remove(tt.key)
 		if tt.ok {
-			require.Nil(t, r, "Failed to %q (key = %s). Expected nil, got %v", tt.desc, tt.key, r)
+			require.Nilf(t, r, "Failed to %q (key = %s). Expected nil, got %v", tt.desc, tt.key, r)
 		} else {
 			require.NotNil(t, r)
 		}
@@ -101,10 +101,10 @@ func TestRecordsRemoveAt(t *testing.T) {
 		newRecord("rls-a.v2", releaseStub("rls-a", 2, "default", common.StatusDeployed)),
 	})
 
-	require.Len(t, rs, 2, "Expected len=2 for mock")
+	require.Lenf(t, rs, 2, "Expected len=2 for mock")
 
 	rs.Remove("rls-a.v1")
-	require.Len(t, rs, 1, "Expected length of rs to be 1, got %d", len(rs))
+	require.Lenf(t, rs, 1, "Expected length of rs to be 1, got %d", len(rs))
 }
 
 func TestRecordsGet(t *testing.T) {
@@ -161,7 +161,7 @@ func TestRecordsIndex(t *testing.T) {
 
 	for _, tt := range tests {
 		got, _ := rs.Index(tt.key)
-		require.Equal(t, tt.sort, got, "Expected %d, got %d", tt.sort, got)
+		require.Equalf(t, tt.sort, got, "Expected %d, got %d", tt.sort, got)
 	}
 }
 
@@ -190,7 +190,7 @@ func TestRecordsExists(t *testing.T) {
 
 	for _, tt := range tests {
 		got := rs.Exists(tt.key)
-		require.Equal(t, tt.ok, got, "Expected %t, got %t", tt.ok, got)
+		require.Equalf(t, tt.ok, got, "Expected %t, got %t", tt.ok, got)
 	}
 }
 

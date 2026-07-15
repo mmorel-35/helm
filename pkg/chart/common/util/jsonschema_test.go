@@ -31,19 +31,19 @@ import (
 
 func TestValidateAgainstSingleSchema(t *testing.T) {
 	values, err := common.ReadValuesFile("./testdata/test-values.yaml")
-	require.NoError(t, err, "Error reading YAML file")
+	require.NoErrorf(t, err, "Error reading YAML file")
 
 	schema, err := os.ReadFile("./testdata/test-values.schema.json")
-	require.NoError(t, err, "Error reading YAML file")
+	require.NoErrorf(t, err, "Error reading YAML file")
 	assert.NoErrorf(t, ValidateAgainstSingleSchema(values, schema), "Error validating Values against Schema")
 }
 
 func TestValidateAgainstInvalidSingleSchema(t *testing.T) {
 	values, err := common.ReadValuesFile("./testdata/test-values.yaml")
-	require.NoError(t, err, "Error reading YAML file")
+	require.NoErrorf(t, err, "Error reading YAML file")
 
 	schema, err := os.ReadFile("./testdata/test-values-invalid.schema.json")
-	require.NoError(t, err, "Error reading YAML file")
+	require.NoErrorf(t, err, "Error reading YAML file")
 
 	expectedErrString := `"file:///values.schema.json#" is not valid against metaschema: jsonschema validation failed with 'https://json-schema.org/draft/2020-12/schema#'
 - at '': got number, want boolean or object`
@@ -52,10 +52,10 @@ func TestValidateAgainstInvalidSingleSchema(t *testing.T) {
 
 func TestValidateAgainstSingleSchemaNegative(t *testing.T) {
 	values, err := common.ReadValuesFile("./testdata/test-values-negative.yaml")
-	require.NoError(t, err, "Error reading YAML file")
+	require.NoErrorf(t, err, "Error reading YAML file")
 
 	schema, err := os.ReadFile("./testdata/test-values.schema.json")
-	require.NoError(t, err, "Error reading JSON file")
+	require.NoErrorf(t, err, "Error reading JSON file")
 
 	expectedErrString := `- at '': missing property 'employmentInfo'
 - at '/age': minimum: got -5, want 0
@@ -212,8 +212,8 @@ func TestHTTPURLLoader_Load(t *testing.T) {
 
 		loader := newHTTPURLLoader()
 		result, err := loader.Load(server.URL)
-		require.NoError(t, err, "Expected no error, got")
-		require.NotNil(t, result, "Expected result to be non-nil")
+		require.NoErrorf(t, err, "Expected no error, got")
+		require.NotNilf(t, result, "Expected result to be non-nil")
 	})
 
 	t.Run("HTTP error status", func(t *testing.T) {
@@ -224,8 +224,8 @@ func TestHTTPURLLoader_Load(t *testing.T) {
 
 		loader := newHTTPURLLoader()
 		_, err := loader.Load(server.URL)
-		require.Error(t, err, "Expected error for HTTP 404")
-		assert.ErrorContains(t, err, "404", "Expected error message to contain '404'")
+		require.Errorf(t, err, "Expected error for HTTP 404")
+		assert.ErrorContainsf(t, err, "404", "Expected error message to contain '404'")
 	})
 }
 
@@ -315,5 +315,5 @@ func TestValidateAgainstSchema_InvalidSubchartValuesType_NoPanic(t *testing.T) {
 	}()
 
 	// We expect a non-nil error (invalid type), but crucially no panic.
-	require.Error(t, ValidateAgainstSchema(chrt, vals), "expected an error when subchart values have invalid type, got nil")
+	require.Errorf(t, ValidateAgainstSchema(chrt, vals), "expected an error when subchart values have invalid type, got nil")
 }

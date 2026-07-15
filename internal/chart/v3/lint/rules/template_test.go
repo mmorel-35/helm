@@ -37,11 +37,11 @@ const templateTestBasedir = "./testdata/albatross"
 func TestValidateAllowedExtension(t *testing.T) {
 	var failTest = []string{"/foo", "/test.toml"}
 	for _, test := range failTest {
-		require.ErrorContains(t, validateAllowedExtension(test), "Valid extensions are .yaml, .yml, .tpl, or .txt", "validateAllowedExtension('%s') to return \"Valid extensions are .yaml, .yml, .tpl, or .txt\", got no error", test)
+		require.ErrorContainsf(t, validateAllowedExtension(test), "Valid extensions are .yaml, .yml, .tpl, or .txt", "validateAllowedExtension('%s') to return \"Valid extensions are .yaml, .yml, .tpl, or .txt\", got no error", test)
 	}
 	var successTest = []string{"/foo.yaml", "foo.yaml", "foo.tpl", "/foo/bar/baz.yaml", "NOTES.txt"}
 	for _, test := range successTest {
-		assert.NoError(t, validateAllowedExtension(test), "validateAllowedExtension('%s') to return no error", test)
+		assert.NoErrorf(t, validateAllowedExtension(test), "validateAllowedExtension('%s') to return no error", test)
 	}
 }
 
@@ -55,7 +55,7 @@ func TestTemplateParsing(t *testing.T) {
 	Templates(&linter, values, namespace, strict)
 	res := linter.Messages
 
-	require.Len(t, res, 1, "Expected one error, got %d, %v", len(res), res)
+	require.Lenf(t, res, 1, "Expected one error, got %d, %v", len(res), res)
 	assert.ErrorContains(t, res[0].Err, "deliberateSyntaxError")
 }
 
@@ -73,7 +73,7 @@ func TestTemplateIntegrationHappyPath(t *testing.T) {
 	Templates(&linter, values, namespace, strict)
 	res := linter.Messages
 
-	require.Empty(t, res, "Expected no error, got %d, %v", len(res), res)
+	require.Emptyf(t, res, "Expected no error, got %d, %v", len(res), res)
 }
 
 func TestMultiTemplateFail(t *testing.T) {
@@ -81,7 +81,7 @@ func TestMultiTemplateFail(t *testing.T) {
 	Templates(&linter, values, namespace, strict)
 	res := linter.Messages
 
-	require.Len(t, res, 1, "Expected 1 error, got %d, %v", len(res), res)
+	require.Lenf(t, res, 1, "Expected 1 error, got %d, %v", len(res), res)
 
 	assert.ErrorContains(t, res[0].Err, "object name does not conform to Kubernetes naming requirements")
 }
@@ -163,9 +163,9 @@ func TestValidateMetadataName(t *testing.T) {
 		t.Run(fmt.Sprintf("%s/%s", tt.obj.Kind, tt.obj.Metadata.Name), func(t *testing.T) {
 			err := validateMetadataName(tt.obj)
 			if tt.wantErr {
-				require.Error(t, err, "validateMetadataName()")
+				require.Errorf(t, err, "validateMetadataName()")
 			} else {
-				require.NoError(t, err, "validateMetadataName()")
+				require.NoErrorf(t, err, "validateMetadataName()")
 			}
 		})
 	}
@@ -207,8 +207,8 @@ func TestDeprecatedAPIFails(t *testing.T) {
 	}
 
 	var err deprecatedAPIError
-	require.ErrorAs(t, linter.Messages[0].Err, &err, "Expected error to be of type deprecatedAPIError")
-	assert.Equal(t, "apps/v1beta1 Deployment", err.Deprecated, "Surprised to learn that %q is deprecated", err.Deprecated)
+	require.ErrorAsf(t, linter.Messages[0].Err, &err, "Expected error to be of type deprecatedAPIError")
+	assert.Equalf(t, "apps/v1beta1 Deployment", err.Deprecated, "Surprised to learn that %q is deprecated", err.Deprecated)
 }
 
 const manifest = `apiVersion: v1
@@ -330,7 +330,7 @@ spec:
       - name: nginx
         image: nginx:1.14.2
 	`
-	assert.Error(t, validateMatchSelector(md, manifest), "expected Deployment with no selector to fail")
+	assert.Errorf(t, validateMatchSelector(md, manifest), "expected Deployment with no selector to fail")
 }
 
 func TestValidateTopIndentLevel(t *testing.T) {
@@ -402,7 +402,7 @@ items:
         helm.sh/resource-policy: keep
 `
 
-	require.Error(t, validateListAnnotations(md, manifest), "expected list with nested keep annotations to fail")
+	require.Errorf(t, validateListAnnotations(md, manifest), "expected list with nested keep annotations to fail")
 
 	manifest = `
 apiVersion: v1
@@ -415,7 +415,7 @@ items:
     kind: ConfigMap
 `
 
-	require.NoError(t, validateListAnnotations(md, manifest), "List objects keep annotations should pass")
+	require.NoErrorf(t, validateListAnnotations(md, manifest), "List objects keep annotations should pass")
 }
 
 func TestIsYamlFileExtension(t *testing.T) {
@@ -431,6 +431,6 @@ func TestIsYamlFileExtension(t *testing.T) {
 
 	for _, test := range tests {
 		result := isYamlFileExtension(test.filename)
-		assert.Equal(t, test.expected, result, "isYamlFileExtension(%s) = %v; want %v", test.filename, result, test.expected)
+		assert.Equalf(t, test.expected, result, "isYamlFileExtension(%s) = %v; want %v", test.filename, result, test.expected)
 	}
 }

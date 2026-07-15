@@ -213,7 +213,7 @@ func TestReadFile(t *testing.T) {
 
 				// Test the function
 				got, err := readFile(actualFilePath, tt.providers)
-				require.NoError(t, err, "readFile() expected no error for stdin")
+				require.NoErrorf(t, err, "readFile() expected no error for stdin")
 				assert.Equal(t, testData, got)
 				return
 			}
@@ -268,7 +268,7 @@ func TestReadFileOriginal(t *testing.T) {
 	var p getter.Providers
 	filePath := "%a.txt"
 	_, err := readFile(filePath, p)
-	assert.Error(t, err, "Expected error when has special strings")
+	assert.Errorf(t, err, "Expected error when has special strings")
 }
 
 func TestMergeValuesCLI(t *testing.T) {

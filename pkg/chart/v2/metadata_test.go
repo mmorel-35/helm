@@ -194,13 +194,13 @@ func TestValidate(t *testing.T) {
 
 	for _, tt := range tests {
 		result := tt.md.Validate()
-		assert.ErrorIs(t, result, tt.err, "expected %q, got %q in test %q", tt.err, result, tt.name)
+		assert.ErrorIsf(t, result, tt.err, "expected %q, got %q in test %q", tt.err, result, tt.name)
 	}
 }
 
 func TestValidate_sanitize(t *testing.T) {
 	md := &Metadata{APIVersion: "v2", Name: "test", Version: "1.0", Description: "\adescr\u0081iption\rtest", Maintainers: []*Maintainer{{Name: "\r"}}}
 	require.NoError(t, md.Validate())
-	require.Equal(t, "description test", md.Description, "description was not sanitized: %q", md.Description)
-	require.Equal(t, " ", md.Maintainers[0].Name, "maintainer name was not sanitized")
+	require.Equalf(t, "description test", md.Description, "description was not sanitized: %q", md.Description)
+	require.Equalf(t, " ", md.Maintainers[0].Name, "maintainer name was not sanitized")
 }

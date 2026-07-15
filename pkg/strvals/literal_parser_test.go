@@ -282,13 +282,13 @@ func TestParseLiteral(t *testing.T) {
 		got, err := ParseLiteral(tt.str)
 		if err != nil {
 			if !tt.err {
-				require.NoError(t, err, tt.str)
+				require.NoErrorf(t, err, tt.str)
 			}
 			continue
 		}
 
 		if tt.err {
-			assert.Fail(t, "Expected error. Got nil", tt.str)
+			assert.Failf(t, "Expected error. Got nil", tt.str)
 		}
 
 		y1, err := yaml.Marshal(tt.expect)
@@ -296,11 +296,11 @@ func TestParseLiteral(t *testing.T) {
 
 		y2, err := yaml.Marshal(got)
 		if err != nil {
-			require.NoError(t, err, "Error serializing parsed value")
+			require.NoErrorf(t, err, "Error serializing parsed value")
 		}
 
 		if !bytes.Equal(y1, y2) {
-			assert.Equal(t, string(y1), string(y2), tt.str)
+			assert.Equalf(t, string(y1), string(y2), tt.str)
 		}
 	}
 }
@@ -390,7 +390,7 @@ func TestParseLiteralInto(t *testing.T) {
 			require.NoError(t, err)
 		}
 		if tt.err {
-			assert.Fail(t, "Expected error. Got nil", tt.input)
+			assert.Failf(t, "Expected error. Got nil", tt.input)
 		}
 
 		if tt.input2 != "" {
@@ -398,7 +398,7 @@ func TestParseLiteralInto(t *testing.T) {
 				require.NoError(t, err)
 			}
 			if tt.err {
-				assert.Fail(t, "Expected error. Got nil", tt.input2)
+				assert.Failf(t, "Expected error. Got nil", tt.input2)
 			}
 		}
 
@@ -407,11 +407,11 @@ func TestParseLiteralInto(t *testing.T) {
 
 		y2, err := yaml.Marshal(tt.got)
 		if err != nil {
-			require.NoError(t, err, "Error serializing parsed value")
+			require.NoErrorf(t, err, "Error serializing parsed value")
 		}
 
 		if !bytes.Equal(y1, y2) {
-			assert.Equal(t, string(y1), string(y2), tt.input)
+			assert.Equalf(t, string(y1), string(y2), tt.input)
 		}
 	}
 }
@@ -455,21 +455,21 @@ func TestParseLiteralNestedLevels(t *testing.T) {
 				}
 				continue
 			}
-			require.NoError(t, err, tt.str)
+			require.NoErrorf(t, err, tt.str)
 		}
 
 		if tt.err {
-			assert.Fail(t, "Expected error. Got nil", tt.str)
+			assert.Failf(t, "Expected error. Got nil", tt.str)
 		}
 
 		y1, err := yaml.Marshal(tt.expect)
 		require.NoError(t, err)
 
 		y2, err := yaml.Marshal(got)
-		require.NoError(t, err, "Error serializing parsed value")
+		require.NoErrorf(t, err, "Error serializing parsed value")
 
 		if !bytes.Equal(y1, y2) {
-			assert.Equal(t, string(y1), string(y2), tt.str)
+			assert.Equalf(t, string(y1), string(y2), tt.str)
 		}
 	}
 }

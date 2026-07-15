@@ -63,18 +63,18 @@ runtimeConfig:
 
 	// Read the tarball data
 	tarballData, err := os.ReadFile(tarballPath)
-	require.NoError(t, err, "failed to read tarball")
+	require.NoErrorf(t, err, "failed to read tarball")
 
 	// Sign the plugin tarball
 	sig, err := SignPlugin(tarballData, filepath.Base(tarballPath), signer)
-	require.NoError(t, err, "failed to sign plugin")
+	require.NoErrorf(t, err, "failed to sign plugin")
 
 	// Verify the signature contains the expected content
-	assert.Contains(t, sig, "-----BEGIN PGP SIGNED MESSAGE-----", "signature does not contain PGP header")
+	assert.Containsf(t, sig, "-----BEGIN PGP SIGNED MESSAGE-----", "signature does not contain PGP header")
 
 	// Verify the tarball hash is in the signature
 	expectedHash, err := provenance.DigestFile(tarballPath)
 	require.NoError(t, err)
 	// The signature should contain the tarball hash
-	assert.Contains(t, sig, "sha256:"+expectedHash, "signature does not contain expected tarball hash: sha256:%s", expectedHash)
+	assert.Containsf(t, sig, "sha256:"+expectedHash, "signature does not contain expected tarball hash: sha256:%s", expectedHash)
 }

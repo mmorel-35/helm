@@ -196,7 +196,7 @@ func TestKindSorter(t *testing.T) {
 	} {
 		var buf bytes.Buffer
 		t.Run(test.description, func(t *testing.T) {
-			require.Len(t, manifests, len(test.expected), "Expected %d names in order", len(manifests))
+			require.Lenf(t, manifests, len(test.expected), "Expected %d names in order", len(manifests))
 			defer buf.Reset()
 			orig := manifests
 			for _, r := range sortManifestsByKind(manifests, test.order) {
@@ -204,7 +204,7 @@ func TestKindSorter(t *testing.T) {
 			}
 			assert.Equal(t, test.expected, buf.String())
 			for i, manifest := range orig {
-				require.Equal(t, manifest, manifests[i], "Expected input to sortManifestsByKind to stay the same")
+				require.Equalf(t, manifest, manifests[i], "Expected input to sortManifestsByKind to stay the same")
 			}
 		})
 	}
@@ -319,14 +319,14 @@ func TestKindSorterForHooks(t *testing.T) {
 	} {
 		var buf bytes.Buffer
 		t.Run(test.description, func(t *testing.T) {
-			require.Len(t, hooks, len(test.expected), "Expected %d names in order", len(hooks))
+			require.Lenf(t, hooks, len(test.expected), "Expected %d names in order", len(hooks))
 			defer buf.Reset()
 			orig := hooks
 			for _, r := range sortHooksByKind(hooks, test.order) {
 				buf.WriteString(r.Name)
 			}
 			for i, hook := range orig {
-				require.Equal(t, hook, hooks[i], "Expected input to sortHooksByKind to stay the same")
+				require.Equalf(t, hook, hooks[i], "Expected input to sortHooksByKind to stay the same")
 			}
 			assert.Equal(t, test.expected, buf.String())
 		})

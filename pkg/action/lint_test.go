@@ -91,7 +91,7 @@ func TestLintChart(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := lintChart(tt.chartPath, map[string]any{}, namespace, nil, tt.skipSchemaValidation)
 			if tt.err {
-				require.Error(t, err, "Expected a chart parsing error")
+				require.Errorf(t, err, "Expected a chart parsing error")
 			} else {
 				require.NoError(t, err)
 			}
@@ -106,10 +106,10 @@ func TestNonExistentChart(t *testing.T) {
 		testLint := NewLint()
 
 		result := testLint.Run(testCharts, values)
-		assert.Len(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
+		assert.Lenf(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
 
 		actual := result.Errors[0].Error()
-		assert.EqualError(t, result.Errors[0], expectedError, "expected '%s', but got '%s'", expectedError, actual)
+		assert.EqualErrorf(t, result.Errors[0], expectedError, "expected '%s', but got '%s'", expectedError, actual)
 	})
 
 	t.Run("should error out for corrupted tgz chart", func(t *testing.T) {
@@ -118,10 +118,10 @@ func TestNonExistentChart(t *testing.T) {
 		testLint := NewLint()
 
 		result := testLint.Run(testCharts, values)
-		assert.Len(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
+		assert.Lenf(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
 
 		actual := result.Errors[0].Error()
-		assert.EqualError(t, result.Errors[0], expectedEOFError, "expected '%s', but got '%s'", expectedEOFError, actual)
+		assert.EqualErrorf(t, result.Errors[0], expectedEOFError, "expected '%s', but got '%s'", expectedEOFError, actual)
 	})
 }
 
@@ -136,7 +136,7 @@ func TestLint_EmptyResultErrors(t *testing.T) {
 	testCharts := []string{chart2MultipleChartLint}
 	testLint := NewLint()
 	result := testLint.Run(testCharts, values)
-	assert.Empty(t, result.Errors, "Expected no error, got more")
+	assert.Emptyf(t, result.Errors, "Expected no error, got more")
 }
 
 func TestLint_ChartWithWarnings(t *testing.T) {
@@ -145,7 +145,7 @@ func TestLint_ChartWithWarnings(t *testing.T) {
 		testLint := NewLint()
 		testLint.Strict = false
 		result := testLint.Run(testCharts, values)
-		assert.Empty(t, result.Errors, "Expected no error, got more")
+		assert.Emptyf(t, result.Errors, "Expected no error, got more")
 	})
 
 	t.Run("should fail with one error when strict", func(t *testing.T) {
@@ -153,7 +153,7 @@ func TestLint_ChartWithWarnings(t *testing.T) {
 		testLint := NewLint()
 		testLint.Strict = true
 		result := testLint.Run(testCharts, values)
-		assert.Len(t, result.Errors, 1, "expected one error")
+		assert.Lenf(t, result.Errors, 1, "expected one error")
 	})
 }
 

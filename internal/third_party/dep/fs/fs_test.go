@@ -44,7 +44,7 @@ import (
 func TestRenameWithFallback(t *testing.T) {
 	dir := t.TempDir()
 
-	require.Error(t, RenameWithFallback(filepath.Join(dir, "does_not_exists"), filepath.Join(dir, "dst")), "expected an error for non existing file, but got nil")
+	require.Errorf(t, RenameWithFallback(filepath.Join(dir, "does_not_exists"), filepath.Join(dir, "dst")), "expected an error for non existing file, but got nil")
 
 	srcpath := filepath.Join(dir, "src")
 
@@ -59,7 +59,7 @@ func TestRenameWithFallback(t *testing.T) {
 
 	dstpath := filepath.Join(dir, "b")
 	require.NoError(t, os.MkdirAll(dstpath, 0o777))
-	require.Error(t, RenameWithFallback(srcpath, dstpath), "expected an error if dst is an existing directory, but got nil")
+	require.Errorf(t, RenameWithFallback(srcpath, dstpath), "expected an error if dst is an existing directory, but got nil")
 }
 
 func TestCopyDir(t *testing.T) {
@@ -203,7 +203,7 @@ func TestCopyDirFail_DstExists(t *testing.T) {
 
 	dstdir = filepath.Join(dir, "dst")
 	require.NoError(t, os.MkdirAll(dstdir, 0o755))
-	require.ErrorIs(t, CopyDir(srcdir, dstdir), errDstExist, "expected %v error for CopyDir(%s, %s)", errDstExist, srcdir, dstdir)
+	require.ErrorIsf(t, CopyDir(srcdir, dstdir), errDstExist, "expected %v error for CopyDir(%s, %s)", errDstExist, srcdir, dstdir)
 }
 
 func TestCopyDirFailOpen(t *testing.T) {
@@ -501,9 +501,9 @@ func TestIsSymlink(t *testing.T) {
 	for path, want := range tests {
 		got, err := IsSymlink(path)
 		if want.err {
-			require.Error(t, err, "expected an error")
+			require.Errorf(t, err, "expected an error")
 		} else {
-			require.NoError(t, err, "expected no error")
+			require.NoErrorf(t, err, "expected no error")
 		}
 		assert.Equalf(t, want.expected, got, "expected %t for %s, got %t", want.expected, path, got)
 	}

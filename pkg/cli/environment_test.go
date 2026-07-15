@@ -133,16 +133,16 @@ func TestEnvSettings(t *testing.T) {
 			settings.AddFlags(flags)
 			flags.Parse(strings.Split(tt.args, " "))
 
-			assert.Equal(t, tt.debug, settings.Debug, "debug")
-			assert.Equal(t, tt.ns, settings.Namespace(), "namespace")
-			assert.Equal(t, tt.kcontext, settings.KubeContext, "kube-context")
-			assert.Equal(t, tt.maxhistory, settings.MaxHistory, "maxHistory")
-			assert.Equal(t, tt.kubeAsUser, settings.KubeAsUser, "kubeAsUser")
-			assert.Equal(t, tt.kubeAsGroups, settings.KubeAsGroups, "kubeAsGroups")
-			assert.Equal(t, tt.kubeCaFile, settings.KubeCaFile, "kubeCaFile")
-			assert.Equal(t, tt.burstLimit, settings.BurstLimit, "burstLimit")
-			assert.Equal(t, tt.kubeInsecure, settings.KubeInsecureSkipTLSVerify, "kubeInsecure")
-			assert.Equal(t, tt.kubeTLSServer, settings.KubeTLSServerName, "kubeTLSServer")
+			assert.Equalf(t, tt.debug, settings.Debug, "debug")
+			assert.Equalf(t, tt.ns, settings.Namespace(), "namespace")
+			assert.Equalf(t, tt.kcontext, settings.KubeContext, "kube-context")
+			assert.Equalf(t, tt.maxhistory, settings.MaxHistory, "maxHistory")
+			assert.Equalf(t, tt.kubeAsUser, settings.KubeAsUser, "kubeAsUser")
+			assert.Equalf(t, tt.kubeAsGroups, settings.KubeAsGroups, "kubeAsGroups")
+			assert.Equalf(t, tt.kubeCaFile, settings.KubeCaFile, "kubeCaFile")
+			assert.Equalf(t, tt.burstLimit, settings.BurstLimit, "burstLimit")
+			assert.Equalf(t, tt.kubeInsecure, settings.KubeInsecureSkipTLSVerify, "kubeInsecure")
+			assert.Equalf(t, tt.kubeTLSServer, settings.KubeTLSServerName, "kubeTLSServer")
 		})
 	}
 }
@@ -242,7 +242,7 @@ users:
   user:
     token: test-token
 `
-	require.NoError(t, os.WriteFile(kubeconfigPath, []byte(kubeconfig), 0o600), "failed to create test kubeconfig")
+	require.NoErrorf(t, os.WriteFile(kubeconfigPath, []byte(kubeconfig), 0o600), "failed to create test kubeconfig")
 	t.Setenv("KUBECONFIG", kubeconfigPath)
 
 	settings := New()

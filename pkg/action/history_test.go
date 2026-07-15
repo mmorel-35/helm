@@ -50,16 +50,16 @@ func TestHistoryRun(t *testing.T) {
 	client.Max = 3
 	client.cfg.Releases.MaxHistory = 3
 	for _, rel := range []*release.Release{simpleRelease, updatedRelease} {
-		require.NoError(t, client.cfg.Releases.Create(rel), "Could not add releases to Config")
+		require.NoErrorf(t, client.cfg.Releases.Create(rel), "Could not add releases to Config")
 	}
 
 	releases, err := config.Releases.ListReleases()
 	require.NoError(t, err)
-	assert.Len(t, releases, 2, "expected 2 Releases in Config")
+	assert.Lenf(t, releases, 2, "expected 2 Releases in Config")
 
 	releasers, err := client.Run(releaseName)
 	require.NoError(t, err)
-	assert.Len(t, releasers, 2, "expected 2 Releases in History result")
+	assert.Lenf(t, releasers, 2, "expected 2 Releases in History result")
 
 	release1, err := releaserToV1Release(releasers[0])
 	require.NoError(t, err)

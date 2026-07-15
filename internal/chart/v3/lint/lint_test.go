@@ -92,23 +92,23 @@ func TestBadChartV3(t *testing.T) {
 func TestInvalidYaml(t *testing.T) {
 	var values map[string]any
 	m := RunAll(badYamlFileDir, values, namespace).Messages
-	require.Len(t, m, 1, "All didn't fail with expected errors, got %#v", m)
-	assert.ErrorContains(t, m[0].Err, "deliberateSyntaxError", "All didn't have the error for deliberateSyntaxError")
+	require.Lenf(t, m, 1, "All didn't fail with expected errors, got %#v", m)
+	assert.ErrorContainsf(t, m[0].Err, "deliberateSyntaxError", "All didn't have the error for deliberateSyntaxError")
 }
 
 func TestInvalidChartYamlV3(t *testing.T) {
 	var values map[string]any
 	m := RunAll(invalidChartFileDir, values, namespace).Messages
 	t.Log(m)
-	require.Len(t, m, 3, "All didn't fail with expected errors, got %#v", m)
-	assert.ErrorContains(t, m[0].Err, "failed to strictly parse chart metadata file", "All didn't have the error for duplicate YAML keys")
+	require.Lenf(t, m, 3, "All didn't fail with expected errors, got %#v", m)
+	assert.ErrorContainsf(t, m[0].Err, "failed to strictly parse chart metadata file", "All didn't have the error for duplicate YAML keys")
 }
 
 func TestBadValuesV3(t *testing.T) {
 	var values map[string]any
 	m := RunAll(badValuesFileDir, values, namespace).Messages
 	require.NotEmptyf(t, m, "All didn't fail with expected errors")
-	assert.ErrorContains(t, m[0].Err, "unable to parse YAML", "All didn't have the error for invalid key format: %s", m[0].Err)
+	assert.ErrorContainsf(t, m[0].Err, "unable to parse YAML", "All didn't have the error for invalid key format: %s", m[0].Err)
 }
 
 func TestBadCrdFileV3(t *testing.T) {
@@ -215,7 +215,7 @@ func TestMalformedTemplate(t *testing.T) {
 	case <-c:
 		t.Fatal("lint malformed template timeout")
 	case <-ch:
-		require.Len(t, m, 1, "All didn't fail with expected errors, got %#v", m)
-		assert.ErrorContains(t, m[0].Err, "invalid character '{'", "All didn't have the error for invalid character '{'")
+		require.Lenf(t, m, 1, "All didn't fail with expected errors, got %#v", m)
+		assert.ErrorContainsf(t, m[0].Err, "invalid character '{'", "All didn't have the error for invalid character '{'")
 	}
 }

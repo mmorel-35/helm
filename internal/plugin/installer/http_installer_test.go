@@ -56,10 +56,10 @@ func (t *TestHTTPGetter) Get(_ string, _ ...getter.Option) (*bytes.Buffer, error
 var fakePluginB64 = "H4sIAAAAAAAAA+3SQUvDMBgG4Jz7K0LwapdvSxrwJig6mCKC5xHabBaXdDSt4L+3cQ56mV42ZPg+lw+SF5LwZmXf3OV206/rMGEnIgdG6zTJaDmee4y01FOlZpqGHJGZSsb1qS401sfOtpyz0FTup9xv+2dqNep/N/IP6zdHPSMVXCh1sH8yhtGMDBUFFTL1r4iIcXnUWxzwz/sP1rsrLkbfQGTvro11E4ZlmcucRNZHu04py1OO73OVi2Vbb7td9vp7nXevtvsKRpGVjfc2VMP2xf3t4mH5tHi5mz8ub+bPk9JXIvvr5wMAAAAAAAAAAAAAAAAAAAAAnLVPqwHcXQAoAAA="
 
 func TestStripName(t *testing.T) {
-	assert.Equal(t, "fake-plugin", stripPluginName("fake-plugin-0.0.1.tar.gz"), "name does not match expected value")
-	assert.Equal(t, "fake-plugin", stripPluginName("fake-plugin-0.0.1.tgz"), "name does not match expected value")
-	assert.Equal(t, "fake-plugin", stripPluginName("fake-plugin.tgz"), "name does not match expected value")
-	assert.Equal(t, "fake-plugin", stripPluginName("fake-plugin.tar.gz"), "name does not match expected value")
+	assert.Equalf(t, "fake-plugin", stripPluginName("fake-plugin-0.0.1.tar.gz"), "name does not match expected value")
+	assert.Equalf(t, "fake-plugin", stripPluginName("fake-plugin-0.0.1.tgz"), "name does not match expected value")
+	assert.Equalf(t, "fake-plugin", stripPluginName("fake-plugin.tgz"), "name does not match expected value")
+	assert.Equalf(t, "fake-plugin", stripPluginName("fake-plugin.tar.gz"), "name does not match expected value")
 }
 
 func mockArchiveServer() *httptest.Server {
@@ -88,11 +88,11 @@ func TestHTTPInstaller(t *testing.T) {
 
 	// ensure a HTTPInstaller was returned
 	httpInstaller, ok := i.(*HTTPInstaller)
-	require.True(t, ok, "expected a HTTPInstaller")
+	require.Truef(t, ok, "expected a HTTPInstaller")
 
 	// inject fake http client responding with minimal plugin tarball
 	mockTgz, err := base64.StdEncoding.DecodeString(fakePluginB64)
-	require.NoError(t, err, "Could not decode fake tgz plugin")
+	require.NoErrorf(t, err, "Could not decode fake tgz plugin")
 
 	httpInstaller.getter = &TestHTTPGetter{
 		MockResponse: bytes.NewBuffer(mockTgz),
@@ -100,7 +100,7 @@ func TestHTTPInstaller(t *testing.T) {
 
 	// install the plugin
 	require.NoError(t, Install(i))
-	require.Equal(t, helmpath.DataPath("plugins", "fake-plugin"), i.Path(), "expected path '$XDG_CONFIG_HOME/helm/plugins/fake-plugin', got %q", i.Path())
+	require.Equalf(t, helmpath.DataPath("plugins", "fake-plugin"), i.Path(), "expected path '$XDG_CONFIG_HOME/helm/plugins/fake-plugin', got %q", i.Path())
 
 	// Install again to test plugin exists error
 	require.EqualErrorf(t, Install(i), "plugin already exists", "expected error for plugin exists")
@@ -119,7 +119,7 @@ func TestHTTPInstallerNonExistentVersion(t *testing.T) {
 
 	// ensure a HTTPInstaller was returned
 	httpInstaller, ok := i.(*HTTPInstaller)
-	require.True(t, ok, "expected a HTTPInstaller")
+	require.Truef(t, ok, "expected a HTTPInstaller")
 
 	// inject fake http client responding with error
 	httpInstaller.getter = &TestHTTPGetter{
@@ -127,7 +127,7 @@ func TestHTTPInstallerNonExistentVersion(t *testing.T) {
 	}
 
 	// attempt to install the plugin
-	require.Error(t, Install(i), "expected error from http client")
+	require.Errorf(t, Install(i), "expected error from http client")
 }
 
 func TestHTTPInstallerUpdate(t *testing.T) {
@@ -143,11 +143,11 @@ func TestHTTPInstallerUpdate(t *testing.T) {
 
 	// ensure a HTTPInstaller was returned
 	httpInstaller, ok := i.(*HTTPInstaller)
-	require.True(t, ok, "expected a HTTPInstaller")
+	require.Truef(t, ok, "expected a HTTPInstaller")
 
 	// inject fake http client responding with minimal plugin tarball
 	mockTgz, err := base64.StdEncoding.DecodeString(fakePluginB64)
-	require.NoError(t, err, "Could not decode fake tgz plugin")
+	require.NoErrorf(t, err, "Could not decode fake tgz plugin")
 
 	httpInstaller.getter = &TestHTTPGetter{
 		MockResponse: bytes.NewBuffer(mockTgz),
@@ -155,10 +155,10 @@ func TestHTTPInstallerUpdate(t *testing.T) {
 
 	// install the plugin before updating
 	require.NoError(t, Install(i))
-	require.Equal(t, helmpath.DataPath("plugins", "fake-plugin"), i.Path(), "expected path '$XDG_CONFIG_HOME/helm/plugins/fake-plugin', got %q", i.Path())
+	require.Equalf(t, helmpath.DataPath("plugins", "fake-plugin"), i.Path(), "expected path '$XDG_CONFIG_HOME/helm/plugins/fake-plugin', got %q", i.Path())
 
 	// Update plugin, should fail because it is not implemented
-	require.Error(t, Update(i), "update method not implemented for http installer")
+	require.Errorf(t, Update(i), "update method not implemented for http installer")
 }
 
 func TestExtract(t *testing.T) {
@@ -222,7 +222,7 @@ func TestExtract(t *testing.T) {
 
 	pluginYAMLFullPath := filepath.Join(tempDir, "plugin.yaml")
 	if info, err := os.Stat(pluginYAMLFullPath); err != nil {
-		require.NotErrorIs(t, err, fs.ErrNotExist, "Expected %s to exist but doesn't", pluginYAMLFullPath)
+		require.NotErrorIsf(t, err, fs.ErrNotExist, "Expected %s to exist but doesn't", pluginYAMLFullPath)
 		t.Fatal(err)
 	} else {
 		require.Equalf(t, expectedPluginYAMLPerm, info.Mode().Perm(), "Expected %s to have %o mode but has %o (umask: %o)",
@@ -231,7 +231,7 @@ func TestExtract(t *testing.T) {
 
 	readmeFullPath := filepath.Join(tempDir, "README.md")
 	if info, err := os.Stat(readmeFullPath); err != nil {
-		require.NotErrorIs(t, err, fs.ErrNotExist, "Expected %s to exist but doesn't", readmeFullPath)
+		require.NotErrorIsf(t, err, fs.ErrNotExist, "Expected %s to exist but doesn't", readmeFullPath)
 		t.Fatal(err)
 	} else {
 		require.Equalf(t, expectedReadmePerm, info.Mode().Perm(), "Expected %s to have %o mode but has %o (umask: %o)",
@@ -258,10 +258,10 @@ func TestCleanJoin(t *testing.T) {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			out, err := cleanJoin("/tmp", fixture.path)
 			if fixture.expectError {
-				require.Error(t, err, "Test %d: Path was not cleaned", i)
+				require.Errorf(t, err, "Test %d: Path was not cleaned", i)
 			} else {
 				require.NoError(t, err)
-				assert.Equal(t, fixture.expect, out, "Test %d: Expected %q but got %q", i, fixture.expect, out)
+				assert.Equalf(t, fixture.expect, out, "Test %d: Expected %q but got %q", i, fixture.expect, out)
 			}
 		})
 	}
@@ -277,11 +277,11 @@ func TestMediaTypeToExtension(t *testing.T) {
 		"application/json":   false,
 	} {
 		ext, ok := mediaTypeToExtension(mt)
-		assert.Equal(t, shouldPass, ok, "Media type %q failed test", mt)
+		assert.Equalf(t, shouldPass, ok, "Media type %q failed test", mt)
 		if shouldPass {
-			assert.NotEmpty(t, ext, "Expected an extension but got empty string for media type %q", mt)
+			assert.NotEmptyf(t, ext, "Expected an extension but got empty string for media type %q", mt)
 		} else {
-			assert.Empty(t, ext, "Expected extension to be empty for unrecognized media type %q", mt)
+			assert.Emptyf(t, ext, "Expected extension to be empty for unrecognized media type %q", mt)
 		}
 	}
 }
@@ -334,7 +334,7 @@ func TestExtractWithNestedDirectories(t *testing.T) {
 	require.NoError(t, err)
 
 	// First extraction
-	require.NoError(t, extractor.Extract(&buf, tempDir), "First extraction failed")
+	require.NoErrorf(t, extractor.Extract(&buf, tempDir), "First extraction failed")
 
 	// Verify nested structure was created
 	nestedFile := filepath.Join(tempDir, "docs", "examples", "example1.yaml")
@@ -483,8 +483,8 @@ func TestExtractPluginInSubdirectory(t *testing.T) {
 	// The plugin should be installed from the subdirectory
 	// Check that detectPluginRoot found the correct location
 	pluginRoot, err := detectPluginRoot(tempDir)
-	require.NoError(t, err, "Failed to detect plugin root")
+	require.NoErrorf(t, err, "Failed to detect plugin root")
 
 	expectedRoot := filepath.Join(tempDir, "my-plugin")
-	assert.Equal(t, expectedRoot, pluginRoot, "Expected plugin root to be %s but got %s", expectedRoot, pluginRoot)
+	assert.Equalf(t, expectedRoot, pluginRoot, "Expected plugin root to be %s but got %s", expectedRoot, pluginRoot)
 }

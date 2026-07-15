@@ -62,13 +62,13 @@ func TestSave(t *testing.T) {
 			chartWithInvalidJSON := withSchema(*c, []byte("{"))
 
 			where, err := Save(c, dest)
-			require.NoError(t, err, "Failed to save")
+			require.NoErrorf(t, err, "Failed to save")
 			require.Truef(t, strings.HasPrefix(where, dest), "Expected %q to start with %q", where, dest)
 			require.Truef(t, strings.HasSuffix(where, ".tgz"), "Expected %q to end with .tgz", where)
 
 			c2, err := loader.LoadFile(where)
 			require.NoError(t, err)
-			require.Equal(t, c.Name(), c2.Name(), "Expected chart archive to have %q, got %q", c.Name(), c2.Name())
+			require.Equalf(t, c.Name(), c2.Name(), "Expected chart archive to have %q, got %q", c.Name(), c2.Name())
 			if len(c2.Files) != 1 || c2.Files[0].Name != "scheherazade/shahryar.txt" {
 				t.Fatal("Files data did not match")
 			}
@@ -80,15 +80,15 @@ func TestSave(t *testing.T) {
 				t.Fatalf("Schema data did not match.\nExpected:\n%s\nActual:\n%s", formattedExpected, formattedActual)
 			}
 			_, err = Save(&chartWithInvalidJSON, dest)
-			require.Error(t, err, "Invalid JSON was not caught while saving chart")
+			require.Errorf(t, err, "Invalid JSON was not caught while saving chart")
 
 			c.Metadata.APIVersion = chart.APIVersionV3
 			where, err = Save(c, dest)
-			require.NoError(t, err, "Failed to save")
+			require.NoErrorf(t, err, "Failed to save")
 			c2, err = loader.LoadFile(where)
 			require.NoError(t, err)
-			require.NotNil(t, c2.Lock, "Expected v3 chart archive to contain a Chart.lock file")
-			require.Equal(t, c.Lock.Digest, c2.Lock.Digest, "Chart.lock data did not match")
+			require.NotNilf(t, c2.Lock, "Expected v3 chart archive to contain a Chart.lock file")
+			require.Equalf(t, c.Lock.Digest, c2.Lock.Digest, "Chart.lock data did not match")
 		})
 	}
 
@@ -106,7 +106,7 @@ func TestSave(t *testing.T) {
 		},
 	}
 	_, err := Save(c, tmp)
-	require.Error(t, err, "Expected error saving chart with invalid name")
+	require.Errorf(t, err, "Expected error saving chart with invalid name")
 }
 
 // Creates a copy with a different schema; does not modify anything.
@@ -147,10 +147,10 @@ func TestSavePreservesTimestamps(t *testing.T) {
 	}
 
 	where, err := Save(c, tmp)
-	require.NoError(t, err, "Failed to save")
+	require.NoErrorf(t, err, "Failed to save")
 
 	allHeaders, err := retrieveAllHeadersFromTar(where)
-	require.NoError(t, err, "Failed to parse tar")
+	require.NoErrorf(t, err, "Failed to parse tar")
 
 	roundedTime := initialCreateTime.Round(time.Second)
 	for _, header := range allHeaders {
@@ -210,25 +210,25 @@ func TestSaveDir(t *testing.T) {
 		},
 	}
 
-	require.NoError(t, SaveDir(c, tmp), "Failed to save")
+	require.NoErrorf(t, SaveDir(c, tmp), "Failed to save")
 
 	c2, err := loader.LoadDir(tmp + "/ahab")
 	require.NoError(t, err)
 
-	require.Equal(t, c.Name(), c2.Name(), "Expected chart archive to have %q, got %q", c.Name(), c2.Name())
+	require.Equalf(t, c.Name(), c2.Name(), "Expected chart archive to have %q, got %q", c.Name(), c2.Name())
 
 	require.Len(t, c2.Templates, 1)
-	require.Equal(t, c.Templates[0].Name, c2.Templates[0].Name, "Templates data did not match")
+	require.Equalf(t, c.Templates[0].Name, c2.Templates[0].Name, "Templates data did not match")
 
 	require.Len(t, c2.Files, 1)
-	require.Equal(t, c.Files[0].Name, c2.Files[0].Name, "Files data did not match")
+	require.Equalf(t, c.Files[0].Name, c2.Files[0].Name, "Files data did not match")
 
 	tmp2 := t.TempDir()
 	c.Metadata.Name = "../ahab"
 	pth := filepath.Join(tmp2, "tmpcharts")
-	require.NoError(t, os.MkdirAll(filepath.Join(pth), 0o755), "Failed to create directory")
+	require.NoErrorf(t, os.MkdirAll(filepath.Join(pth), 0o755), "Failed to create directory")
 
-	assert.EqualError(t, SaveDir(c, pth), "\"../ahab\" is not a valid chart name", "Did not get expected error for chart named %q", c.Name())
+	assert.EqualErrorf(t, SaveDir(c, pth), "\"../ahab\" is not a valid chart name", "Did not get expected error for chart named %q", c.Name())
 }
 
 func TestRepeatableSave(t *testing.T) {
@@ -289,12 +289,12 @@ func TestRepeatableSave(t *testing.T) {
 			// create package
 			dest := path.Join(tmp, "newdir")
 			where, err := Save(test.chart, dest)
-			require.NoError(t, err, "Failed to save")
+			require.NoErrorf(t, err, "Failed to save")
 			// get shasum for package
 			result, err := sha256Sum(where)
-			require.NoError(t, err, "Failed to check shasum")
+			require.NoErrorf(t, err, "Failed to check shasum")
 			// assert that the package SHA is what we wanted.
-			assert.Equal(t, test.want, result, "FormatName() result = %v, want %v", result, test.want)
+			assert.Equalf(t, test.want, result, "FormatName() result = %v, want %v", result, test.want)
 		})
 	}
 }

@@ -101,7 +101,7 @@ func TestExpand(t *testing.T) {
 	require.NoError(t, err)
 
 	expectLen := 11
-	assert.Len(t, fis, expectLen, "Expected %d files, but got %d", expectLen, len(fis))
+	assert.Lenf(t, fis, expectLen, "Expected %d files, but got %d", expectLen, len(fis))
 
 	for _, fi := range fis {
 		expect, err := os.Stat(filepath.Join("testdata", "frobnitz", fi.Name()))
@@ -111,7 +111,7 @@ func TestExpand(t *testing.T) {
 		// (value-4096) regardless of the size of the contents of the directory
 		mode := expect.Mode()
 		if !mode.IsDir() {
-			assert.Equal(t, expect.Size(), fi.Size(), "Expected %s to have size %d, got %d", fi.Name(), expect.Size(), fi.Size())
+			assert.Equalf(t, expect.Size(), fi.Size(), "Expected %s to have size %d, got %d", fi.Name(), expect.Size(), fi.Size())
 		}
 	}
 }
@@ -154,7 +154,7 @@ func TestExpandFile(t *testing.T) {
 	require.NoError(t, err)
 
 	expectLen := 11
-	assert.Len(t, fis, expectLen, "Expected %d files, but got %d", expectLen, len(fis))
+	assert.Lenf(t, fis, expectLen, "Expected %d files, but got %d", expectLen, len(fis))
 
 	for _, fi := range fis {
 		expect, err := os.Stat(filepath.Join("testdata", "frobnitz", fi.Name()))
@@ -164,7 +164,7 @@ func TestExpandFile(t *testing.T) {
 		// (value-4096) regardless of the size of the contents of the directory
 		mode := expect.Mode()
 		if !mode.IsDir() {
-			assert.Equal(t, expect.Size(), fi.Size(), "Expected %s to have size %d, got %d", fi.Name(), expect.Size(), fi.Size())
+			assert.Equalf(t, expect.Size(), fi.Size(), "Expected %s to have size %d, got %d", fi.Name(), expect.Size(), fi.Size())
 		}
 	}
 }

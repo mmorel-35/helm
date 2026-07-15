@@ -55,7 +55,7 @@ const testSchema = `
 func TestValidateValuesYamlNotDirectory(t *testing.T) {
 	_ = os.Mkdir(nonExistingValuesFilePath, os.ModePerm)
 	defer os.Remove(nonExistingValuesFilePath)
-	assert.Error(t, validateValuesFileExistence(nonExistingValuesFilePath), "validateValuesFileExistence to return a linter error, got no error")
+	assert.Errorf(t, validateValuesFileExistence(nonExistingValuesFilePath), "validateValuesFileExistence to return a linter error, got no error")
 }
 
 func TestValidateValuesFileWellFormed(t *testing.T) {
@@ -64,7 +64,7 @@ func TestValidateValuesFileWellFormed(t *testing.T) {
 	`
 	tmpdir := ensure.TempFile(t, "values.yaml", []byte(badYaml))
 	valfile := filepath.Join(tmpdir, "values.yaml")
-	require.Error(t, validateValuesFile(valfile, map[string]any{}, false), "expected values file to fail parsing")
+	require.Errorf(t, validateValuesFile(valfile, map[string]any{}, false), "expected values file to fail parsing")
 }
 
 func TestValidateValuesFileSchema(t *testing.T) {
@@ -93,7 +93,7 @@ func TestValidateValuesFileSchemaFailureButWithSkipSchemaValidation(t *testing.T
 	createTestingSchema(t, tmpdir)
 
 	valfile := filepath.Join(tmpdir, "values.yaml")
-	require.NoError(t, validateValuesFile(valfile, map[string]any{}, true), "expected values file to pass parsing because of skipSchemaValidation")
+	require.NoErrorf(t, validateValuesFile(valfile, map[string]any{}, true), "expected values file to pass parsing because of skipSchemaValidation")
 }
 
 func TestValidateValuesFileSchemaOverrides(t *testing.T) {

@@ -43,7 +43,7 @@ func TestLocalInstaller(t *testing.T) {
 
 	require.NoError(t, Install(i))
 
-	require.Equal(t, helmpath.DataPath("plugins", "echo-v1"), i.Path(), "expected path '$XDG_CONFIG_HOME/helm/plugins/helm-env', got %q", i.Path())
+	require.Equalf(t, helmpath.DataPath("plugins", "echo-v1"), i.Path(), "expected path '$XDG_CONFIG_HOME/helm/plugins/helm-env', got %q", i.Path())
 	os.RemoveAll(filepath.Dir(helmpath.DataPath())) // helmpath.DataPath is like /tmp/helm013130971/helm
 }
 
@@ -98,12 +98,12 @@ func TestLocalInstallerTarball(t *testing.T) {
 
 	// Verify it's detected as LocalInstaller
 	localInstaller, ok := i.(*LocalInstaller)
-	require.True(t, ok, "expected LocalInstaller")
-	require.True(t, localInstaller.isArchive, "expected isArchive to be true")
+	require.Truef(t, ok, "expected LocalInstaller")
+	require.Truef(t, localInstaller.isArchive, "expected isArchive to be true")
 	require.NoError(t, Install(i))
 
 	expectedPath := helmpath.DataPath("plugins", "test-plugin")
-	require.Equal(t, expectedPath, i.Path(), "expected path %q, got %q", expectedPath, i.Path())
+	require.Equalf(t, expectedPath, i.Path(), "expected path %q, got %q", expectedPath, i.Path())
 
 	// Verify plugin was installed
 	_, err = os.Stat(i.Path())

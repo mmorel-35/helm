@@ -148,7 +148,7 @@ func TestGenerateOCIChartAnnotations(t *testing.T) {
 
 	for _, tt := range tests {
 		result := generateChartOCIAnnotations(tt.chart, nowString)
-		assert.Equal(t, tt.expect, result, tt.name)
+		assert.Equalf(t, tt.expect, result, tt.name)
 	}
 }
 
@@ -216,7 +216,7 @@ func TestGenerateOCIAnnotations(t *testing.T) {
 
 	for _, tt := range tests {
 		result := generateOCIAnnotations(tt.chart, nowString)
-		assert.Equal(t, tt.expect, result, tt.name)
+		assert.Equalf(t, tt.expect, result, tt.name)
 	}
 }
 
@@ -233,22 +233,22 @@ func TestGenerateOCICreatedAnnotations(t *testing.T) {
 
 	// Check that created annotation exists
 	_, ok := result[ocispec.AnnotationCreated]
-	assert.True(t, ok, "%s annotation not created", ocispec.AnnotationCreated)
+	assert.Truef(t, ok, "%s annotation not created", ocispec.AnnotationCreated)
 
 	// Verify value of created artifact in RFC3339 format
 	_, err := time.Parse(time.RFC3339, result[ocispec.AnnotationCreated])
-	require.NoError(t, err, "%s annotation with value '%s' not in RFC3339 format", ocispec.AnnotationCreated, result[ocispec.AnnotationCreated])
+	require.NoErrorf(t, err, "%s annotation with value '%s' not in RFC3339 format", ocispec.AnnotationCreated, result[ocispec.AnnotationCreated])
 
 	// Verify default creation time set
 	result = generateOCIAnnotations(testChart, "")
 
 	// Check that created annotation exists
 	_, ok = result[ocispec.AnnotationCreated]
-	require.True(t, ok, "%s annotation not created", ocispec.AnnotationCreated)
+	require.Truef(t, ok, "%s annotation not created", ocispec.AnnotationCreated)
 
 	createdTimeAnnotation, err := time.Parse(time.RFC3339, result[ocispec.AnnotationCreated])
-	require.NoError(t, err, "%s annotation with value '%s' not in RFC3339 format", ocispec.AnnotationCreated, result[ocispec.AnnotationCreated])
+	require.NoErrorf(t, err, "%s annotation with value '%s' not in RFC3339 format", ocispec.AnnotationCreated, result[ocispec.AnnotationCreated])
 
 	// Verify creation annotation after (or equals) time test began
-	assert.GreaterOrEqual(t, nowTime, createdTimeAnnotation, "%s annotation with value '%s' not configured properly. Annotation value is not after %s", ocispec.AnnotationCreated, result[ocispec.AnnotationCreated], nowTimeString)
+	assert.GreaterOrEqualf(t, nowTime, createdTimeAnnotation, "%s annotation with value '%s' not configured properly. Annotation value is not after %s", ocispec.AnnotationCreated, result[ocispec.AnnotationCreated], nowTimeString)
 }

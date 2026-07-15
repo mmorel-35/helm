@@ -56,11 +56,11 @@ func TestCreateCmd(t *testing.T) {
 	acc, err := chart.NewAccessor(c)
 	require.NoError(t, err)
 
-	assert.Equal(t, cname, acc.Name(), "Expected %q name, got %q", cname, acc.Name())
+	assert.Equalf(t, cname, acc.Name(), "Expected %q name, got %q", cname, acc.Name())
 	metadata := acc.MetadataAsMap()
 	apiVersion, ok := metadata["APIVersion"].(string)
-	require.True(t, ok, "APIVersion not found in metadata")
-	assert.Equal(t, chartv2.APIVersionV2, apiVersion, "Wrong API version: %q", apiVersion)
+	require.Truef(t, ok, "APIVersion not found in metadata")
+	assert.Equalf(t, chartv2.APIVersionV2, apiVersion, "Wrong API version: %q", apiVersion)
 }
 
 func TestCreateStarterCmd(t *testing.T) {
@@ -113,7 +113,7 @@ func TestCreateStarterCmd(t *testing.T) {
 			} else {
 				dest, err = chartutil.Create("starterchart", starterchart)
 			}
-			require.NoError(t, err, "Could not create chart")
+			require.NoErrorf(t, err, "Could not create chart")
 			t.Logf("Created %s", dest)
 
 			tplpath := filepath.Join(starterchart, "starterchart", "templates", "foo.tpl")
@@ -151,18 +151,18 @@ func TestCreateStarterCmd(t *testing.T) {
 			chartName := acc.Name()
 			metadata := acc.MetadataAsMap()
 			apiVersion, ok := metadata["APIVersion"].(string)
-			require.True(t, ok, "APIVersion not found in metadata")
+			require.Truef(t, ok, "APIVersion not found in metadata")
 			var templates []string
 			for _, tpl := range acc.Templates() {
 				templates = append(templates, tpl.Name)
 			}
 
-			assert.Equal(t, cname, chartName, "Expected %q name, got %q", cname, chartName)
-			assert.Equal(t, tt.expectedVersion, apiVersion, "Wrong API version: expected %q, got %q", tt.expectedVersion, apiVersion)
+			assert.Equalf(t, cname, chartName, "Expected %q name, got %q", cname, chartName)
+			assert.Equalf(t, tt.expectedVersion, apiVersion, "Wrong API version: expected %q, got %q", tt.expectedVersion, apiVersion)
 
 			// Verify custom template exists
 			found := slices.Contains(templates, "templates/foo.tpl")
-			assert.True(t, found, "Did not find foo.tpl")
+			assert.Truef(t, found, "Did not find foo.tpl")
 		})
 	}
 }
@@ -192,11 +192,11 @@ func TestCreateCmdChartAPIVersionV2(t *testing.T) {
 	acc, err := chart.NewAccessor(c)
 	require.NoError(t, err)
 
-	assert.Equal(t, cname, acc.Name(), "Expected %q name, got %q", cname, acc.Name())
+	assert.Equalf(t, cname, acc.Name(), "Expected %q name, got %q", cname, acc.Name())
 	metadata := acc.MetadataAsMap()
 	apiVersion, ok := metadata["APIVersion"].(string)
-	require.True(t, ok, "APIVersion not found in metadata")
-	assert.Equal(t, chartv2.APIVersionV2, apiVersion, "Wrong API version: expected %q, got %q", chartv2.APIVersionV2, apiVersion)
+	require.Truef(t, ok, "APIVersion not found in metadata")
+	assert.Equalf(t, chartv2.APIVersionV2, apiVersion, "Wrong API version: expected %q, got %q", chartv2.APIVersionV2, apiVersion)
 }
 
 func TestCreateCmdChartAPIVersionV3(t *testing.T) {
@@ -220,11 +220,11 @@ func TestCreateCmdChartAPIVersionV3(t *testing.T) {
 	acc, err := chart.NewAccessor(c)
 	require.NoError(t, err)
 
-	assert.Equal(t, cname, acc.Name(), "Expected %q name, got %q", cname, acc.Name())
+	assert.Equalf(t, cname, acc.Name(), "Expected %q name, got %q", cname, acc.Name())
 	metadata := acc.MetadataAsMap()
 	apiVersion, ok := metadata["APIVersion"].(string)
-	require.True(t, ok, "APIVersion not found in metadata")
-	assert.Equal(t, chartv3.APIVersionV3, apiVersion, "Wrong API version: expected %q, got %q", chartv3.APIVersionV3, apiVersion)
+	require.Truef(t, ok, "APIVersion not found in metadata")
+	assert.Equalf(t, chartv3.APIVersionV3, apiVersion, "Wrong API version: expected %q, got %q", chartv3.APIVersionV3, apiVersion)
 }
 
 func TestCreateCmdInvalidChartAPIVersion(t *testing.T) {
@@ -234,8 +234,8 @@ func TestCreateCmdInvalidChartAPIVersion(t *testing.T) {
 
 	// Run a create with invalid version
 	_, _, err := executeActionCommand("create --chart-api-version=v1 " + cname)
-	require.Error(t, err, "Expected error for invalid API version, got nil")
+	require.Errorf(t, err, "Expected error for invalid API version, got nil")
 
 	expectedErr := "unsupported chart API version: v1 (supported: v2, v3)"
-	assert.EqualError(t, err, expectedErr, "Expected error %q, got %q", expectedErr, err.Error())
+	assert.EqualErrorf(t, err, expectedErr, "Expected error %q, got %q", expectedErr, err.Error())
 }

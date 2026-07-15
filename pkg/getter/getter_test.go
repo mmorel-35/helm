@@ -33,7 +33,7 @@ func TestProvider(t *testing.T) {
 		func(_ ...Option) (Getter, error) { return nil, nil },
 	}
 
-	assert.True(t, p.Provides("three"), "Expected provider to provide three")
+	assert.Truef(t, p.Provides("three"), "Expected provider to provide three")
 }
 
 func TestProviders(t *testing.T) {
@@ -48,7 +48,7 @@ func TestProviders(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = ps.ByScheme("five")
-	assert.Error(t, err, "Did not expect handler for five")
+	assert.Errorf(t, err, "Did not expect handler for five")
 }
 
 func TestProvidersWithTimeout(t *testing.T) {
@@ -60,7 +60,7 @@ func TestProvidersWithTimeout(t *testing.T) {
 	client, err := httpGetter.httpClient(httpGetter.opts)
 	require.NoError(t, err)
 	got := client.Timeout
-	assert.Equal(t, want, got, "Expected %q, got %q", want, got)
+	assert.Equalf(t, want, got, "Expected %q, got %q", want, got)
 }
 
 func TestAll(t *testing.T) {
@@ -68,7 +68,7 @@ func TestAll(t *testing.T) {
 	env.PluginsDirectory = pluginDir
 
 	all := All(env)
-	assert.Len(t, all, 4, "expected 4 providers (default plus three plugins), got %d", len(all))
+	assert.Lenf(t, all, 4, "expected 4 providers (default plus three plugins), got %d", len(all))
 
 	_, err := all.ByScheme("test2")
 	assert.NoError(t, err)

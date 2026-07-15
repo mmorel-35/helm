@@ -66,10 +66,10 @@ func TestValidatePluginData(t *testing.T) {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			err := item.plug.Metadata().Validate()
 			if item.pass {
-				require.NoError(t, err, "failed to validate case %d", i)
+				require.NoErrorf(t, err, "failed to validate case %d", i)
 			} else {
-				require.Error(t, err, "expected case %d to fail", i)
-				assert.ErrorContains(t, err, item.errString, "expected case %d error to contain %q", i, item.errString)
+				require.Errorf(t, err, "expected case %d to fail", i)
+				assert.ErrorContainsf(t, err, item.errString, "expected case %d error to contain %q", i, item.errString)
 			}
 		})
 	}
@@ -122,7 +122,7 @@ func TestMetadataValidateMultipleErrors(t *testing.T) {
 	}
 
 	err := metadata.Validate()
-	require.Error(t, err, "expected validation to fail with multiple errors")
+	require.Errorf(t, err, "expected validation to fail with multiple errors")
 
 	errStr := err.Error()
 
@@ -148,5 +148,5 @@ func TestMetadataValidateMultipleErrors(t *testing.T) {
 		}
 	}
 
-	assert.GreaterOrEqual(t, errorCount, len(expectedErrors), "expected %d errors, but only found %d in: %v", len(expectedErrors), errorCount, errStr)
+	assert.GreaterOrEqualf(t, errorCount, len(expectedErrors), "expected %d errors, but only found %d in: %v", len(expectedErrors), errorCount, errStr)
 }

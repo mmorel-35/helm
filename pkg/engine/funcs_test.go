@@ -135,7 +135,7 @@ keyInElement1 = "valueInElement1"`,
 	for _, tt := range tests {
 		var b strings.Builder
 		require.NoError(t, template.Must(template.New("test").Funcs(funcMap()).Parse(tt.tpl)).Execute(&b, tt.vars))
-		assert.Equal(t, tt.expect, b.String(), tt.tpl)
+		assert.Equalf(t, tt.expect, b.String(), tt.tpl)
 	}
 
 	loopMap := map[string]any{
@@ -187,7 +187,7 @@ keyInElement1 = "valueInElement1"`,
 		err := template.Must(template.New("test").Funcs(funcMap()).Parse(tt.tpl)).Execute(&b, tt.vars)
 		if tt.expect != nil {
 			require.NoError(t, err)
-			assert.Equal(t, tt.expect, b.String(), tt.tpl)
+			assert.Equalf(t, tt.expect, b.String(), tt.tpl)
 		} else {
 			assert.Error(t, err)
 		}
@@ -359,8 +359,8 @@ func TestDurationHelpers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var b strings.Builder
-			require.NoError(t, template.Must(template.New("test").Funcs(funcMap()).Parse(tt.tpl)).Execute(&b, tt.vars), tt.tpl)
-			assert.Equal(t, tt.expect, b.String(), tt.tpl)
+			require.NoErrorf(t, template.Must(template.New("test").Funcs(funcMap()).Parse(tt.tpl)).Execute(&b, tt.vars), tt.tpl)
+			assert.Equalf(t, tt.expect, b.String(), tt.tpl)
 		})
 	}
 
@@ -420,7 +420,7 @@ func TestDurationHelpers(t *testing.T) {
 					Funcs(funcMap()).
 					Parse(tt.tpl),
 			)
-			require.Error(t, tmpl.Execute(&b, tt.vars), tt.tpl)
+			require.Errorf(t, tmpl.Execute(&b, tt.vars), tt.tpl)
 		})
 	}
 }

@@ -93,14 +93,14 @@ func Test_ReadyChecker_IsReady_Pod(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.CoreV1().Pods(defaultNamespace).Create(t.Context(), tt.pod, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create Pod error")
+			require.NoErrorf(t, err, "Failed to create Pod error")
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
 			if tt.wantErr {
-				require.Error(t, err, "IsReady()")
+				require.Errorf(t, err, "IsReady()")
 			} else {
-				require.NoError(t, err, "IsReady()")
+				require.NoErrorf(t, err, "IsReady()")
 			}
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -163,10 +163,10 @@ func Test_ReadyChecker_IsReady_Job(t *testing.T) {
 			}
 			_, err := c.client.BatchV1().Jobs(defaultNamespace).Create(t.Context(), tt.job, metav1.CreateOptions{})
 
-			require.NoError(t, err, "Failed to create Job")
+			require.NoErrorf(t, err, "Failed to create Job")
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -231,14 +231,14 @@ func Test_ReadyChecker_IsReady_Deployment(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.AppsV1().Deployments(defaultNamespace).Create(t.Context(), tt.deployment, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create Deployment")
+			require.NoErrorf(t, err, "Failed to create Deployment")
 
 			_, err = c.client.AppsV1().ReplicaSets(defaultNamespace).Create(t.Context(), tt.replicaSet, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create ReplicaSet")
+			require.NoErrorf(t, err, "Failed to create ReplicaSet")
 
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -300,11 +300,11 @@ func Test_ReadyChecker_IsReady_PersistentVolumeClaim(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.CoreV1().PersistentVolumeClaims(defaultNamespace).Create(t.Context(), tt.pvc, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create PersistentVolumeClaim")
+			require.NoErrorf(t, err, "Failed to create PersistentVolumeClaim")
 
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -366,11 +366,11 @@ func Test_ReadyChecker_IsReady_Service(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.CoreV1().Services(defaultNamespace).Create(t.Context(), tt.svc, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create Service")
+			require.NoErrorf(t, err, "Failed to create Service")
 
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -432,11 +432,11 @@ func Test_ReadyChecker_IsReady_DaemonSet(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.AppsV1().DaemonSets(defaultNamespace).Create(t.Context(), tt.ds, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create DaemonSet")
+			require.NoErrorf(t, err, "Failed to create DaemonSet")
 
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -498,11 +498,11 @@ func Test_ReadyChecker_IsReady_StatefulSet(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.AppsV1().StatefulSets(defaultNamespace).Create(t.Context(), tt.ss, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create StatefulSet")
+			require.NoErrorf(t, err, "Failed to create StatefulSet")
 
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -579,11 +579,11 @@ func Test_ReadyChecker_IsReady_ReplicationController(t *testing.T) {
 				pausedAsReady: tt.fields.pausedAsReady,
 			}
 			_, err := c.client.CoreV1().ReplicationControllers(defaultNamespace).Create(t.Context(), tt.rc, metav1.CreateOptions{})
-			require.NoError(t, err, "Failed to create ReplicationController")
+			require.NoErrorf(t, err, "Failed to create ReplicationController")
 
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -646,8 +646,8 @@ func Test_ReadyChecker_IsReady_ReplicaSet(t *testing.T) {
 			}
 			//
 			got, err := c.IsReady(tt.args.ctx, tt.args.resource)
-			assert.Equal(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
-			assert.Equal(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.wantErr, (err != nil), "IsReady() error = %v, wantErr %v", err, tt.wantErr)
+			assert.Equalf(t, tt.want, got, "IsReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -969,15 +969,15 @@ func Test_ReadyChecker_podsReadyForObject(t *testing.T) {
 			c := NewReadyChecker(fake.NewClientset())
 			for _, pod := range tt.existPods {
 				_, err := c.client.CoreV1().Pods(defaultNamespace).Create(t.Context(), &pod, metav1.CreateOptions{})
-				require.NoError(t, err, "Failed to create Pod error")
+				require.NoErrorf(t, err, "Failed to create Pod error")
 			}
 			got, err := c.podsReadyForObject(t.Context(), tt.args.namespace, tt.args.obj)
 			if tt.wantErr {
-				require.Error(t, err, "podsReadyForObject()")
+				require.Errorf(t, err, "podsReadyForObject()")
 			} else {
-				require.NoError(t, err, "podsReadyForObject()")
+				require.NoErrorf(t, err, "podsReadyForObject()")
 			}
-			assert.Equal(t, tt.want, got, "podsReadyForObject() got = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "podsReadyForObject() got = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -1048,7 +1048,7 @@ func Test_ReadyChecker_jobReady(t *testing.T) {
 				t.Errorf("jobReady() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.Equal(t, tt.want, got, "jobReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "jobReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -1125,7 +1125,7 @@ func Test_ReadyChecker_serviceReady(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewReadyChecker(fake.NewClientset())
 			got := c.serviceReady(tt.args.service)
-			assert.Equal(t, tt.want, got, "serviceReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "serviceReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -1192,7 +1192,7 @@ func Test_ReadyChecker_crdBetaReady(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewReadyChecker(fake.NewClientset())
 			got := c.crdBetaReady(tt.args.crdBeta)
-			assert.Equal(t, tt.want, got, "crdBetaReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "crdBetaReady() = %v, want %v", got, tt.want)
 		})
 	}
 }
@@ -1259,7 +1259,7 @@ func Test_ReadyChecker_crdReady(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewReadyChecker(fake.NewClientset())
 			got := c.crdReady(tt.args.crdBeta)
-			assert.Equal(t, tt.want, got, "crdBetaReady() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "crdBetaReady() = %v, want %v", got, tt.want)
 		})
 	}
 }

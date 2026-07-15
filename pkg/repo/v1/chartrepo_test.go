@@ -79,7 +79,7 @@ func TestIndexCustomSchemeDownload(t *testing.T) {
 	idx, err := repo.DownloadIndexFile()
 	require.NoErrorf(t, err, "Failed to download index file to %s", idx)
 
-	require.Len(t, myCustomGetter.repoUrls, 1, "Custom Getter.Get should be called once")
+	require.Lenf(t, myCustomGetter.repoUrls, 1, "Custom Getter.Get should be called once")
 
 	expectedRepoIndexURL := repoURL + "/index.yaml"
 	require.Equalf(t, expectedRepoIndexURL, myCustomGetter.repoUrls[0], "Custom Getter.Get should be called with %s", expectedRepoIndexURL)
@@ -176,7 +176,7 @@ func TestFindChartInAuthAndTLSAndPassRepoURL(t *testing.T) {
 	// for both messages.
 	if runtime.GOOS == "darwin" {
 		if !strings.Contains(err.Error(), "x509: “Acme Co” certificate is not trusted") && !strings.Contains(err.Error(), "x509: certificate signed by unknown authority") {
-			t.Errorf("Expected TLS error for function  FindChartInAuthAndTLSAndPassRepoURL not found, but got a different error (%v)", err)
+			t.Error("Expected TLS error for function  FindChartInAuthAndTLSAndPassRepoURL not found, but got a different error")
 		}
 	} else {
 		assert.ErrorContainsf(t, err, "x509: certificate signed by unknown authority", "Expected TLS error for function  FindChartInAuthAndTLSAndPassRepoURL not found, but got a different error")
@@ -203,7 +203,7 @@ func TestErrorFindChartInRepoURL(t *testing.T) {
 	})
 
 	_, err := FindChartInRepoURL("http://someserver/something", "nginx", g)
-	require.Error(t, err, "Expected error for bad chart URL, but did not get any errors")
+	require.Errorf(t, err, "Expected error for bad chart URL, but did not get any errors")
 	require.ErrorContainsf(t, err, `looks like "http://someserver/something" is not a valid chart repository or cannot be reached`, "Expected error for bad chart URL, but got a different error")
 
 	srv, err := startLocalServerForTests(nil)
@@ -211,17 +211,17 @@ func TestErrorFindChartInRepoURL(t *testing.T) {
 	defer srv.Close()
 
 	_, err = FindChartInRepoURL(srv.URL, "nginx1", g)
-	require.Error(t, err, "Expected error for chart not found, but did not get any errors")
-	require.EqualError(t, err, `chart "nginx1" not found in `+srv.URL+` repository`, "Expected error for chart not found, but got a different error")
-	require.ErrorIs(t, err, ChartNotFoundError{}, "error is not of correct error type structure")
+	require.Errorf(t, err, "Expected error for chart not found, but did not get any errors")
+	require.EqualErrorf(t, err, `chart "nginx1" not found in `+srv.URL+` repository`, "Expected error for chart not found, but got a different error")
+	require.ErrorIsf(t, err, ChartNotFoundError{}, "error is not of correct error type structure")
 
 	_, err = FindChartInRepoURL(srv.URL, "nginx1", g, WithChartVersion("0.1.0"))
-	require.Error(t, err, "Expected error for chart not found, but did not get any errors")
-	require.EqualError(t, err, `chart "nginx1" version "0.1.0" not found in `+srv.URL+` repository`, "Expected error for chart not found, but got a different error")
+	require.Errorf(t, err, "Expected error for chart not found, but did not get any errors")
+	require.EqualErrorf(t, err, `chart "nginx1" version "0.1.0" not found in `+srv.URL+` repository`, "Expected error for chart not found, but got a different error")
 
 	_, err = FindChartInRepoURL(srv.URL, "chartWithNoURL", g)
-	require.Error(t, err, "Expected error for no chart URLs available, but did not get any errors")
-	assert.EqualError(t, err, `chart "chartWithNoURL" has no downloadable URLs`, "Expected error for chart not found, but got a different error")
+	require.Errorf(t, err, "Expected error for no chart URLs available, but did not get any errors")
+	assert.EqualErrorf(t, err, `chart "chartWithNoURL" has no downloadable URLs`, "Expected error for chart not found, but got a different error")
 }
 
 func TestResolveReferenceURL(t *testing.T) {

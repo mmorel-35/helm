@@ -124,35 +124,25 @@ func TestResolveChartOpts(t *testing.T) {
 	snapshotOpts := c.Options
 
 	for _, tt := range tests {
-		// reset chart downloader options for each test case
-		c.Options = snapshotOpts
+		t.Run(t.Name(), func(t *testing.T) {
+			// reset chart downloader options for each test case
+			c.Options = snapshotOpts
 
-		expect, err := getter.NewHTTPGetter(tt.expect...)
-		if err != nil {
-			t.Errorf("%s: failed to setup http client: %s", tt.name, err)
-			continue
-		}
+			expect, err := getter.NewHTTPGetter(tt.expect...)
+			require.NoErrorf(t, err, "failed to setup http client")
 
-		_, u, err := c.ResolveChartVersion(tt.ref, tt.version)
-		if err != nil {
-			t.Errorf("%s: failed with error %s", tt.name, err)
-			continue
-		}
+			_, u, err := c.ResolveChartVersion(tt.ref, tt.version)
+			require.NoError(t, err)
 
-		got, err := getter.NewHTTPGetter(
-			append(
-				c.Options,
-				getter.WithURL(u.String()),
-			)...,
-		)
-		if err != nil {
-			t.Errorf("%s: failed to create http client: %s", tt.name, err)
-			continue
-		}
-
-		if *(got.(*getter.HTTPGetter)) != *(expect.(*getter.HTTPGetter)) {
-			t.Errorf("%s: expected %s, got %s", tt.name, expect, got)
-		}
+			got, err := getter.NewHTTPGetter(
+				append(
+					c.Options,
+					getter.WithURL(u.String()),
+				)...,
+			)
+			require.NoErrorf(t, err, "failed to create http client")
+			assert.Equalf(t, *(expect.(*getter.HTTPGetter)), *(got.(*getter.HTTPGetter)), "%s: expected %s, got %s", tt.name, expect, got)
+		})
 	}
 }
 
@@ -161,7 +151,7 @@ func TestVerifyChart(t *testing.T) {
 	require.NoError(t, err)
 	// The verification is tested at length in the provenance package. Here,
 	// we just want a quick sanity check that the v is not empty.
-	assert.NotEmpty(t, v.FileHash, "Digest missing")
+	assert.NotEmptyf(t, v.FileHash, "Digest missing")
 }
 
 func TestIsTar(t *testing.T) {
@@ -175,7 +165,7 @@ func TestIsTar(t *testing.T) {
 	}
 
 	for src, expect := range tests {
-		assert.Equal(t, expect, isTar(src), "%q should be %t", src, expect)
+		assert.Equalf(t, expect, isTar(src), "%q should be %t", src, expect)
 	}
 }
 
@@ -215,7 +205,7 @@ func TestDownloadTo(t *testing.T) {
 
 	expect := filepath.Join(dest, cname)
 	assert.Equalf(t, expect, where, "Expected download to %s, got %s", expect, where)
-	assert.NotEmpty(t, v.FileHash, "File hash was empty, but verification is required.")
+	assert.NotEmptyf(t, v.FileHash, "File hash was empty, but verification is required.")
 
 	_, err = os.Stat(filepath.Join(dest, cname))
 	assert.NoError(t, err)
@@ -264,7 +254,7 @@ func TestDownloadTo_TLS(t *testing.T) {
 	target := filepath.Join(dest, "signtest-0.1.0.tgz")
 	expect := target
 	assert.Equalf(t, expect, where, "Expected download to %s, got %s", expect, where)
-	assert.NotEmpty(t, v.FileHash, "File hash was empty, but verification is required.")
+	assert.NotEmptyf(t, v.FileHash, "File hash was empty, but verification is required.")
 
 	_, err = os.Stat(target)
 	assert.NoError(t, err)
@@ -329,7 +319,7 @@ func TestScanReposForURL(t *testing.T) {
 	entry, err := c.scanReposForURL(u, rf)
 	require.NoError(t, err)
 
-	assert.Equal(t, "testing", entry.Name, "Unexpected repo %q for URL %q", entry.Name, u)
+	assert.Equalf(t, "testing", entry.Name, "Unexpected repo %q for URL %q", entry.Name, u)
 
 	// A lookup failure should produce an ErrNoOwnerRepo
 	u = "https://no.such.repo/foo/bar-1.23.4.tgz"
@@ -376,7 +366,7 @@ func TestDownloadToCache(t *testing.T) {
 
 		// Check that the file exists at the returned path
 		_, err = os.Stat(pth)
-		require.NoError(t, err, "chart should exist at returned path")
+		require.NoErrorf(t, err, "chart should exist at returned path")
 
 		// Check that it's in the cache
 		digest, _, err := c.ResolveChartVersion("test/signtest", "0.1.0")
@@ -388,7 +378,7 @@ func TestDownloadToCache(t *testing.T) {
 		copy(digestArray[:], digestBytes)
 
 		cachePath, err := c.Cache.Get(digestArray, CacheChart)
-		require.NoError(t, err, "chart should now be in cache")
+		require.NoErrorf(t, err, "chart should now be in cache")
 		require.Equal(t, pth, cachePath)
 	})
 
@@ -403,7 +393,7 @@ func TestDownloadToCache(t *testing.T) {
 		require.NotNil(t, v)
 
 		_, err = os.Stat(pth)
-		require.NoError(t, err, "chart should exist at returned path")
+		require.NoErrorf(t, err, "chart should exist at returned path")
 	})
 
 	// Case 3: Download with verification
@@ -418,7 +408,7 @@ func TestDownloadToCache(t *testing.T) {
 		_, v, err := c.DownloadToCache("test/signtest", "0.1.0")
 		require.NoError(t, err)
 		require.NotNil(t, v)
-		require.NotEmpty(t, v.FileHash, "verification should have a file hash")
+		require.NotEmptyf(t, v.FileHash, "verification should have a file hash")
 
 		// Check that both chart and prov are in cache
 		digest, _, err := c.ResolveChartVersion("test/signtest", "0.1.0")
@@ -430,10 +420,10 @@ func TestDownloadToCache(t *testing.T) {
 		copy(digestArray[:], digestBytes)
 
 		_, err = c.Cache.Get(digestArray, CacheChart)
-		require.NoError(t, err, "chart should be in cache")
+		require.NoErrorf(t, err, "chart should be in cache")
 
 		_, err = c.Cache.Get(digestArray, CacheProv)
-		require.NoError(t, err, "provenance file should be in cache")
+		require.NoErrorf(t, err, "provenance file should be in cache")
 
 		// Reset for other tests
 		c.Verify = VerifyNever

@@ -115,8 +115,8 @@ func TestRepoAdd(t *testing.T) {
 
 	o.forceUpdate = true
 
-	require.NoError(t, o.run(io.Discard), "Repository was not updated")
-	assert.NoError(t, o.run(io.Discard), "Duplicate repository name was added")
+	require.NoErrorf(t, o.run(io.Discard), "Repository was not updated")
+	assert.NoErrorf(t, o.run(io.Discard), "Duplicate repository name was added")
 }
 
 func TestRepoAddCheckLegalName(t *testing.T) {
@@ -236,5 +236,5 @@ func TestRepoAddWithPasswordFromStdin(t *testing.T) {
 	_, result, err = executeActionCommandStdinC(store, in, cmd)
 
 	require.NoError(t, err)
-	assert.Contains(t, result, fmt.Sprintf("%q has been added to your repositories", testName), "Repo was not successfully added. Output: %s", result)
+	assert.Containsf(t, result, fmt.Sprintf("%q has been added to your repositories", testName), "Repo was not successfully added. Output: %s", result)
 }

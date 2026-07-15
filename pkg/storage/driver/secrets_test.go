@@ -30,7 +30,7 @@ import (
 
 func TestSecretName(t *testing.T) {
 	c := newTestFixtureSecrets(t)
-	assert.Equal(t, SecretsDriverName, c.Name(), "Expected name to be %q, got %q", SecretsDriverName, c.Name())
+	assert.Equalf(t, SecretsDriverName, c.Name(), "Expected name to be %q, got %q", SecretsDriverName, c.Name())
 }
 
 func TestSecretGet(t *testing.T) {
@@ -44,7 +44,7 @@ func TestSecretGet(t *testing.T) {
 
 	// get release with key
 	got, err := secrets.Get(key)
-	require.NoError(t, err, "Failed to get release")
+	require.NoErrorf(t, err, "Failed to get release")
 	// compare fetched release with original
 	assert.Truef(t, reflect.DeepEqual(rel, got), "Expected {%v}, got {%v}", rel, got)
 }
@@ -58,9 +58,9 @@ func TestUNcompressedSecretGet(t *testing.T) {
 
 	// Create a test fixture which contains an uncompressed release
 	secret, err := newSecretsObject(key, rel, nil)
-	require.NoError(t, err, "Failed to create secret")
+	require.NoErrorf(t, err, "Failed to create secret")
 	b, err := json.Marshal(rel)
-	require.NoError(t, err, "Failed to marshal release")
+	require.NoErrorf(t, err, "Failed to marshal release")
 	secret.Data["release"] = []byte(base64.StdEncoding.EncodeToString(b))
 	var mock MockSecretsInterface
 	mock.objects = map[string]*v1.Secret{key: secret}
@@ -68,7 +68,7 @@ func TestUNcompressedSecretGet(t *testing.T) {
 
 	// get release with key
 	got, err := secrets.Get(key)
-	require.NoError(t, err, "Failed to get release")
+	require.NoErrorf(t, err, "Failed to get release")
 	// compare fetched release with original
 	assert.Truef(t, reflect.DeepEqual(rel, got), "Expected {%v}, got {%v}", rel, got)
 }
@@ -89,8 +89,8 @@ func TestSecretList(t *testing.T) {
 		return rls.Info.Status == common.StatusUninstalled
 	})
 	// check
-	require.NoError(t, err, "Failed to list deleted")
-	assert.Len(t, del, 2, "Expected 2 deleted, got %d:\n%v\n", len(del), del)
+	require.NoErrorf(t, err, "Failed to list deleted")
+	assert.Lenf(t, del, 2, "Expected 2 deleted, got %d:\n%v\n", len(del), del)
 
 	// list all deployed releases
 	dpl, err := secrets.List(func(rel release.Releaser) bool {
@@ -98,8 +98,8 @@ func TestSecretList(t *testing.T) {
 		return rls.Info.Status == common.StatusDeployed
 	})
 	// check
-	require.NoError(t, err, "Failed to list deployed")
-	assert.Len(t, dpl, 2, "Expected 2 deployed, got %d", len(dpl))
+	require.NoErrorf(t, err, "Failed to list deployed")
+	assert.Lenf(t, dpl, 2, "Expected 2 deployed, got %d", len(dpl))
 
 	// list all superseded releases
 	ssd, err := secrets.List(func(rel release.Releaser) bool {
@@ -107,14 +107,14 @@ func TestSecretList(t *testing.T) {
 		return rls.Info.Status == common.StatusSuperseded
 	})
 	// check
-	require.NoError(t, err, "Failed to list superseded")
-	assert.Len(t, ssd, 2, "Expected 2 superseded, got %d", len(ssd))
+	require.NoErrorf(t, err, "Failed to list superseded")
+	assert.Lenf(t, ssd, 2, "Expected 2 superseded, got %d", len(ssd))
 	// Check if release having both system and custom labels, this is needed to ensure that selector filtering would work.
 	rls := convertReleaserToV1(t, ssd[0])
 	_, ok := rls.Labels["name"]
-	require.True(t, ok, "Expected 'name' label in results, actual %v", rls.Labels)
+	require.Truef(t, ok, "Expected 'name' label in results, actual %v", rls.Labels)
 	_, ok = rls.Labels["key1"]
-	require.True(t, ok, "Expected 'key1' label in results, actual %v", rls.Labels)
+	require.Truef(t, ok, "Expected 'key1' label in results, actual %v", rls.Labels)
 }
 
 func TestSecretQuery(t *testing.T) {
@@ -128,8 +128,8 @@ func TestSecretQuery(t *testing.T) {
 	}...)
 
 	rls, err := secrets.Query(map[string]string{"status": "deployed"})
-	require.NoError(t, err, "Failed to query")
-	require.Len(t, rls, 2, "Expected 2 results, actual %d", len(rls))
+	require.NoErrorf(t, err, "Failed to query")
+	require.Lenf(t, rls, 2, "Expected 2 results, actual %d", len(rls))
 
 	_, err = secrets.Query(map[string]string{"name": "notExist"})
 	assert.ErrorIs(t, err, ErrReleaseNotFound)
@@ -149,7 +149,7 @@ func TestSecretCreate(t *testing.T) {
 
 	// get the release back
 	got, err := secrets.Get(key)
-	require.NoError(t, err, "Failed to get release with key %q", key)
+	require.NoErrorf(t, err, "Failed to get release with key %q", key)
 
 	// compare created release with original
 	assert.Truef(t, reflect.DeepEqual(rel, got), "Expected {%v}, got {%v}", rel, got)
@@ -172,11 +172,11 @@ func TestSecretUpdate(t *testing.T) {
 
 	// fetch the updated release
 	goti, err := secrets.Get(key)
-	require.NoError(t, err, "Failed to get release with key %q", key)
+	require.NoErrorf(t, err, "Failed to get release with key %q", key)
 	got := convertReleaserToV1(t, goti)
 
 	// check release has actually been updated by comparing modified fields
-	assert.Equal(t, got.Info.Status, rel.Info.Status, "Expected status %s, got status %s", rel.Info.Status.String(), got.Info.Status.String())
+	assert.Equalf(t, got.Info.Status, rel.Info.Status, "Expected status %s, got status %s", rel.Info.Status.String(), got.Info.Status.String())
 }
 
 func TestSecretDelete(t *testing.T) {
@@ -190,11 +190,11 @@ func TestSecretDelete(t *testing.T) {
 
 	// perform the delete on a non-existing release
 	_, err := secrets.Delete("nonexistent")
-	require.ErrorIs(t, err, ErrReleaseNotFound, "Expected ErrReleaseNotFound")
+	require.ErrorIsf(t, err, ErrReleaseNotFound, "Expected ErrReleaseNotFound")
 
 	// perform the delete
 	rls, err := secrets.Delete(key)
-	require.NoError(t, err, "Failed to delete release with key %q", key)
+	require.NoErrorf(t, err, "Failed to delete release with key %q", key)
 	assert.Truef(t, reflect.DeepEqual(rel, rls), "Expected {%v}, got {%v}", rel, rls)
 	_, err = secrets.Get(key)
 	assert.ErrorIs(t, err, ErrReleaseNotFound)

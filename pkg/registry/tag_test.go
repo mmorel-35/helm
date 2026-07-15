@@ -27,7 +27,7 @@ func TestGetTagMatchingVersionOrConstraint_ExactMatch(t *testing.T) {
 	tags := []string{"1.0.0", "1.2.3", "2.0.0"}
 	got, err := GetTagMatchingVersionOrConstraint(tags, "1.2.3")
 	require.NoError(t, err)
-	require.Equal(t, "1.2.3", got, "expected exact match")
+	require.Equalf(t, "1.2.3", got, "expected exact match")
 }
 
 func TestGetTagMatchingVersionOrConstraint_EmptyVersionWildcard(t *testing.T) {
@@ -45,7 +45,7 @@ func TestGetTagMatchingVersionOrConstraint_ConstraintRange(t *testing.T) {
 	// Caret range
 	got, err := GetTagMatchingVersionOrConstraint(tags, "^1.0.0")
 	require.NoError(t, err)
-	require.Equal(t, "1.0.0", got, "first match in order")
+	require.Equalf(t, "1.0.0", got, "first match in order")
 
 	// Compound range
 	got, err = GetTagMatchingVersionOrConstraint(tags, ">=1.0.0 <2.0.0")
@@ -56,13 +56,13 @@ func TestGetTagMatchingVersionOrConstraint_ConstraintRange(t *testing.T) {
 func TestGetTagMatchingVersionOrConstraint_InvalidConstraint(t *testing.T) {
 	tags := []string{"1.0.0"}
 	_, err := GetTagMatchingVersionOrConstraint(tags, ">a1")
-	require.Error(t, err, "expected error for invalid constraint")
+	require.Errorf(t, err, "expected error for invalid constraint")
 }
 
 func TestGetTagMatchingVersionOrConstraint_NoMatches(t *testing.T) {
 	tags := []string{"0.1.0", "0.2.0"}
 	_, err := GetTagMatchingVersionOrConstraint(tags, ">=1.0.0")
-	assert.ErrorContains(t, err, ">=1.0.0", "expected error to contain version string")
+	assert.ErrorContainsf(t, err, ">=1.0.0", "expected error to contain version string")
 }
 
 func TestGetTagMatchingVersionOrConstraint_SkipsNonSemverTags(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGetTagMatchingVersionOrConstraint_OrderMatters_FirstMatchReturned(t *te
 	tags := []string{"1.3.0", "1.2.0"}
 	got, err := GetTagMatchingVersionOrConstraint(tags, ">=1.2.0 <2.0.0")
 	require.NoError(t, err)
-	assert.Equal(t, "1.3.0", got, "first satisfying tag")
+	assert.Equalf(t, "1.3.0", got, "first satisfying tag")
 }
 
 func TestGetTagMatchingVersionOrConstraint_ExactMatchHasPrecedence(t *testing.T) {
@@ -85,5 +85,5 @@ func TestGetTagMatchingVersionOrConstraint_ExactMatchHasPrecedence(t *testing.T)
 	tags := []string{"1.3.0", "1.2.3"}
 	got, err := GetTagMatchingVersionOrConstraint(tags, "1.2.3")
 	require.NoError(t, err)
-	assert.Equal(t, "1.2.3", got, "expected exact match")
+	assert.Equalf(t, "1.2.3", got, "expected exact match")
 }

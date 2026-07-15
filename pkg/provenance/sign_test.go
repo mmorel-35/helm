@@ -108,7 +108,7 @@ func TestMessageBlock(t *testing.T) {
 	require.NoError(t, err)
 	got := out.String()
 
-	assert.Equal(t, testMessageBlock, got, "Expected:\n%q\nGot\n%q\n", testMessageBlock, got)
+	assert.Equalf(t, testMessageBlock, got, "Expected:\n%q\nGot\n%q\n", testMessageBlock, got)
 }
 
 func TestParseMessageBlock(t *testing.T) {
@@ -121,7 +121,7 @@ func TestParseMessageBlock(t *testing.T) {
 	assert.Equalf(t, 1, lsc, "Expected 1 file, got %d", lsc)
 
 	hash, ok := sc.Files["hashtest-1.2.3.tgz"]
-	assert.True(t, ok, "hashtest file not found in Files")
+	assert.Truef(t, ok, "hashtest file not found in Files")
 	assert.Equalf(t, "sha256:c6841b3a895f1444a6738b5d04564a57e860ce42f8519c3be807fb6d9bee7888", hash, "Unexpected hash: %q", hash)
 }
 
@@ -156,7 +156,7 @@ func TestDigest(t *testing.T) {
 	sig, err := readSumFile(testSumfile)
 	require.NoError(t, err)
 
-	assert.Contains(t, sig, hash, "Expected %s to be in %s", hash, sig)
+	assert.Containsf(t, sig, hash, "Expected %s to be in %s", hash, sig)
 }
 
 func TestNewFromFiles(t *testing.T) {
@@ -174,14 +174,14 @@ func TestDigestFile(t *testing.T) {
 	sig, err := readSumFile(testSumfile)
 	require.NoError(t, err)
 
-	assert.Contains(t, sig, hash, "Expected %s to be in %s", hash, sig)
+	assert.Containsf(t, sig, hash, "Expected %s to be in %s", hash, sig)
 }
 
 func TestDecryptKey(t *testing.T) {
 	k, err := NewFromKeyring(testPasswordKeyfile, testPasswordKeyName)
 	require.NoError(t, err)
 
-	require.True(t, k.Entity.PrivateKey.Encrypted, "Key is not encrypted")
+	require.Truef(t, k.Entity.PrivateKey.Encrypted, "Key is not encrypted")
 
 	// We give this a simple callback that returns the password.
 	require.NoError(t, k.DecryptKey(func(_ string) ([]byte, error) {
@@ -192,7 +192,7 @@ func TestDecryptKey(t *testing.T) {
 	k, err = NewFromKeyring(testPasswordKeyfile, testPasswordKeyName)
 	require.NoError(t, err)
 	// Now we give it a bogus password.
-	require.Error(t, k.DecryptKey(func(_ string) ([]byte, error) {
+	require.Errorf(t, k.DecryptKey(func(_ string) ([]byte, error) {
 		return []byte("secrets_and_lies"), nil
 	}), "Expected an error when giving a bogus passphrase")
 }
@@ -211,14 +211,14 @@ func TestClearSign(t *testing.T) {
 	require.NoError(t, err)
 	t.Logf("Sig:\n%s", sig)
 
-	assert.Contains(t, sig, testMessageBlock, "expected message block to be in sig: %s", sig)
+	assert.Containsf(t, sig, testMessageBlock, "expected message block to be in sig: %s", sig)
 }
 
 func TestMixedKeyringRSASigningAndVerification(t *testing.T) {
 	signer, err := NewFromFiles(testKeyfile, testMixedKeyring)
 	require.NoError(t, err)
 
-	require.NotEmpty(t, signer.KeyRing, "expected signer keyring to be loaded")
+	require.NotEmptyf(t, signer.KeyRing, "expected signer keyring to be loaded")
 
 	hasEdDSA := false
 	for _, entity := range signer.KeyRing {
@@ -239,11 +239,11 @@ func TestMixedKeyringRSASigningAndVerification(t *testing.T) {
 		}
 	}
 
-	assert.True(t, hasEdDSA, "expected %s to include an Ed25519 public key", testMixedKeyring)
+	assert.Truef(t, hasEdDSA, "expected %s to include an Ed25519 public key", testMixedKeyring)
 
-	require.NotNil(t, signer.Entity, "expected signer entity to be loaded")
-	require.NotNil(t, signer.Entity.PrivateKey, "expected signer private key to be loaded")
-	assert.Equal(t, packet.PubKeyAlgoRSA, signer.Entity.PrivateKey.PubKeyAlgo, "expected RSA key")
+	require.NotNilf(t, signer.Entity, "expected signer entity to be loaded")
+	require.NotNilf(t, signer.Entity.PrivateKey, "expected signer private key to be loaded")
+	assert.Equalf(t, packet.PubKeyAlgoRSA, signer.Entity.PrivateKey.PubKeyAlgo, "expected RSA key")
 
 	metadataBytes := loadChartMetadataForSigning(t, testChartfile)
 
@@ -251,17 +251,17 @@ func TestMixedKeyringRSASigningAndVerification(t *testing.T) {
 	require.NoError(t, err)
 
 	sig, err := signer.ClearSign(archiveData, filepath.Base(testChartfile), metadataBytes)
-	require.NoError(t, err, "failed to sign chart")
+	require.NoErrorf(t, err, "failed to sign chart")
 
 	verification, err := signer.Verify(archiveData, []byte(sig), filepath.Base(testChartfile))
-	require.NoError(t, err, "failed to verify chart signature")
+	require.NoErrorf(t, err, "failed to verify chart signature")
 
-	require.NotNil(t, verification.SignedBy, "expected verification to include signer")
-	require.NotNil(t, verification.SignedBy.PrimaryKey, "expected verification to include signer primary key")
-	assert.Equal(t, packet.PubKeyAlgoRSA, verification.SignedBy.PrimaryKey.PubKeyAlgo, "expected verification to report RSA key")
+	require.NotNilf(t, verification.SignedBy, "expected verification to include signer")
+	require.NotNilf(t, verification.SignedBy.PrimaryKey, "expected verification to include signer primary key")
+	assert.Equalf(t, packet.PubKeyAlgoRSA, verification.SignedBy.PrimaryKey.PubKeyAlgo, "expected verification to report RSA key")
 
 	_, ok := verification.SignedBy.Identities[testKeyName]
-	assert.True(t, ok, "expected verification to be signed by %q", testKeyName)
+	assert.Truef(t, ok, "expected verification to be signed by %q", testKeyName)
 }
 
 // failSigner always fails to sign and returns an error
@@ -289,8 +289,8 @@ func TestClearSignError(t *testing.T) {
 	require.NoError(t, err)
 
 	sig, err := signer.ClearSign(archiveData, filepath.Base(testChartfile), metadataBytes)
-	require.Error(t, err, "didn't get an error from ClearSign but expected one")
-	assert.Empty(t, sig, "expected an empty signature after failed ClearSign but got %q", sig)
+	require.Errorf(t, err, "didn't get an error from ClearSign but expected one")
+	assert.Emptyf(t, sig, "expected an empty signature after failed ClearSign but got %q", sig)
 }
 
 func TestVerify(t *testing.T) {
@@ -306,9 +306,9 @@ func TestVerify(t *testing.T) {
 	require.NoError(t, err)
 
 	ver, err := signer.Verify(archiveData, sigData, filepath.Base(testChartfile))
-	require.NoError(t, err, "Failed to pass verify")
-	assert.NotEmpty(t, ver.FileHash, "Verification is missing hash.")
-	assert.NotNil(t, ver.SignedBy, "No SignedBy field")
+	require.NoErrorf(t, err, "Failed to pass verify")
+	assert.NotEmptyf(t, ver.FileHash, "Verification is missing hash.")
+	assert.NotNilf(t, ver.SignedBy, "No SignedBy field")
 	assert.Equalf(t, filepath.Base(testChartfile), ver.FileName, "FileName is unexpectedly %q", ver.FileName)
 
 	// Read the tampered signature file data
@@ -319,7 +319,7 @@ func TestVerify(t *testing.T) {
 	require.Errorf(t, err, "Expected %s to fail.", testTamperedSigBlock)
 
 	var sErr pgperrors.SignatureError
-	if assert.ErrorAs(t, err, &sErr, "Expected invalid signature error") {
+	if assert.ErrorAsf(t, err, &sErr, "Expected invalid signature error") {
 		t.Logf("Tampered sig block error: %s (%T)", sErr, sErr)
 	}
 }

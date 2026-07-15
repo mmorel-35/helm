@@ -40,6 +40,6 @@ func TestIsCompatibleRange(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		assert.Equal(t, tt.expected, IsCompatibleRange(tt.constraint, tt.ver), "expected constraint %s to be %v for %s", tt.constraint, tt.expected, tt.ver)
+		assert.Equalf(t, tt.expected, IsCompatibleRange(tt.constraint, tt.ver), "expected constraint %s to be %v for %s", tt.constraint, tt.expected, tt.ver)
 	}
 }

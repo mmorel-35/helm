@@ -31,7 +31,7 @@ func TestProvider(t *testing.T) {
 		func(_ ...Option) (Pusher, error) { return nil, nil },
 	}
 
-	assert.True(t, p.Provides("three"), "Expected provider to provide three")
+	assert.Truef(t, p.Provides("three"), "Expected provider to provide three")
 }
 
 func TestProviders(t *testing.T) {
@@ -46,13 +46,13 @@ func TestProviders(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = ps.ByScheme("five")
-	assert.Error(t, err, "Did not expect handler for five")
+	assert.Errorf(t, err, "Did not expect handler for five")
 }
 
 func TestAll(t *testing.T) {
 	env := cli.New()
 	all := All(env)
-	assert.Len(t, all, 1, "expected 1 provider (OCI), got %d", len(all))
+	assert.Lenf(t, all, 1, "expected 1 provider (OCI), got %d", len(all))
 }
 
 func TestByScheme(t *testing.T) {

@@ -44,7 +44,7 @@ func TestListStates(t *testing.T) {
 		"unknown":             ListUnknown,
 		"totally made up key": ListUnknown,
 	} {
-		assert.Equal(t, expect.FromName(input), expect, "Expected %d for %s", expect, input)
+		assert.Equalf(t, expect.FromName(input), expect, "Expected %d for %s", expect, input)
 		// This is a cheap way to verify that ListAll actually allows everything but Unknown
 		if got := expect.FromName(input); got != ListUnknown && got&ListAll == 0 {
 			t.Errorf("Expected %s to match the ListAll filter", input)
@@ -277,7 +277,7 @@ func makeMeSomeReleasesWithStaleFailure(t *testing.T, store *storage.Storage) {
 
 	all, err := store.ListReleases()
 	require.NoError(t, err)
-	assert.Len(t, all, 5, "sanity test: five items added")
+	assert.Lenf(t, all, 5, "sanity test: five items added")
 }
 
 func TestList_Filter(t *testing.T) {
@@ -326,7 +326,7 @@ func makeMeSomeReleases(t *testing.T, store *storage.Storage) {
 
 	all, err := store.ListReleases()
 	require.NoError(t, err)
-	assert.Len(t, all, 3, "sanity test: three items added")
+	assert.Lenf(t, all, 3, "sanity test: three items added")
 }
 
 func TestFilterLatestReleases(t *testing.T) {

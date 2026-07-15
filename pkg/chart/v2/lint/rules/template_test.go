@@ -41,7 +41,7 @@ func TestValidateAllowedExtension(t *testing.T) {
 	}
 	var successTest = []string{"/foo.yaml", "foo.yaml", "foo.tpl", "/foo/bar/baz.yaml", "NOTES.txt"}
 	for _, test := range successTest {
-		assert.NoError(t, validateAllowedExtension(test), "validateAllowedExtension('%s') to return no error", test)
+		assert.NoErrorf(t, validateAllowedExtension(test), "validateAllowedExtension('%s') to return no error", test)
 	}
 }
 
@@ -58,7 +58,7 @@ func TestTemplateParsing(t *testing.T) {
 		TemplateLinterSkipSchemaValidation(false))
 	res := linter.Messages
 
-	require.Len(t, res, 1, "Expected one error, got %d, %v", len(res), res)
+	require.Lenf(t, res, 1, "Expected one error, got %d, %v", len(res), res)
 	assert.ErrorContains(t, res[0].Err, "deliberateSyntaxError")
 }
 
@@ -80,7 +80,7 @@ func TestTemplateIntegrationHappyPath(t *testing.T) {
 		TemplateLinterSkipSchemaValidation(false))
 	res := linter.Messages
 
-	require.Empty(t, res, "Expected no error, got %d, %v", len(res), res)
+	require.Emptyf(t, res, "Expected no error, got %d, %v", len(res), res)
 }
 
 func TestMultiTemplateFail(t *testing.T) {
@@ -92,7 +92,7 @@ func TestMultiTemplateFail(t *testing.T) {
 		TemplateLinterSkipSchemaValidation(false))
 	res := linter.Messages
 
-	require.Len(t, res, 1, "Expected 1 error, got %d, %v", len(res), res)
+	require.Lenf(t, res, 1, "Expected 1 error, got %d, %v", len(res), res)
 	assert.ErrorContains(t, res[0].Err, "object name does not conform to Kubernetes naming requirements")
 }
 
@@ -345,7 +345,7 @@ spec:
       - name: nginx
         image: nginx:1.14.2
 	`
-	assert.Error(t, validateMatchSelector(md, manifest), "expected Deployment with no selector to fail")
+	assert.Errorf(t, validateMatchSelector(md, manifest), "expected Deployment with no selector to fail")
 }
 
 func TestValidateTopIndentLevel(t *testing.T) {
@@ -417,7 +417,7 @@ items:
       annotations:
         helm.sh/resource-policy: keep
 `
-	require.Error(t, validateListAnnotations(md, manifest), "expected list with nested keep annotations to fail")
+	require.Errorf(t, validateListAnnotations(md, manifest), "expected list with nested keep annotations to fail")
 
 	manifest = `
 apiVersion: v1
@@ -445,6 +445,6 @@ func TestIsYamlFileExtension(t *testing.T) {
 
 	for _, test := range tests {
 		result := isYamlFileExtension(test.filename)
-		assert.Equal(t, test.expected, result, "isYamlFileExtension(%s) = %v; want %v", test.filename, result, test.expected)
+		assert.Equalf(t, test.expected, result, "isYamlFileExtension(%s) = %v; want %v", test.filename, result, test.expected)
 	}
 }

@@ -231,7 +231,7 @@ func TestSelectorsForObject(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				expected := labels.Set(tt.expectedLabels)
-				assert.True(t, selector.Matches(expected), "expected selector to match")
+				assert.Truef(t, selector.Matches(expected), "expected selector to match")
 			}
 		})
 	}
@@ -297,12 +297,12 @@ func TestLegacyWaiter_waitForPodSuccess(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			done, err := lw.waitForPodSuccess(tt.obj, "foo")
 			if tt.wantErr {
-				require.Error(t, err, "expected error, got none")
-				require.ErrorContains(t, err, tt.errMessage, "expected error to contain %q, got %q", tt.errMessage, err.Error())
+				require.Errorf(t, err, "expected error, got none")
+				require.ErrorContainsf(t, err, tt.errMessage, "expected error to contain %q, got %q", tt.errMessage, err.Error())
 			} else {
 				require.NoError(t, err)
 			}
-			assert.Equal(t, tt.wantDone, done, "got done=%v, want %v", done, tt.wantDone)
+			assert.Equalf(t, tt.wantDone, done, "got done=%v, want %v", done, tt.wantDone)
 		})
 	}
 }
@@ -384,11 +384,11 @@ func TestLegacyWaiter_waitForJob(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			done, err := lw.waitForJob(tt.obj, "test-job")
 			if tt.wantErr {
-				require.Error(t, err, "expected error, got none")
+				require.Errorf(t, err, "expected error, got none")
 				require.ErrorContainsf(t, err, tt.errMessage, "expected error to contain %q, got %q", tt.errMessage, err.Error())
 			} else {
 				require.NoError(t, err)
-				assert.Equal(t, tt.wantDone, done, "got done=%v, want %v", done, tt.wantDone)
+				assert.Equalf(t, tt.wantDone, done, "got done=%v, want %v", done, tt.wantDone)
 			}
 		})
 	}
@@ -447,7 +447,7 @@ func TestLegacyWaiter_isRetryableError(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := lw.isRetryableError(tt.err, info)
-			assert.Equal(t, tt.wantRetry, got, "isRetryableError() = %v, want %v", got, tt.wantRetry)
+			assert.Equalf(t, tt.wantRetry, got, "isRetryableError() = %v, want %v", got, tt.wantRetry)
 		})
 	}
 }

@@ -57,7 +57,7 @@ func TestAtomicWriteFile_CreateTempError(t *testing.T) {
 	reader := bytes.NewReader([]byte("test content"))
 	mode := os.FileMode(0o644)
 
-	assert.Error(t, AtomicWriteFile(invalidPath, reader, mode), "Expected error when CreateTemp fails")
+	assert.Errorf(t, AtomicWriteFile(invalidPath, reader, mode), "Expected error when CreateTemp fails")
 }
 
 // TestAtomicWriteFile_EmptyContent tests with empty content
@@ -68,7 +68,7 @@ func TestAtomicWriteFile_EmptyContent(t *testing.T) {
 	reader := bytes.NewReader([]byte(""))
 	mode := os.FileMode(0o644)
 
-	require.NoError(t, AtomicWriteFile(testpath, reader, mode), "AtomicWriteFile error with empty content")
+	require.NoErrorf(t, AtomicWriteFile(testpath, reader, mode), "AtomicWriteFile error with empty content")
 
 	got, err := os.ReadFile(testpath)
 	require.NoError(t, err)
@@ -86,7 +86,7 @@ func TestAtomicWriteFile_LargeContent(t *testing.T) {
 	reader := bytes.NewReader([]byte(largeContent))
 	mode := os.FileMode(0o644)
 
-	require.NoError(t, AtomicWriteFile(testpath, reader, mode), "AtomicWriteFile error with large content")
+	require.NoErrorf(t, AtomicWriteFile(testpath, reader, mode), "AtomicWriteFile error with large content")
 
 	got, err := os.ReadFile(testpath)
 	require.NoError(t, err)
@@ -101,13 +101,13 @@ func TestPlatformAtomicWriteFile_OverwritesExisting(t *testing.T) {
 	path := filepath.Join(dir, "overwrite_test")
 
 	first := bytes.NewReader([]byte("first"))
-	require.NoError(t, PlatformAtomicWriteFile(path, first, 0o644), "first write failed")
+	require.NoErrorf(t, PlatformAtomicWriteFile(path, first, 0o644), "first write failed")
 
 	second := bytes.NewReader([]byte("second"))
-	require.NoError(t, PlatformAtomicWriteFile(path, second, 0o644), "second write failed")
+	require.NoErrorf(t, PlatformAtomicWriteFile(path, second, 0o644), "second write failed")
 
 	contents, err := os.ReadFile(path)
-	require.NoError(t, err, "failed reading result")
+	require.NoErrorf(t, err, "failed reading result")
 
 	require.Equal(t, "second", string(contents))
 }

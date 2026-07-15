@@ -371,8 +371,8 @@ func TestGetVersionSet(t *testing.T) {
 	vs, err := GetVersionSet(client.Discovery())
 	require.NoError(t, err)
 
-	assert.True(t, vs.Has("v1"), "Expected supported versions to at least include v1.")
-	assert.False(t, vs.Has("nosuchversion/v1"), "Non-existent version is reported found.")
+	assert.Truef(t, vs.Has("v1"), "Expected supported versions to at least include v1.")
+	assert.Falsef(t, vs.Has("nosuchversion/v1"), "Non-existent version is reported found.")
 }
 
 // Mock PostRenderer for testing
@@ -1738,7 +1738,7 @@ data:
 
 				for expectedFile, expectedContent := range tt.expectedFiles {
 					actualContent, exists := files[expectedFile]
-					assert.True(t, exists, "Expected file %s not found", expectedFile)
+					assert.Truef(t, exists, "Expected file %s not found", expectedFile)
 					assert.Equal(t, expectedContent, actualContent)
 				}
 			}
@@ -1788,7 +1788,7 @@ data:
 	assert.Len(t, reconstructed, len(originalFiles))
 	for filename, originalContent := range originalFiles {
 		reconstructedContent, exists := reconstructed[filename]
-		assert.True(t, exists, "File %s should exist in reconstructed files", filename)
+		assert.Truef(t, exists, "File %s should exist in reconstructed files", filename)
 
 		// Normalize whitespace for comparison since YAML processing might affect formatting
 		normalizeContent := func(content string) string {
@@ -2076,7 +2076,7 @@ metadata:
 	)
 
 	require.NoError(t, err)
-	assert.Equal(t, 1, calls, "combined strategy should invoke the post-renderer exactly once")
+	assert.Equalf(t, 1, calls, "combined strategy should invoke the post-renderer exactly once")
 	assert.Contains(t, lastInput, "hook-cm")
 	assert.Contains(t, lastInput, "template-cm")
 }
@@ -2112,7 +2112,7 @@ metadata:
 	)
 
 	require.NoError(t, err)
-	assert.Equal(t, 1, calls, "unset strategy must preserve backwards-compatible combined behavior")
+	assert.Equalf(t, 1, calls, "unset strategy must preserve backwards-compatible combined behavior")
 }
 
 func TestRenderResources_PostRenderer_SeparateSplitsHooksAndTemplates(t *testing.T) {
@@ -2146,12 +2146,12 @@ metadata:
 	)
 
 	require.NoError(t, err)
-	assert.Len(t, inputs, 2, "separate strategy should invoke the post-renderer twice when both hooks and templates exist")
+	assert.Lenf(t, inputs, 2, "separate strategy should invoke the post-renderer twice when both hooks and templates exist")
 	for _, in := range inputs {
 		hasHook := strings.Contains(in, "hook-cm")
 		hasTemplate := strings.Contains(in, "template-cm")
-		assert.False(t, hasHook && hasTemplate, "a single post-render invocation must not contain both hook and template resources")
-		assert.True(t, hasHook || hasTemplate, "each post-render invocation must contain either a hook or a template")
+		assert.Falsef(t, hasHook && hasTemplate, "a single post-render invocation must not contain both hook and template resources")
+		assert.Truef(t, hasHook || hasTemplate, "each post-render invocation must contain either a hook or a template")
 	}
 }
 
@@ -2180,7 +2180,7 @@ metadata:
 	)
 
 	require.NoError(t, err)
-	assert.Equal(t, 1, calls, "separate strategy should skip the empty hook group and invoke the post-renderer only once")
+	assert.Equalf(t, 1, calls, "separate strategy should skip the empty hook group and invoke the post-renderer only once")
 }
 
 func TestRenderResources_PostRenderer_NoHooksSkipsHooks(t *testing.T) {
@@ -2214,9 +2214,9 @@ metadata:
 	)
 
 	require.NoError(t, err)
-	assert.Len(t, inputs, 1, "nohooks strategy should invoke the post-renderer exactly once (for templates only)")
-	assert.NotContains(t, inputs[0], "hook-cm", "hooks must not be sent to the post-renderer")
-	assert.Contains(t, inputs[0], "template-cm", "templates must be sent to the post-renderer")
+	assert.Lenf(t, inputs, 1, "nohooks strategy should invoke the post-renderer exactly once (for templates only)")
+	assert.NotContainsf(t, inputs[0], "hook-cm", "hooks must not be sent to the post-renderer")
+	assert.Containsf(t, inputs[0], "template-cm", "templates must be sent to the post-renderer")
 
 	// Hooks still round-trip through the release so they can execute.
 	require.Len(t, hooks, 1)
@@ -2251,7 +2251,7 @@ metadata:
 	)
 
 	require.NoError(t, err)
-	assert.Equal(t, 0, calls, "nohooks strategy should not invoke the post-renderer when the chart only has hooks")
+	assert.Equalf(t, 0, calls, "nohooks strategy should not invoke the post-renderer when the chart only has hooks")
 }
 
 func TestRenderResources_PostRenderer_UnknownStrategyErrors(t *testing.T) {

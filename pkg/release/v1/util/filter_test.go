@@ -46,6 +46,6 @@ func TestFilterAll(t *testing.T) {
 	require.Len(t, ls, 1)
 
 	r0 := ls[0]
-	require.NotEqual(t, 4, r0.Version, "got release with status revision 4")
-	require.NotEqual(t, common.StatusUninstalled, r0.Info.Status, "got release with status UNINSTALLED")
+	require.NotEqualf(t, 4, r0.Version, "got release with status revision 4")
+	require.NotEqualf(t, common.StatusUninstalled, r0.Info.Status, "got release with status UNINSTALLED")
 }

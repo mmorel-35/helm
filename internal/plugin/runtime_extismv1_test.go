@@ -44,12 +44,12 @@ func buildLoadExtismPlugin(t *testing.T, dir string) pluginRaw {
 
 	m, err := loadMetadata(metadataData)
 	require.NoError(t, err)
-	require.Equal(t, "extism/v1", m.Runtime, "expected plugin runtime to be extism/v1")
+	require.Equalf(t, "extism/v1", m.Runtime, "expected plugin runtime to be extism/v1")
 
 	cmd := exec.CommandContext(t.Context(), "make", "-C", dir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	require.NoError(t, cmd.Run(), "failed to build plugin in %q", dir)
+	require.NoErrorf(t, cmd.Run(), "failed to build plugin in %q", dir)
 
 	return pluginRaw{
 		Metadata: *m,
@@ -59,7 +59,7 @@ func buildLoadExtismPlugin(t *testing.T, dir string) pluginRaw {
 
 func TestRuntimeConfigExtismV1Validate(t *testing.T) {
 	rc := RuntimeConfigExtismV1{}
-	assert.NoError(t, rc.Validate(), "expected no error for empty RuntimeConfigExtismV1")
+	assert.NoErrorf(t, rc.Validate(), "expected no error for empty RuntimeConfigExtismV1")
 }
 
 func TestRuntimeExtismV1InvokePlugin(t *testing.T) {
@@ -70,8 +70,8 @@ func TestRuntimeExtismV1InvokePlugin(t *testing.T) {
 
 	p, err := r.CreatePlugin(pr.Dir, &pr.Metadata)
 
-	require.NoError(t, err, "expected no error creating plugin")
-	assert.NotNil(t, p, "expected plugin to be created")
+	require.NoErrorf(t, err, "expected no error creating plugin")
+	assert.NotNilf(t, p, "expected plugin to be created")
 
 	output, err := p.Invoke(t.Context(), &Input{
 		Message: schema.InputMessageTestV1{

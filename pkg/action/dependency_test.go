@@ -87,7 +87,7 @@ func TestDependencyStatus_Dashes(t *testing.T) {
 
 	// Now try to get the deps
 	stat := NewDependency().dependencyStatus(dir, dep, first)
-	assert.Equal(t, "ok", stat, "Unexpected status: %q", stat)
+	assert.Equalf(t, "ok", stat, "Unexpected status: %q", stat)
 }
 
 func TestStatArchiveForStatus(t *testing.T) {

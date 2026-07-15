@@ -34,7 +34,7 @@ func TestNewOCIPusher(t *testing.T) {
 	require.NoError(t, err)
 
 	_, ok := p.(*OCIPusher)
-	require.True(t, ok, "Expected NewOCIPusher to produce an *OCIPusher")
+	require.Truef(t, ok, "Expected NewOCIPusher to produce an *OCIPusher")
 
 	cd := "../../testdata"
 	join := filepath.Join
@@ -51,12 +51,12 @@ func TestNewOCIPusher(t *testing.T) {
 	require.NoError(t, err)
 
 	op, ok := p.(*OCIPusher)
-	require.True(t, ok, "Expected NewOCIPusher to produce an *OCIPusher")
-	assert.Equal(t, pub, op.opts.certFile, "Expected NewOCIPusher to contain %q as the public key file, got %q", pub, op.opts.certFile)
-	assert.Equal(t, priv, op.opts.keyFile, "Expected NewOCIPusher to contain %q as the private key file, got %q", priv, op.opts.keyFile)
-	assert.Equal(t, ca, op.opts.caFile, "Expected NewOCIPusher to contain %q as the CA file, got %q", ca, op.opts.caFile)
-	assert.Equal(t, plainHTTP, op.opts.plainHTTP, "Expected NewOCIPusher to have plainHTTP as %t, got %t", plainHTTP, op.opts.plainHTTP)
-	assert.Equal(t, insecureSkipTLSVerify, op.opts.insecureSkipTLSVerify, "Expected NewOCIPusher to have insecureSkipVerifyTLS as %t, got %t", insecureSkipTLSVerify, op.opts.insecureSkipTLSVerify)
+	require.Truef(t, ok, "Expected NewOCIPusher to produce an *OCIPusher")
+	assert.Equalf(t, pub, op.opts.certFile, "Expected NewOCIPusher to contain %q as the public key file, got %q", pub, op.opts.certFile)
+	assert.Equalf(t, priv, op.opts.keyFile, "Expected NewOCIPusher to contain %q as the private key file, got %q", priv, op.opts.keyFile)
+	assert.Equalf(t, ca, op.opts.caFile, "Expected NewOCIPusher to contain %q as the CA file, got %q", ca, op.opts.caFile)
+	assert.Equalf(t, plainHTTP, op.opts.plainHTTP, "Expected NewOCIPusher to have plainHTTP as %t, got %t", plainHTTP, op.opts.plainHTTP)
+	assert.Equalf(t, insecureSkipTLSVerify, op.opts.insecureSkipTLSVerify, "Expected NewOCIPusher to have insecureSkipVerifyTLS as %t, got %t", insecureSkipTLSVerify, op.opts.insecureSkipTLSVerify)
 
 	// Test if setting registryClient is being passed to the ops
 	registryClient, err := registry.NewClient()
@@ -68,8 +68,8 @@ func TestNewOCIPusher(t *testing.T) {
 	require.NoError(t, err)
 
 	op, ok = p.(*OCIPusher)
-	require.True(t, ok, "expected NewOCIPusher to produce an *OCIPusher")
-	assert.Equal(t, registryClient, op.opts.registryClient, "Expected NewOCIPusher to contain %p as RegistryClient, got %p", registryClient, op.opts.registryClient)
+	require.Truef(t, ok, "expected NewOCIPusher to produce an *OCIPusher")
+	assert.Equalf(t, registryClient, op.opts.registryClient, "Expected NewOCIPusher to contain %p as RegistryClient, got %p", registryClient, op.opts.registryClient)
 }
 
 func TestOCIPusher_Push_ErrorHandling(t *testing.T) {
@@ -190,17 +190,17 @@ func TestOCIPusher_newRegistryClient(t *testing.T) {
 			require.NoError(t, err)
 
 			op, ok := pusher.(*OCIPusher)
-			require.True(t, ok, "Expected *OCIPusher")
+			require.Truef(t, ok, "Expected *OCIPusher")
 
 			client, err := op.newRegistryClient()
 			if tt.expectError {
-				require.Error(t, err, "Expected error but got none")
+				require.Errorf(t, err, "Expected error but got none")
 				if tt.errorContains != "" {
 					require.ErrorContainsf(t, err, tt.errorContains, "Expected error containing %q, got %q", tt.errorContains, err.Error())
 				}
 			} else {
 				require.NoError(t, err)
-				require.NotNil(t, client, "Expected non-nil registry client")
+				require.NotNilf(t, client, "Expected non-nil registry client")
 			}
 		})
 	}
@@ -338,13 +338,13 @@ func TestOCIPusher_Push_MultipleOptions(t *testing.T) {
 
 	// Test that multiple options are applied correctly
 	// We expect an error since we're not actually pushing to a registry
-	require.Error(t, pusher.Push(chartPath, "oci://localhost:5000/test",
+	require.Errorf(t, pusher.Push(chartPath, "oci://localhost:5000/test",
 		WithPlainHTTP(true),
 		WithInsecureSkipTLSVerify(true),
 	), "Expected error when pushing without a valid registry")
 
 	// Verify options were applied
 	op := pusher.(*OCIPusher)
-	assert.True(t, op.opts.plainHTTP, "Expected plainHTTP option to be applied")
-	assert.True(t, op.opts.insecureSkipTLSVerify, "Expected insecureSkipTLSVerify option to be applied")
+	assert.Truef(t, op.opts.plainHTTP, "Expected plainHTTP option to be applied")
+	assert.Truef(t, op.opts.insecureSkipTLSVerify, "Expected insecureSkipTLSVerify option to be applied")
 }

@@ -37,7 +37,7 @@ func TestCollectPlugins(t *testing.T) {
 	p, err := collectGetterPlugins(env)
 	require.NoError(t, err)
 
-	assert.Len(t, p, 2, "Expected 2 plugins, got %d: %v", len(p), p)
+	assert.Lenf(t, p, 2, "Expected 2 plugins, got %d: %v", len(p), p)
 
 	_, err = p.ByScheme("test2")
 	require.NoError(t, err)
@@ -46,7 +46,7 @@ func TestCollectPlugins(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = p.ByScheme("nosuchthing")
-	require.Error(t, err, "did not expect protocol handler for nosuchthing")
+	require.Errorf(t, err, "did not expect protocol handler for nosuchthing")
 }
 
 func TestConvertOptions(t *testing.T) {
@@ -145,19 +145,19 @@ func TestCollectGetterPluginsPassesEnv(t *testing.T) {
 
 	providers, err := collectGetterPlugins(env)
 	require.NoError(t, err)
-	require.NotEmpty(t, providers, "expected at least one plugin provider")
+	require.NotEmptyf(t, providers, "expected at least one plugin provider")
 
 	getter, err := providers.ByScheme("test")
 	require.NoError(t, err)
 
 	gp, ok := getter.(*getterPlugin)
-	require.True(t, ok, "expected getter to be a *getterPlugin")
+	require.Truef(t, ok, "expected getter to be a *getterPlugin")
 
-	require.NotEmpty(t, gp.env, "expected env to be set on getterPlugin")
+	require.NotEmptyf(t, gp.env, "expected env to be set on getterPlugin")
 	envMap := plugin.ParseEnv(gp.env)
 
-	assert.Contains(t, envMap, "HELM_DEBUG", "expected HELM_DEBUG in env")
-	assert.Equal(t, "true", envMap["HELM_DEBUG"], "expected HELM_DEBUG to be true")
-	assert.Contains(t, envMap, "HELM_PLUGINS", "expected HELM_PLUGINS in env")
-	assert.Equal(t, pluginDir, envMap["HELM_PLUGINS"], "expected HELM_PLUGINS to match pluginsDirectory")
+	assert.Containsf(t, envMap, "HELM_DEBUG", "expected HELM_DEBUG in env")
+	assert.Equalf(t, "true", envMap["HELM_DEBUG"], "expected HELM_DEBUG to be true")
+	assert.Containsf(t, envMap, "HELM_PLUGINS", "expected HELM_PLUGINS in env")
+	assert.Equalf(t, pluginDir, envMap["HELM_PLUGINS"], "expected HELM_PLUGINS to match pluginsDirectory")
 }

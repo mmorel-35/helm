@@ -50,7 +50,7 @@ func TestUpgradeCmd(t *testing.T) {
 	chartPath := filepath.Join(tmpChart, cfile.Metadata.Name)
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart for upgrade")
 	ch, err := loader.Load(chartPath)
-	require.NoError(t, err, "Error loading chart")
+	require.NoErrorf(t, err, "Error loading chart")
 	_ = release.Mock(&release.MockReleaseOptions{
 		Name:  "funny-bunny",
 		Chart: ch,
@@ -61,7 +61,7 @@ func TestUpgradeCmd(t *testing.T) {
 
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart")
 	ch, err = loader.Load(chartPath)
-	require.NoError(t, err, "Error loading updated chart")
+	require.NoErrorf(t, err, "Error loading updated chart")
 
 	// update chart version again
 	cfile.Metadata.Version = "0.1.3"
@@ -69,7 +69,7 @@ func TestUpgradeCmd(t *testing.T) {
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart")
 	var ch2 *chart.Chart
 	ch2, err = loader.Load(chartPath)
-	require.NoError(t, err, "Error loading updated chart")
+	require.NoErrorf(t, err, "Error loading updated chart")
 
 	missingDepsPath := "testdata/testcharts/chart-missing-deps"
 	badDepsPath := "testdata/testcharts/chart-bad-requirements"
@@ -262,7 +262,7 @@ func TestUpgradeWithValue(t *testing.T) {
 
 	updatedRel, err := releaserToV1Release(updatedReli)
 	require.NoError(t, err)
-	assert.Contains(t, updatedRel.Manifest, "drink: tea", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
+	assert.Containsf(t, updatedRel.Manifest, "drink: tea", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
 }
 
 func TestUpgradeWithStringValue(t *testing.T) {
@@ -284,7 +284,7 @@ func TestUpgradeWithStringValue(t *testing.T) {
 
 	updatedRel, err := releaserToV1Release(updatedReli)
 	require.NoError(t, err)
-	assert.Contains(t, updatedRel.Manifest, "drink: coffee", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
+	assert.Containsf(t, updatedRel.Manifest, "drink: coffee", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
 }
 
 func TestUpgradeInstallWithSubchartNotes(t *testing.T) {
@@ -306,8 +306,8 @@ func TestUpgradeInstallWithSubchartNotes(t *testing.T) {
 
 	upgradedRel, err := releaserToV1Release(upgradedReli)
 	require.NoError(t, err)
-	assert.Contains(t, upgradedRel.Info.Notes, "PARENT NOTES", "The parent notes are not set correctly. NOTES: %s", upgradedRel.Info.Notes)
-	assert.Contains(t, upgradedRel.Info.Notes, "SUBCHART NOTES", "The subchart notes are not set correctly. NOTES: %s", upgradedRel.Info.Notes)
+	assert.Containsf(t, upgradedRel.Info.Notes, "PARENT NOTES", "The parent notes are not set correctly. NOTES: %s", upgradedRel.Info.Notes)
+	assert.Containsf(t, upgradedRel.Info.Notes, "SUBCHART NOTES", "The subchart notes are not set correctly. NOTES: %s", upgradedRel.Info.Notes)
 }
 
 func TestUpgradeWithValuesFile(t *testing.T) {
@@ -329,7 +329,7 @@ func TestUpgradeWithValuesFile(t *testing.T) {
 
 	updatedRel, err := releaserToV1Release(updatedReli)
 	require.NoError(t, err)
-	assert.Contains(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
+	assert.Containsf(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
 }
 
 func TestUpgradeWithValuesFromStdin(t *testing.T) {
@@ -354,7 +354,7 @@ func TestUpgradeWithValuesFromStdin(t *testing.T) {
 
 	updatedRel, err := releaserToV1Release(updatedReli)
 	require.NoError(t, err)
-	assert.Contains(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
+	assert.Containsf(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
 }
 
 func TestUpgradeInstallWithValuesFromStdin(t *testing.T) {
@@ -377,14 +377,14 @@ func TestUpgradeInstallWithValuesFromStdin(t *testing.T) {
 
 	updatedRel, err := releaserToV1Release(updatedReli)
 	require.NoError(t, err)
-	assert.Contains(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
+	assert.Containsf(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
 }
 
 func prepareMockRelease(t *testing.T, releaseName string) (func(n string, v int, ch *chart.Chart) *release.Release, *chart.Chart, string) {
 	t.Helper()
 	tmpChart := t.TempDir()
 	configmapData, err := os.ReadFile("testdata/testcharts/upgradetest/templates/configmap.yaml")
-	require.NoError(t, err, "Error loading template yaml")
+	require.NoErrorf(t, err, "Error loading template yaml")
 	cfile := &chart.Chart{
 		Metadata: &chart.Metadata{
 			APIVersion:  chart.APIVersionV1,
@@ -397,7 +397,7 @@ func prepareMockRelease(t *testing.T, releaseName string) (func(n string, v int,
 	chartPath := filepath.Join(tmpChart, cfile.Metadata.Name)
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart for upgrade")
 	ch, err := loader.Load(chartPath)
-	require.NoError(t, err, "Error loading chart")
+	require.NoErrorf(t, err, "Error loading chart")
 	_ = release.Mock(&release.MockReleaseOptions{
 		Name:  releaseName,
 		Chart: ch,
@@ -478,9 +478,9 @@ func prepareMockReleaseWithSecret(t *testing.T, releaseName string) (func(n stri
 	t.Helper()
 	tmpChart := t.TempDir()
 	configmapData, err := os.ReadFile("testdata/testcharts/chart-with-secret/templates/configmap.yaml")
-	require.NoError(t, err, "Error loading template yaml")
+	require.NoErrorf(t, err, "Error loading template yaml")
 	secretData, err := os.ReadFile("testdata/testcharts/chart-with-secret/templates/secret.yaml")
-	require.NoError(t, err, "Error loading template yaml")
+	require.NoErrorf(t, err, "Error loading template yaml")
 	modTime := time.Now()
 	cfile := &chart.Chart{
 		Metadata: &chart.Metadata{
@@ -494,7 +494,7 @@ func prepareMockReleaseWithSecret(t *testing.T, releaseName string) (func(n stri
 	chartPath := filepath.Join(tmpChart, cfile.Metadata.Name)
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart for upgrade")
 	ch, err := loader.Load(chartPath)
-	require.NoError(t, err, "Error loading chart")
+	require.NoErrorf(t, err, "Error loading chart")
 	_ = release.Mock(&release.MockReleaseOptions{
 		Name:  releaseName,
 		Chart: ch,
@@ -530,8 +530,8 @@ func TestUpgradeWithDryRun(t *testing.T) {
 
 	// No second release should be stored because this is a dry run.
 	_, err = store.Get(releaseName, 2)
-	require.Error(t, err, "expected error as there should be no new release but got none")
-	assert.Contains(t, out, "kind: Secret", "expected secret in output from --dry-run but found none")
+	require.Errorf(t, err, "expected error as there should be no new release but got none")
+	assert.Containsf(t, out, "kind: Secret", "expected secret in output from --dry-run but found none")
 
 	// Ensure the secret is not in the output
 	cmd = fmt.Sprintf("upgrade %s --dry-run --hide-secret '%s'", releaseName, chartPath)
@@ -540,13 +540,13 @@ func TestUpgradeWithDryRun(t *testing.T) {
 
 	// No second release should be stored because this is a dry run.
 	_, err = store.Get(releaseName, 2)
-	require.Error(t, err, "expected error as there should be no new release but got none")
-	assert.NotContains(t, out, "kind: Secret", "expected no secret in output from --dry-run --hide-secret but found one")
+	require.Errorf(t, err, "expected error as there should be no new release but got none")
+	assert.NotContainsf(t, out, "kind: Secret", "expected no secret in output from --dry-run --hide-secret but found one")
 
 	// Ensure there is an error when --hide-secret used without dry-run
 	cmd = fmt.Sprintf("upgrade %s --hide-secret '%s'", releaseName, chartPath)
 	_, _, err = executeActionCommandC(store, cmd)
-	assert.Error(t, err, "expected error when --hide-secret used without --dry-run")
+	assert.Errorf(t, err, "expected error when --hide-secret used without --dry-run")
 }
 
 func TestUpgradeInstallServerSideApply(t *testing.T) {
@@ -586,11 +586,11 @@ func TestUpgradeInstallServerSideApply(t *testing.T) {
 			require.NoError(t, err)
 
 			rel, err := store.Get(releaseName, 1)
-			require.NoError(t, err, "unexpected error getting release")
+			require.NoErrorf(t, err, "unexpected error getting release")
 
 			relV1, err := releaserToV1Release(rel)
-			require.NoError(t, err, "unexpected error converting release")
-			assert.Equal(t, tt.expectedApplyMethod, relV1.ApplyMethod, "expected ApplyMethod %q, got %q", tt.expectedApplyMethod, relV1.ApplyMethod)
+			require.NoErrorf(t, err, "unexpected error converting release")
+			assert.Equalf(t, tt.expectedApplyMethod, relV1.ApplyMethod, "expected ApplyMethod %q, got %q", tt.expectedApplyMethod, relV1.ApplyMethod)
 		})
 	}
 }

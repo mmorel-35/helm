@@ -77,7 +77,7 @@ func TestGetPluginName(t *testing.T) {
 			pluginName, err := GetPluginName(tt.source)
 
 			if tt.expectErr {
-				assert.Error(t, err, "expected error but got none")
+				assert.Errorf(t, err, "expected error but got none")
 				return
 			}
 

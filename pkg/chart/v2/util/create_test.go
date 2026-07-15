@@ -38,8 +38,8 @@ func TestCreate(t *testing.T) {
 	dir := filepath.Join(tdir, "foo")
 
 	mychart, err := loader.LoadDir(c)
-	require.NoError(t, err, "Failed to load newly created chart %q", c)
-	assert.Equal(t, "foo", mychart.Name(), "Expected name to be 'foo', got %q", mychart.Name())
+	require.NoErrorf(t, err, "Failed to load newly created chart %q", c)
+	assert.Equalf(t, "foo", mychart.Name(), "Expected name to be 'foo', got %q", mychart.Name())
 
 	for _, f := range []string{
 		ChartfileName,
@@ -74,8 +74,8 @@ func TestCreateFrom(t *testing.T) {
 	dir := filepath.Join(tdir, "foo")
 	c := filepath.Join(tdir, cf.Name)
 	mychart, err := loader.LoadDir(c)
-	require.NoError(t, err, "Failed to load newly created chart %q", c)
-	assert.Equal(t, "foo", mychart.Name(), "Expected name to be 'foo', got %q", mychart.Name())
+	require.NoErrorf(t, err, "Failed to load newly created chart %q", c)
+	assert.Equalf(t, "foo", mychart.Name(), "Expected name to be 'foo', got %q", mychart.Name())
 
 	for _, f := range []string{
 		ChartfileName,
@@ -87,7 +87,7 @@ func TestCreateFrom(t *testing.T) {
 
 		// Check each file to make sure <CHARTNAME> has been replaced
 		b, err := os.ReadFile(filepath.Join(dir, f))
-		require.NoError(t, err, "Unable to read file %s", f)
+		require.NoErrorf(t, err, "Unable to read file %s", f)
 		assert.Falsef(t, bytes.Contains(b, []byte("<CHARTNAME>")), "File %s contains <CHARTNAME>", f)
 	}
 }
@@ -113,8 +113,8 @@ func TestCreate_Overwrite(t *testing.T) {
 
 	data, err := os.ReadFile(tplname)
 	require.NoError(t, err)
-	require.NotEqual(t, "FOO", string(data), "File that should have been modified was not.")
-	assert.NotEqual(t, 0, errlog.Len(), "Expected warnings about overwriting files.")
+	require.NotEqualf(t, "FOO", string(data), "File that should have been modified was not.")
+	assert.NotEqualf(t, 0, errlog.Len(), "Expected warnings about overwriting files.")
 }
 
 func TestValidateChartName(t *testing.T) {

@@ -67,22 +67,22 @@ func TestVCSInstaller(t *testing.T) {
 
 	// ensure a VCSInstaller was returned
 	vcsInstaller, ok := i.(*VCSInstaller)
-	require.True(t, ok, "expected a VCSInstaller")
+	require.Truef(t, ok, "expected a VCSInstaller")
 
 	// set the testRepo in the VCSInstaller
 	vcsInstaller.Repo = repo
 
 	require.NoError(t, Install(i))
-	require.Equal(t, "0.1.1", repo.current, "expected version '0.1.1', got %q", repo.current)
+	require.Equalf(t, "0.1.1", repo.current, "expected version '0.1.1', got %q", repo.current)
 	expectedPath := helmpath.DataPath("plugins", "helm-env")
-	require.Equal(t, expectedPath, i.Path(), "expected path %q, got %q", expectedPath, i.Path())
+	require.Equalf(t, expectedPath, i.Path(), "expected path %q, got %q", expectedPath, i.Path())
 
 	// Install again to test plugin exists error
 	require.EqualErrorf(t, Install(i), "plugin already exists", "expected error for plugin exists")
 
 	// Testing FindSource method, expect error because plugin code is not a cloned repository
 	_, err = FindSource(i.Path())
-	require.Error(t, err, "expected error for inability to find plugin source, got none")
+	require.Errorf(t, err, "expected error for inability to find plugin source, got none")
 	require.EqualErrorf(t, err, "cannot get information about plugin source", "expected error for inability to find plugin source")
 }
 
@@ -97,7 +97,7 @@ func TestVCSInstallerNonExistentVersion(t *testing.T) {
 
 	// ensure a VCSInstaller was returned
 	_, ok := i.(*VCSInstaller)
-	require.True(t, ok, "expected a VCSInstaller")
+	require.Truef(t, ok, "expected a VCSInstaller")
 
 	if err := Install(i); err == nil {
 		t.Fatal("expected error for version does not exists, got none")
@@ -117,7 +117,7 @@ func TestVCSInstallerUpdate(t *testing.T) {
 
 	// ensure a VCSInstaller was returned
 	_, ok := i.(*VCSInstaller)
-	require.True(t, ok, "expected a VCSInstaller")
+	require.Truef(t, ok, "expected a VCSInstaller")
 
 	require.EqualErrorf(t, Update(i), "plugin does not exist", "expected error for plugin does not exist")
 
@@ -137,7 +137,7 @@ func TestVCSInstallerUpdate(t *testing.T) {
 	vcsInstaller := pluginInfo.(*VCSInstaller)
 
 	repoRemote := vcsInstaller.Repo.Remote()
-	require.Equal(t, source, repoRemote, "invalid source found, expected %q got %q", source, repoRemote)
+	require.Equalf(t, source, repoRemote, "invalid source found, expected %q got %q", source, repoRemote)
 
 	// Update plugin
 	require.NoError(t, Update(i))

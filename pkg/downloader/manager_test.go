@@ -49,7 +49,7 @@ func TestVersionEquals(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		assert.Equal(t, tt.expect, versionEquals(tt.v1, tt.v2), "%s: failed comparison of %q and %q (expect equal: %t)", tt.name, tt.v1, tt.v2, tt.expect)
+		assert.Equalf(t, tt.expect, versionEquals(tt.v1, tt.v2), "%s: failed comparison of %q and %q (expect equal: %t)", tt.name, tt.v1, tt.v2, tt.expect)
 	}
 }
 
@@ -70,11 +70,11 @@ func TestFindChartURL(t *testing.T) {
 	churl, username, password, insecureSkipTLSVerify, passcredentialsall, _, _, _, err := m.findChartURL(name, version, repoURL, repos)
 	require.NoError(t, err)
 
-	assert.Equal(t, "https://charts.helm.sh/stable/alpine-0.1.0.tgz", churl, "Unexpected URL %q", churl)
-	assert.Empty(t, username, "Unexpected username %q", username)
-	assert.Empty(t, password, "Unexpected password %q", password)
-	assert.False(t, passcredentialsall, "Unexpected passcredentialsall %t", passcredentialsall)
-	assert.False(t, insecureSkipTLSVerify, "Unexpected insecureSkipTLSVerify %t", insecureSkipTLSVerify)
+	assert.Equalf(t, "https://charts.helm.sh/stable/alpine-0.1.0.tgz", churl, "Unexpected URL %q", churl)
+	assert.Emptyf(t, username, "Unexpected username %q", username)
+	assert.Emptyf(t, password, "Unexpected password %q", password)
+	assert.Falsef(t, passcredentialsall, "Unexpected passcredentialsall %t", passcredentialsall)
+	assert.Falsef(t, insecureSkipTLSVerify, "Unexpected insecureSkipTLSVerify %t", insecureSkipTLSVerify)
 
 	name = "tlsfoo"
 	version = "1.2.3"
@@ -83,11 +83,11 @@ func TestFindChartURL(t *testing.T) {
 	churl, username, password, insecureSkipTLSVerify, passcredentialsall, _, _, _, err = m.findChartURL(name, version, repoURL, repos)
 	require.NoError(t, err)
 
-	assert.True(t, insecureSkipTLSVerify, "Unexpected insecureSkipTLSVerify %t", insecureSkipTLSVerify)
-	assert.Equal(t, "https://example.com/tlsfoo-1.2.3.tgz", churl, "Unexpected URL %q", churl)
-	assert.Empty(t, username, "Unexpected username %q", username)
-	assert.Empty(t, password, "Unexpected password %q", password)
-	assert.False(t, passcredentialsall, "Unexpected passcredentialsall %t", passcredentialsall)
+	assert.Truef(t, insecureSkipTLSVerify, "Unexpected insecureSkipTLSVerify %t", insecureSkipTLSVerify)
+	assert.Equalf(t, "https://example.com/tlsfoo-1.2.3.tgz", churl, "Unexpected URL %q", churl)
+	assert.Emptyf(t, username, "Unexpected username %q", username)
+	assert.Emptyf(t, password, "Unexpected password %q", password)
+	assert.Falsef(t, passcredentialsall, "Unexpected passcredentialsall %t", passcredentialsall)
 
 	name = "foo"
 	version = "1.2.3"
@@ -96,11 +96,11 @@ func TestFindChartURL(t *testing.T) {
 	churl, username, password, insecureSkipTLSVerify, passcredentialsall, _, _, _, err = m.findChartURL(name, version, repoURL, repos)
 	require.NoError(t, err)
 
-	assert.Equal(t, "http://example.com/helm/charts/foo-1.2.3.tgz", churl, "Unexpected URL %q", churl)
-	assert.Empty(t, username, "Unexpected username %q", username)
-	assert.Empty(t, password, "Unexpected password %q", password)
-	assert.False(t, passcredentialsall, "Unexpected passcredentialsall %t", passcredentialsall)
-	assert.False(t, insecureSkipTLSVerify, "Unexpected insecureSkipTLSVerify %t", insecureSkipTLSVerify)
+	assert.Equalf(t, "http://example.com/helm/charts/foo-1.2.3.tgz", churl, "Unexpected URL %q", churl)
+	assert.Emptyf(t, username, "Unexpected username %q", username)
+	assert.Emptyf(t, password, "Unexpected password %q", password)
+	assert.Falsef(t, passcredentialsall, "Unexpected passcredentialsall %t", passcredentialsall)
+	assert.Falsef(t, insecureSkipTLSVerify, "Unexpected insecureSkipTLSVerify %t", insecureSkipTLSVerify)
 }
 
 func TestGetRepoNames(t *testing.T) {
@@ -176,11 +176,11 @@ func TestGetRepoNames(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		require.False(t, tt.err, "Expected error in test %q", tt.name)
+		require.Falsef(t, tt.err, "Expected error in test %q", tt.name)
 
 		// m1 and m2 are the maps we want to compare
 		eq := reflect.DeepEqual(l, tt.expect)
-		assert.True(t, eq, "%s: expected map %v, got %v", tt.name, l, tt.name)
+		assert.Truef(t, eq, "%s: expected map %v, got %v", tt.name, l, tt.name)
 	}
 }
 
@@ -233,7 +233,7 @@ version: 0.1.0`
 		Repository: "file://./testdata/bad-local-subchart",
 		Version:    "0.1.0",
 	}
-	require.Error(t, m.downloadAll([]*chart.Dependency{badLocalDep}), "Expected error for bad dependency name")
+	require.Errorf(t, m.downloadAll([]*chart.Dependency{badLocalDep}), "Expected error for bad dependency name")
 }
 
 func TestUpdateBeforeBuild(t *testing.T) {
@@ -506,8 +506,8 @@ func TestKey(t *testing.T) {
 
 	for _, tt := range tests {
 		o, err := key(tt.name)
-		require.NoError(t, err, "unable to generate key for %q", tt.name)
-		assert.Equal(t, tt.expect, o, "wrong key name generated for %q, expected %q but got %q", tt.name, tt.expect, o)
+		require.NoErrorf(t, err, "unable to generate key for %q", tt.name)
+		assert.Equalf(t, tt.expect, o, "wrong key name generated for %q, expected %q but got %q", tt.name, tt.expect, o)
 	}
 }
 
@@ -602,7 +602,7 @@ func TestWriteLock(t *testing.T) {
 
 		lockfilePath := filepath.Join(dir, "Chart.lock")
 		_, err = os.Stat(lockfilePath)
-		require.NoError(t, err, "Chart.lock should exist")
+		require.NoErrorf(t, err, "Chart.lock should exist")
 
 		content, err := os.ReadFile(lockfilePath)
 		require.NoError(t, err)
@@ -620,7 +620,7 @@ func TestWriteLock(t *testing.T) {
 
 		lockfilePath := filepath.Join(dir, "requirements.lock")
 		_, err = os.Stat(lockfilePath)
-		require.NoError(t, err, "requirements.lock should exist")
+		require.NoErrorf(t, err, "requirements.lock should exist")
 
 		content, err := os.ReadFile(lockfilePath)
 		require.NoError(t, err)

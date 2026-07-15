@@ -65,12 +65,12 @@ func chartWithBadDependencies() chart.Chart {
 
 func TestValidateDependencyInChartsDir(t *testing.T) {
 	c := chartWithBadDependencies()
-	assert.Error(t, validateDependencyInChartsDir(&c), "chart should have been flagged for missing deps in chart directory")
+	assert.Errorf(t, validateDependencyInChartsDir(&c), "chart should have been flagged for missing deps in chart directory")
 }
 
 func TestValidateDependencyInMetadata(t *testing.T) {
 	c := chartWithBadDependencies()
-	assert.Error(t, validateDependencyInMetadata(&c), "chart should have been flagged for missing deps in chart metadata")
+	assert.Errorf(t, validateDependencyInMetadata(&c), "chart should have been flagged for missing deps in chart metadata")
 }
 
 func TestValidateDependenciesUnique(t *testing.T) {
@@ -128,7 +128,7 @@ func TestValidateDependenciesUnique(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		assert.Error(t, validateDependenciesUnique(&tt.chart), "chart should have been flagged for dependency shadowing")
+		assert.Errorf(t, validateDependenciesUnique(&tt.chart), "chart should have been flagged for dependency shadowing")
 	}
 }
 

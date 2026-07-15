@@ -68,7 +68,7 @@ bar
 baz
 
 `
-	assert.Equal(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
+	assert.Equalf(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
 }
 
 func TestShowNoValues(t *testing.T) {
@@ -81,7 +81,7 @@ func TestShowNoValues(t *testing.T) {
 	output, err := client.Run("")
 	require.NoError(t, err)
 
-	assert.Empty(t, output, "expected empty values buffer, got %s", output)
+	assert.Emptyf(t, output, "expected empty values buffer, got %s", output)
 }
 
 func TestShowValuesByJsonPathFormat(t *testing.T) {
@@ -92,7 +92,7 @@ func TestShowValuesByJsonPathFormat(t *testing.T) {
 	output, err := client.Run("")
 	require.NoError(t, err)
 	expect := "simpleValue"
-	assert.Equal(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
+	assert.Equalf(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
 }
 
 func TestShowCRDs(t *testing.T) {
@@ -122,7 +122,7 @@ bar
 baz
 
 `
-	assert.Equal(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
+	assert.Equalf(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
 }
 
 func TestShowNoReadme(t *testing.T) {
@@ -150,7 +150,7 @@ foo
 bar
 
 `
-	assert.Equal(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
+	assert.Equalf(t, expect, output, "Expected\n%q\nGot\n%q\n", expect, output)
 }
 
 func TestShowSetRegistryClient(t *testing.T) {

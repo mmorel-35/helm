@@ -489,5 +489,5 @@ data:
 	req.NoError(configuration.execHook(rel, release.HookPreInstall, kube.StatusWatcherStrategy, waitOptions, 600, false))
 
 	// Verify that WaitOptions were passed to GetWaiter
-	is.NotEmpty(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
+	is.NotEmptyf(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
 }

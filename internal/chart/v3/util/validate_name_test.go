@@ -85,9 +85,9 @@ func TestValidateMetadataName(t *testing.T) {
 	for input, expectPass := range names {
 		err := ValidateMetadataName(input)
 		if expectPass {
-			assert.NoError(t, err, "Expected %q to succeed", input)
+			assert.NoErrorf(t, err, "Expected %q to succeed", input)
 		} else {
-			assert.Error(t, err, "Expected %q to fail", input)
+			assert.Errorf(t, err, "Expected %q to fail", input)
 		}
 	}
 }

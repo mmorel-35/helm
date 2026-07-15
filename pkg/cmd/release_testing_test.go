@@ -73,7 +73,7 @@ func TestReleaseTestNotesHandling(t *testing.T) {
 	cmd1 := newReleaseTestCmd(actionConfig, &buf1)
 	cmd1.SetArgs([]string{"test-release"})
 	err1 := cmd1.Execute()
-	require.NoError(t, err1, "Unexpected error for default test")
+	require.NoErrorf(t, err1, "Unexpected error for default test")
 	output1 := buf1.String()
-	assert.NotContains(t, output1, "NOTES:", "Expected notes to be hidden by default, but found NOTES section in output: %s", output1)
+	assert.NotContainsf(t, output1, "NOTES:", "Expected notes to be hidden by default, but found NOTES section in output: %s", output1)
 }

@@ -84,7 +84,7 @@ func TestSaveChartNoRawData(t *testing.T) {
 	res := &Chart{}
 	req.NoError(json.Unmarshal(data, res))
 
-	is.Equal([]*common.File(nil), res.Raw)
+	is.Nil(res.Raw)
 }
 
 func TestMetadata(t *testing.T) {

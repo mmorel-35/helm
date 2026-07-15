@@ -35,20 +35,20 @@ func TestLoadChartfile(t *testing.T) {
 
 func verifyChartfile(t *testing.T, f *chart.Metadata, name string) {
 	t.Helper()
-	require.NotNil(t, f, "Failed verifyChartfile because f is nil")
-	assert.Equal(t, chart.APIVersionV1, f.APIVersion, "Expected API Version %q, got %q", chart.APIVersionV1, f.APIVersion)
-	assert.Equal(t, name, f.Name, "Expected %s, got %s", name, f.Name)
-	assert.Equal(t, "This is a frobnitz.", f.Description, "Unexpected description %q", f.Description)
-	assert.Equal(t, "1.2.3", f.Version, "Unexpected version %q", f.Version)
-	assert.Len(t, f.Maintainers, 2, "Expected 2 maintainers, got %d", len(f.Maintainers))
-	assert.Equal(t, "The Helm Team", f.Maintainers[0].Name, "Unexpected maintainer name.")
-	assert.Equal(t, "nobody@example.com", f.Maintainers[1].Email, "Unexpected maintainer email.")
-	require.Len(t, f.Sources, 1, "Unexpected number of sources")
-	assert.Equal(t, "https://example.com/foo/bar", f.Sources[0], "Expected https://example.com/foo/bar, got %s", f.Sources)
-	assert.Equal(t, "http://example.com", f.Home, "Unexpected home.")
-	assert.Equal(t, "https://example.com/64x64.png", f.Icon, "Unexpected icon: %q", f.Icon)
-	assert.Len(t, f.Keywords, 3, "Unexpected keywords")
-	require.Len(t, f.Annotations, 2, "Unexpected annotations")
+	require.NotNilf(t, f, "Failed verifyChartfile because f is nil")
+	assert.Equalf(t, chart.APIVersionV1, f.APIVersion, "Expected API Version %q, got %q", chart.APIVersionV1, f.APIVersion)
+	assert.Equalf(t, name, f.Name, "Expected %s, got %s", name, f.Name)
+	assert.Equalf(t, "This is a frobnitz.", f.Description, "Unexpected description %q", f.Description)
+	assert.Equalf(t, "1.2.3", f.Version, "Unexpected version %q", f.Version)
+	assert.Lenf(t, f.Maintainers, 2, "Expected 2 maintainers, got %d", len(f.Maintainers))
+	assert.Equalf(t, "The Helm Team", f.Maintainers[0].Name, "Unexpected maintainer name.")
+	assert.Equalf(t, "nobody@example.com", f.Maintainers[1].Email, "Unexpected maintainer email.")
+	require.Lenf(t, f.Sources, 1, "Unexpected number of sources")
+	assert.Equalf(t, "https://example.com/foo/bar", f.Sources[0], "Expected https://example.com/foo/bar, got %s", f.Sources)
+	assert.Equalf(t, "http://example.com", f.Home, "Unexpected home.")
+	assert.Equalf(t, "https://example.com/64x64.png", f.Icon, "Unexpected icon: %q", f.Icon)
+	assert.Lenf(t, f.Keywords, 3, "Unexpected keywords")
+	require.Lenf(t, f.Annotations, 2, "Unexpected annotations")
 
 	want, got := "extravalue", f.Annotations["extrakey"]
 	assert.Equalf(t, want, got, "Want %q, but got %q", want, got)
@@ -58,15 +58,15 @@ func verifyChartfile(t *testing.T, f *chart.Metadata, name string) {
 
 	kk := []string{"frobnitz", "sprocket", "dodad"}
 	for i, k := range f.Keywords {
-		assert.Equal(t, kk[i], k, "Expected %q, got %q", kk[i], k)
+		assert.Equalf(t, kk[i], k, "Expected %q, got %q", kk[i], k)
 	}
 }
 
 func TestIsChartDir(t *testing.T) {
 	validChartDir, err := IsChartDir("testdata/frobnitz")
 	require.NoError(t, err)
-	require.True(t, validChartDir, "expected valid chart directory")
+	require.Truef(t, validChartDir, "expected valid chart directory")
 	validChartDir, err = IsChartDir("testdata")
 	require.Error(t, err)
-	require.False(t, validChartDir, "expected invalid chart directory")
+	require.Falsef(t, validChartDir, "expected invalid chart directory")
 }

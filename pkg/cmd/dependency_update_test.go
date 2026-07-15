@@ -72,7 +72,7 @@ func TestDependencyUpdateCmd(t *testing.T) {
 	}
 
 	// This is written directly to stdout, so we have to capture as is.
-	assert.Contains(t, out, `update from the "test" chart repository`, "Repo did not get updated\n%s", out)
+	assert.Containsf(t, out, `update from the "test" chart repository`, "Repo did not get updated\n%s", out)
 
 	// Make sure the actual file got downloaded.
 	expect := dir(chartname, "charts/reqtest-0.1.0.tgz")
@@ -171,15 +171,15 @@ func TestDependencyUpdateCmd_DoNotDeleteOldChartsOnError(t *testing.T) {
 	require.NoError(t, err)
 	dependencies := []string{"compressedchart-0.1.0.tgz", "reqtest-0.1.0.tgz"}
 
-	require.Len(t, dependencies, len(files), "Expected %d chart dependencies, got %d", len(dependencies), len(files))
+	require.Lenf(t, dependencies, len(files), "Expected %d chart dependencies, got %d", len(dependencies), len(files))
 	for index, file := range files {
-		require.Equal(t, file.Name(), dependencies[index], "Chart dependency %s not matching %s", dependencies[index], file.Name())
+		require.Equalf(t, file.Name(), dependencies[index], "Chart dependency %s not matching %s", dependencies[index], file.Name())
 	}
 
 	// Make sure tmpcharts-x is deleted
 	tmpPath := filepath.Join(dir(chartname), fmt.Sprintf("tmpcharts-%d", os.Getpid()))
 	_, err = os.Stat(tmpPath)
-	require.ErrorIs(t, err, fs.ErrNotExist, "tmpcharts dir still exists")
+	require.ErrorIsf(t, err, fs.ErrNotExist, "tmpcharts dir still exists")
 }
 
 func TestDependencyUpdateCmd_WithRepoThatWasNotAdded(t *testing.T) {
@@ -216,7 +216,7 @@ func TestDependencyUpdateCmd_WithRepoThatWasNotAdded(t *testing.T) {
 	}
 
 	// This is written directly to stdout, so we have to capture as is
-	assert.Contains(t, out, `Getting updates for unmanaged Helm repositories...`, "No ‘unmanaged’ Helm repo used in test chartdependency or it doesn’t cause the creation "+
+	assert.Containsf(t, out, `Getting updates for unmanaged Helm repositories...`, "No ‘unmanaged’ Helm repo used in test chartdependency or it doesn’t cause the creation "+
 		"of an ‘ad hoc’ repo index cache file\n%s", out)
 }
 

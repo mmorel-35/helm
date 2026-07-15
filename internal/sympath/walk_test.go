@@ -83,14 +83,14 @@ func makeTree(t *testing.T) {
 	walkTree(tree, tree.name, func(path string, n *Node) {
 		if n.entries == nil {
 			if n.symLinkedTo != "" {
-				require.NoError(t, os.Symlink(n.symLinkedTo, path), "makeTree")
+				require.NoErrorf(t, os.Symlink(n.symLinkedTo, path), "makeTree")
 			} else {
 				fd, err := os.Create(path)
-				require.NoError(t, err, "makeTree")
+				require.NoErrorf(t, err, "makeTree")
 				fd.Close()
 			}
 		} else {
-			require.NoError(t, os.Mkdir(path, 0o770), "makeTree")
+			require.NoErrorf(t, os.Mkdir(path, 0o770), "makeTree")
 		}
 	})
 }
@@ -99,7 +99,7 @@ func checkMarks(t *testing.T, report bool) {
 	t.Helper()
 	walkTree(tree, tree.name, func(path string, n *Node) {
 		if report {
-			assert.Equal(t, n.expectedMarks, n.marks, "node %s", path)
+			assert.Equalf(t, n.expectedMarks, n.marks, "node %s", path)
 		}
 		n.marks = 0
 	})
@@ -133,9 +133,9 @@ func TestWalk(t *testing.T) {
 	}
 	// Expect no errors.
 	require.NoError(t, Walk(tree.name, markFn))
-	require.Empty(t, errors, "unexpected errors")
+	require.Emptyf(t, errors, "unexpected errors")
 	checkMarks(t, true)
 
 	// cleanup
-	assert.NoError(t, os.RemoveAll(tree.name), "removeTree")
+	assert.NoErrorf(t, os.RemoveAll(tree.name), "removeTree")
 }

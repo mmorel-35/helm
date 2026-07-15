@@ -327,7 +327,7 @@ func TestCreate(t *testing.T) {
 				require.NoError(t, err)
 
 				// See note above about limitations in supporting more than a single object
-				assert.Len(t, result.Created, 1, "expected 1 object created, got %d", len(result.Created))
+				assert.Lenf(t, result.Created, 1, "expected 1 object created, got %d", len(result.Created))
 			}
 
 			actions := []string{}
@@ -567,13 +567,13 @@ func TestUpdate(t *testing.T) {
 
 			// Special handling for the rollback test case
 			if name == "rollback after failed upgrade with removed resource" {
-				assert.Empty(t, result.Created, "expected 0 resource created, got %d", len(result.Created))
-				assert.Len(t, result.Updated, 1, "expected 1 resource updated, got %d", len(result.Updated))
-				assert.Empty(t, result.Deleted, "expected 0 resource deleted, got %d", len(result.Deleted))
+				assert.Emptyf(t, result.Created, "expected 0 resource created, got %d", len(result.Created))
+				assert.Lenf(t, result.Updated, 1, "expected 1 resource updated, got %d", len(result.Updated))
+				assert.Emptyf(t, result.Deleted, "expected 0 resource deleted, got %d", len(result.Deleted))
 			} else {
-				assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
-				assert.Len(t, result.Updated, 2, "expected 2 resource updated, got %d", len(result.Updated))
-				assert.Len(t, result.Deleted, 1, "expected 1 resource deleted, got %d", len(result.Deleted))
+				assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+				assert.Lenf(t, result.Updated, 2, "expected 2 resource updated, got %d", len(result.Updated))
+				assert.Lenf(t, result.Deleted, 1, "expected 1 resource deleted, got %d", len(result.Deleted))
 			}
 
 			if tc.ExpectedError != "" {
@@ -621,11 +621,11 @@ func TestBuild(t *testing.T) {
 			// Test for an invalid manifest
 			infos, err := c.Build(tt.reader, false)
 			if tt.err {
-				require.ErrorContains(t, err, "--validate=false", "error message was not scrubbed")
+				require.ErrorContainsf(t, err, "--validate=false", "error message was not scrubbed")
 			} else {
-				require.NoError(t, err, "Got error message when no error should have occurred")
+				require.NoErrorf(t, err, "Got error message when no error should have occurred")
 			}
-			assert.Len(t, infos, tt.count, "expected %d result objects, got %d", tt.count, len(infos))
+			assert.Lenf(t, infos, tt.count, "expected %d result objects, got %d", tt.count, len(infos))
 		})
 	}
 }
@@ -657,11 +657,11 @@ func TestBuildTable(t *testing.T) {
 			// Test for an invalid manifest
 			infos, err := c.BuildTable(tt.reader, false)
 			if tt.err {
-				require.ErrorContains(t, err, "--validate=false", "error message was not scrubbed")
+				require.ErrorContainsf(t, err, "--validate=false", "error message was not scrubbed")
 			} else {
-				require.NoError(t, err, "Got error message when no error should have occurred")
+				require.NoErrorf(t, err, "Got error message when no error should have occurred")
 			}
-			assert.Len(t, infos, tt.count, "expected %d result objects, got %d", tt.count, len(infos))
+			assert.Lenf(t, infos, tt.count, "expected %d result objects, got %d", tt.count, len(infos))
 		})
 	}
 }
@@ -702,12 +702,12 @@ func TestPerform(t *testing.T) {
 			}
 
 			err = perform(infos, fn)
-			assert.Equal(t, tt.err, (err != nil), "expected error: %v", tt.err)
+			assert.Equalf(t, tt.err, (err != nil), "expected error: %v", tt.err)
 			if err != nil {
 				require.EqualErrorf(t, err, tt.errMessage, "expected error message: %v, got %v", tt.errMessage, err)
 			}
 
-			assert.Len(t, results, tt.count, "expected %d result objects, got %d", tt.count, len(results))
+			assert.Lenf(t, results, tt.count, "expected %d result objects, got %d", tt.count, len(results))
 		})
 	}
 }
@@ -780,7 +780,7 @@ func TestWait(t *testing.T) {
 		ClientCreateOptionServerSideApply(false, false))
 
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 3, "expected 3 resource created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 3, "expected 3 resource created, got %d", len(result.Created))
 	require.NoErrorf(t, c.Wait(resources, time.Second*30), "expected wait without error")
 
 	assert.GreaterOrEqualf(t, time.Since(*created), time.Second*5, "expected to wait at least 5 seconds before ready status was detected, but got %s", time.Since(*created))
@@ -825,7 +825,7 @@ func TestWaitJob(t *testing.T) {
 		ClientCreateOptionServerSideApply(false, false))
 
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
 	require.NoErrorf(t, c.WaitWithJobs(resources, time.Second*30), "expected wait without error")
 	assert.GreaterOrEqualf(t, time.Since(*created), time.Second*5, "expected to wait at least 5 seconds before ready status was detected, but got %s", time.Since(*created))
 }
@@ -870,7 +870,7 @@ func TestWaitDelete(t *testing.T) {
 		resources,
 		ClientCreateOptionServerSideApply(false, false))
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
 	_, errs := c.Delete(resources, metav1.DeletePropagationBackground)
 	require.Nil(t, errs)
 	require.NoErrorf(t, c.WaitForDelete(resources, time.Second*30), "expected wait without error")
@@ -1174,11 +1174,11 @@ func (c createPatchTestCase) run(t *testing.T) {
 	}
 
 	patch, patchType, err := createPatch(c.original, targetInfo, c.threeWayMergeForUnstructured)
-	require.NoError(t, err, "Failed to create patch")
+	require.NoErrorf(t, err, "Failed to create patch")
 
-	assert.Equal(t, c.expectedPatch, string(patch), "Unexpected patch.\nTarget:\n%s\nOriginal:\n%s\nActual:\n%s\n\nExpected:\n%s\nGot:\n%s", c.target, c.original, c.actual, c.expectedPatch, string(patch))
+	assert.Equalf(t, c.expectedPatch, string(patch), "Unexpected patch.\nTarget:\n%s\nOriginal:\n%s\nActual:\n%s\n\nExpected:\n%s\nGot:\n%s", c.target, c.original, c.actual, c.expectedPatch, string(patch))
 
-	assert.Equal(t, types.MergePatchType, patchType, "Expected patch type %s, got %s", types.MergePatchType, patchType)
+	assert.Equalf(t, types.MergePatchType, patchType, "Expected patch type %s, got %s", types.MergePatchType, patchType)
 }
 
 func newTestCustomResourceData(metadata map[string]string, spec map[string]any) *unstructured.Unstructured {
@@ -1353,7 +1353,7 @@ func TestIsReachableTwiceAfterClientCreationFailure(t *testing.T) {
 
 	assertReachableErr := func(label string, err error) {
 		t.Helper()
-		require.Error(t, err, "%s: expected error, got nil", label)
+		require.Errorf(t, err, "%s: expected error, got nil", label)
 		require.ErrorIs(t, err, refusedErr)
 	}
 
@@ -1855,7 +1855,7 @@ func TestClientWaitContextCancellationLegacy(t *testing.T) {
 		resources,
 		ClientCreateOptionServerSideApply(false, false))
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 2, "expected 2 resources created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 2, "expected 2 resources created, got %d", len(result.Created))
 	assert.ErrorContains(t, c.Wait(resources, time.Second*30), "context canceled")
 }
 
@@ -1905,8 +1905,8 @@ func TestClientWaitWithJobsContextCancellationLegacy(t *testing.T) {
 		resources,
 		ClientCreateOptionServerSideApply(false, false))
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
-	assert.ErrorContains(t, c.WaitWithJobs(resources, time.Second*30), "context canceled", "expected context canceled error")
+	assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+	assert.ErrorContainsf(t, c.WaitWithJobs(resources, time.Second*30), "context canceled", "expected context canceled error")
 }
 
 func TestClientWaitForDeleteContextCancellationLegacy(t *testing.T) {
@@ -1961,11 +1961,11 @@ func TestClientWaitForDeleteContextCancellationLegacy(t *testing.T) {
 		resources,
 		ClientCreateOptionServerSideApply(false, false))
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
 
 	_, errs := c.Delete(resources, metav1.DeletePropagationBackground)
 	require.Nil(t, errs)
-	assert.ErrorContains(t, c.WaitForDelete(resources, time.Second*30), "context canceled", "expected context canceled error")
+	assert.ErrorContainsf(t, c.WaitForDelete(resources, time.Second*30), "context canceled", "expected context canceled error")
 }
 
 func TestClientWaitContextNilDoesNotPanic(t *testing.T) {
@@ -2017,9 +2017,9 @@ func TestClientWaitContextNilDoesNotPanic(t *testing.T) {
 		resources,
 		ClientCreateOptionServerSideApply(false, false))
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
 	require.NoError(t, c.Wait(resources, time.Second*30))
-	assert.GreaterOrEqual(t, time.Since(*created), time.Second*2, "expected to wait at least 2 seconds")
+	assert.GreaterOrEqualf(t, time.Since(*created), time.Second*2, "expected to wait at least 2 seconds")
 }
 
 func TestClientWaitContextPreCancelledLegacy(t *testing.T) {
@@ -2062,7 +2062,7 @@ func TestClientWaitContextPreCancelledLegacy(t *testing.T) {
 		resources,
 		ClientCreateOptionServerSideApply(false, false))
 	require.NoError(t, err)
-	assert.Len(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
+	assert.Lenf(t, result.Created, 1, "expected 1 resource created, got %d", len(result.Created))
 	assert.ErrorContains(t, c.Wait(resources, time.Second*30), "context canceled")
 }
 
@@ -2088,7 +2088,7 @@ metadata:
 
 	cancel()
 
-	assert.ErrorContains(t, c.Wait(resources, time.Second*30), "context canceled", "expected context canceled error")
+	assert.ErrorContainsf(t, c.Wait(resources, time.Second*30), "context canceled", "expected context canceled error")
 }
 
 func TestClientWaitWithJobsContextCancellationStatusWatcher(t *testing.T) {

@@ -351,8 +351,8 @@ func TestReleaseListWriter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			writer := newReleaseListWriter(tt.releases, tt.timeFormat, tt.noHeaders, tt.noColor)
 
-			require.NotNil(t, writer, "Expected writer to be non-nil")
-			assert.Len(t, writer.releases, len(tt.releases), "Expected %d releases, got %d", len(tt.releases), len(writer.releases))
+			require.NotNilf(t, writer, "Expected writer to be non-nil")
+			assert.Lenf(t, writer.releases, len(tt.releases), "Expected %d releases, got %d", len(tt.releases), len(writer.releases))
 		})
 	}
 }
@@ -426,9 +426,9 @@ func TestReleaseListWriterMethods(t *testing.T) {
 			var buf []byte
 			out := &bytesWriter{buf: &buf}
 
-			require.NoError(t, writer.WriteJSON(out), "WriteJSON failed")
-			require.NoError(t, writer.WriteYAML(out), "WriteYAML failed")
-			assert.NoError(t, writer.WriteTable(out), "WriteTable failed")
+			require.NoErrorf(t, writer.WriteJSON(out), "WriteJSON failed")
+			require.NoErrorf(t, writer.WriteYAML(out), "WriteYAML failed")
+			assert.NoErrorf(t, writer.WriteTable(out), "WriteTable failed")
 		})
 	}
 
@@ -437,9 +437,9 @@ func TestReleaseListWriterMethods(t *testing.T) {
 	var buf []byte
 	out := &bytesWriter{buf: &buf}
 
-	require.NoError(t, writer.WriteJSON(out), "WriteJSON failed")
-	require.NoError(t, writer.WriteYAML(out), "WriteYAML failed")
-	assert.NoError(t, writer.WriteTable(out), "WriteTable failed")
+	require.NoErrorf(t, writer.WriteJSON(out), "WriteJSON failed")
+	require.NoErrorf(t, writer.WriteYAML(out), "WriteYAML failed")
+	assert.NoErrorf(t, writer.WriteTable(out), "WriteTable failed")
 }
 
 func TestFilterReleases(t *testing.T) {
@@ -490,7 +490,7 @@ func TestFilterReleases(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := filterReleases(tt.releases, tt.ignoredReleaseNames)
-			assert.Len(t, result, tt.expectedCount, "Expected %d releases, got %d", tt.expectedCount, len(result))
+			assert.Lenf(t, result, tt.expectedCount, "Expected %d releases, got %d", tt.expectedCount, len(result))
 		})
 	}
 }
@@ -579,9 +579,9 @@ func TestListStatusMapping(t *testing.T) {
 			}
 
 			writer := newReleaseListWriter(releaseFixture, "", false, false)
-			assert.Len(t, writer.releases, 1, "Expected 1 release, got %d", len(writer.releases))
+			assert.Lenf(t, writer.releases, 1, "Expected 1 release, got %d", len(writer.releases))
 
-			assert.Equal(t, tc.status.String(), writer.releases[0].Status, "Expected status %s, got %s", tc.status.String(), writer.releases[0].Status)
+			assert.Equalf(t, tc.status.String(), writer.releases[0].Status, "Expected status %s, got %s", tc.status.String(), writer.releases[0].Status)
 		})
 	}
 }

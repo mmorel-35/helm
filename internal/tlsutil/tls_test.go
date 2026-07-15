@@ -34,7 +34,7 @@ const (
 func testfile(t *testing.T, file string) (path string) {
 	t.Helper()
 	path, err := filepath.Abs(filepath.Join(tlsTestDir, file))
-	require.NoError(t, err, "error getting absolute path to test file %q", file)
+	require.NoErrorf(t, err, "error getting absolute path to test file %q", file)
 	return path
 }
 
@@ -53,8 +53,8 @@ func TestNewTLSConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Len(t, cfg.Certificates, 1)
-		require.False(t, cfg.InsecureSkipVerify, "insecure skip verify mismatch, expecting false")
-		require.NotNil(t, cfg.RootCAs, "mismatch tls RootCAs, expecting non-nil")
+		require.Falsef(t, cfg.InsecureSkipVerify, "insecure skip verify mismatch, expecting false")
+		require.NotNilf(t, cfg.RootCAs, "mismatch tls RootCAs, expecting non-nil")
 	}
 	{
 		cfg, err := NewTLSConfig(
@@ -64,8 +64,8 @@ func TestNewTLSConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Empty(t, cfg.Certificates)
-		require.False(t, cfg.InsecureSkipVerify, "insecure skip verify mismatch, expecting false")
-		require.NotNil(t, cfg.RootCAs, "mismatch tls RootCAs, expecting non-nil")
+		require.Falsef(t, cfg.InsecureSkipVerify, "insecure skip verify mismatch, expecting false")
+		require.NotNilf(t, cfg.RootCAs, "mismatch tls RootCAs, expecting non-nil")
 	}
 
 	{
@@ -76,7 +76,7 @@ func TestNewTLSConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Len(t, cfg.Certificates, 1)
-		require.False(t, cfg.InsecureSkipVerify, "insecure skip verify mismatch, expecting false")
-		require.Nil(t, cfg.RootCAs, "mismatch tls RootCAs, expecting nil")
+		require.Falsef(t, cfg.InsecureSkipVerify, "insecure skip verify mismatch, expecting false")
+		require.Nilf(t, cfg.RootCAs, "mismatch tls RootCAs, expecting nil")
 	}
 }

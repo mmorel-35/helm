@@ -26,16 +26,16 @@ func TestIsRemoteHTTPArchive(t *testing.T) {
 	defer srv.Close()
 	source := srv.URL + "/plugins/fake-plugin-0.0.1.tar.gz"
 
-	assert.False(t, isRemoteHTTPArchive("/not/a/URL"), "Expected non-URL to return false")
+	assert.Falsef(t, isRemoteHTTPArchive("/not/a/URL"), "Expected non-URL to return false")
 
 	// URLs with valid archive extensions are considered valid archives
 	// even if the server is unreachable (optimization to avoid unnecessary HTTP requests)
-	assert.True(t, isRemoteHTTPArchive("https://127.0.0.1:123/fake/plugin-1.2.3.tgz"), "URL with .tgz extension should be considered a valid archive")
+	assert.Truef(t, isRemoteHTTPArchive("https://127.0.0.1:123/fake/plugin-1.2.3.tgz"), "URL with .tgz extension should be considered a valid archive")
 
 	// Test with invalid extension and unreachable server
-	assert.False(t, isRemoteHTTPArchive("https://127.0.0.1:123/fake/plugin-1.2.3.notanarchive"), "Bad URL without valid extension should not succeed")
+	assert.Falsef(t, isRemoteHTTPArchive("https://127.0.0.1:123/fake/plugin-1.2.3.notanarchive"), "Bad URL without valid extension should not succeed")
 
-	assert.True(t, isRemoteHTTPArchive(source), "Expected %q to be a valid archive URL", source)
+	assert.Truef(t, isRemoteHTTPArchive(source), "Expected %q to be a valid archive URL", source)
 
-	assert.False(t, isRemoteHTTPArchive(source+"-not-an-extension"), "Expected media type match to fail")
+	assert.Falsef(t, isRemoteHTTPArchive(source+"-not-an-extension"), "Expected media type match to fail")
 }

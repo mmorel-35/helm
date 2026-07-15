@@ -41,9 +41,9 @@ import (
 
 func TestLoadDir(t *testing.T) {
 	l, err := Loader("testdata/frobnitz")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	c, err := l.Load()
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyFrobnitz(t, c)
 	verifyChart(t, c)
 	verifyDependencies(t, c)
@@ -56,9 +56,9 @@ func TestLoadDirWithDevNull(t *testing.T) {
 	}
 
 	l, err := Loader("testdata/frobnitz_with_dev_null")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	_, err = l.Load()
-	assert.Error(t, err, "packages with an irregular file (/dev/null) should not load")
+	assert.Errorf(t, err, "packages with an irregular file (/dev/null) should not load")
 }
 
 func TestLoadDirWithSymlink(t *testing.T) {
@@ -70,10 +70,10 @@ func TestLoadDirWithSymlink(t *testing.T) {
 	defer os.Remove(link)
 
 	l, err := Loader("testdata/frobnitz_with_symlink")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 
 	c, err := l.Load()
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyFrobnitz(t, c)
 	verifyChart(t, c)
 	verifyDependencies(t, c)
@@ -118,9 +118,9 @@ func TestBomTestData(t *testing.T) {
 
 func TestLoadDirWithUTFBOM(t *testing.T) {
 	l, err := Loader("testdata/frobnitz_with_bom")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	c, err := l.Load()
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyFrobnitz(t, c)
 	verifyChart(t, c)
 	verifyDependencies(t, c)
@@ -130,9 +130,9 @@ func TestLoadDirWithUTFBOM(t *testing.T) {
 
 func TestLoadArchiveWithUTFBOM(t *testing.T) {
 	l, err := Loader("testdata/frobnitz_with_bom.tgz")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	c, err := l.Load()
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyFrobnitz(t, c)
 	verifyChart(t, c)
 	verifyDependencies(t, c)
@@ -142,9 +142,9 @@ func TestLoadArchiveWithUTFBOM(t *testing.T) {
 
 func TestLoadFile(t *testing.T) {
 	l, err := Loader("testdata/frobnitz-1.2.3.tgz")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	c, err := l.Load()
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyFrobnitz(t, c)
 	verifyChart(t, c)
 	verifyDependencies(t, c)
@@ -198,18 +198,18 @@ icon: https://example.com/64x64.png
 	}
 
 	c, err := LoadFiles(goodFiles)
-	require.NoError(t, err, "Expected good files to be loaded")
-	assert.Equal(t, "frobnitz", c.Name(), "Expected chart name to be 'frobnitz', got %s", c.Name())
-	assert.Equal(t, "some values", c.Values["var"], "Expected chart values to be populated with default values")
-	assert.Len(t, c.Raw, 5, "Expected %d files, got %d", 5, len(c.Raw))
+	require.NoErrorf(t, err, "Expected good files to be loaded")
+	assert.Equalf(t, "frobnitz", c.Name(), "Expected chart name to be 'frobnitz', got %s", c.Name())
+	assert.Equalf(t, "some values", c.Values["var"], "Expected chart values to be populated with default values")
+	assert.Lenf(t, c.Raw, 5, "Expected %d files, got %d", 5, len(c.Raw))
 
-	assert.True(t, bytes.Equal(c.Schema, []byte("type: Values")), "Expected chart schema to be populated with default values")
+	assert.Truef(t, bytes.Equal(c.Schema, []byte("type: Values")), "Expected chart schema to be populated with default values")
 
-	assert.Len(t, c.Templates, 2, "Expected number of templates == 2, got %d", len(c.Templates))
+	assert.Lenf(t, c.Templates, 2, "Expected number of templates == 2, got %d", len(c.Templates))
 
 	_, err = LoadFiles([]*archive.BufferedFile{})
-	require.Error(t, err, "Expected err to be non-nil")
-	assert.EqualError(t, err, "Chart.yaml file is missing", "Expected chart metadata missing error, got '%s'", err.Error())
+	require.Errorf(t, err, "Expected err to be non-nil")
+	assert.EqualErrorf(t, err, "Chart.yaml file is missing", "Expected chart metadata missing error, got '%s'", err.Error())
 }
 
 // Test the order of file loading. The Chart.yaml file needs to come first for
@@ -265,7 +265,7 @@ icon: https://example.com/64x64.png
 	// Capture stderr to make sure message about Chart.yaml handle dependencies
 	// is not present
 	r, w, err := os.Pipe()
-	require.NoError(t, err, "Unable to create pipe")
+	require.NoErrorf(t, err, "Unable to create pipe")
 	stderr := log.Writer()
 	log.SetOutput(w)
 	defer func() {
@@ -273,19 +273,19 @@ icon: https://example.com/64x64.png
 	}()
 
 	_, err = LoadFiles(goodFiles)
-	require.NoError(t, err, "Expected good files to be loaded")
+	require.NoErrorf(t, err, "Expected good files to be loaded")
 	w.Close()
 
 	var text bytes.Buffer
 	io.Copy(&text, r)
-	assert.Empty(t, text.String(), "Expected no message to Stderr, got %s", text.String())
+	assert.Emptyf(t, text.String(), "Expected no message to Stderr, got %s", text.String())
 }
 
 // Packaging the chart on a Windows machine will produce an
 // archive that has \\ as delimiters. Test that we support these archives
 func TestLoadFileBackslash(t *testing.T) {
 	c, err := Load("testdata/frobnitz_backslash-1.2.3.tgz")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyChartFileAndTemplate(t, c, "frobnitz_backslash")
 	verifyChart(t, c)
 	verifyDependencies(t, c)
@@ -293,9 +293,9 @@ func TestLoadFileBackslash(t *testing.T) {
 
 func TestLoadV3WithReqs(t *testing.T) {
 	l, err := Loader("testdata/frobnitz.v3.reqs")
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	c, err := l.Load()
-	require.NoError(t, err, "Failed to load testdata")
+	require.NoErrorf(t, err, "Failed to load testdata")
 	verifyDependencies(t, c)
 	verifyDependenciesLock(t, c)
 }
@@ -349,8 +349,8 @@ func TestLoadInvalidArchive(t *testing.T) {
 		illegalChart := filepath.Join(tmpdir, tt.chartname)
 		writeTar(illegalChart, tt.internal, []byte("hello: world"))
 		_, err := Load(illegalChart)
-		require.Error(t, err, "expected error when unpacking illegal files")
-		require.ErrorContains(t, err, tt.expectError, "Expected error to contain %q, got %q for %s", tt.expectError, err.Error(), tt.chartname)
+		require.Errorf(t, err, "expected error when unpacking illegal files")
+		require.ErrorContainsf(t, err, tt.expectError, "Expected error to contain %q, got %q for %s", tt.expectError, err.Error(), tt.chartname)
 	}
 
 	// Make sure that absolute path gets interpreted as relative
@@ -446,15 +446,15 @@ func TestMergeValuesV3(t *testing.T) {
 
 	testMap := MergeMaps(flatMap, nestedMap)
 	equal := reflect.DeepEqual(testMap, nestedMap)
-	assert.True(t, equal, "Expected a nested map to overwrite a flat value. Expected: %v, got %v", nestedMap, testMap)
+	assert.Truef(t, equal, "Expected a nested map to overwrite a flat value. Expected: %v, got %v", nestedMap, testMap)
 
 	testMap = MergeMaps(nestedMap, flatMap)
 	equal = reflect.DeepEqual(testMap, flatMap)
-	assert.True(t, equal, "Expected a flat value to overwrite a map. Expected: %v, got %v", flatMap, testMap)
+	assert.Truef(t, equal, "Expected a flat value to overwrite a map. Expected: %v, got %v", flatMap, testMap)
 
 	testMap = MergeMaps(nestedMap, anotherNestedMap)
 	equal = reflect.DeepEqual(testMap, anotherNestedMap)
-	assert.True(t, equal, "Expected a nested map to overwrite another nested map. Expected: %v, got %v", anotherNestedMap, testMap)
+	assert.Truef(t, equal, "Expected a nested map to overwrite another nested map. Expected: %v, got %v", anotherNestedMap, testMap)
 
 	testMap = MergeMaps(anotherFlatMap, anotherNestedMap)
 	expectedMap := map[string]any{
@@ -466,14 +466,14 @@ func TestMergeValuesV3(t *testing.T) {
 		},
 	}
 	equal = reflect.DeepEqual(testMap, expectedMap)
-	assert.True(t, equal, "Expected a map with different keys to merge properly with another map. Expected: %v, got %v", expectedMap, testMap)
+	assert.Truef(t, equal, "Expected a map with different keys to merge properly with another map. Expected: %v, got %v", expectedMap, testMap)
 }
 
 func verifyChart(t *testing.T, c *chart.Chart) {
 	t.Helper()
-	require.NotEmpty(t, c.Name(), "No chart metadata found on %v", c)
+	require.NotEmptyf(t, c.Name(), "No chart metadata found on %v", c)
 	t.Logf("Verifying chart %s", c.Name())
-	assert.Len(t, c.Templates, 1, "Expected 1 template, got %d", len(c.Templates))
+	assert.Lenf(t, c.Templates, 1, "Expected 1 template, got %d", len(c.Templates))
 
 	numfiles := 6
 	if len(c.Files) != numfiles {
@@ -500,40 +500,40 @@ func verifyChart(t *testing.T, c *chart.Chart) {
 	}
 
 	for _, dep := range c.Dependencies() {
-		require.NotNil(t, dep.Metadata, "expected metadata on dependency: %v", dep)
+		require.NotNilf(t, dep.Metadata, "expected metadata on dependency: %v", dep)
 		exp, ok := expect[dep.Name()]
-		require.True(t, ok, "Unknown dependency %s", dep.Name())
-		assert.Equal(t, exp["version"], dep.Metadata.Version, "Expected %s version %s, got %s", dep.Name(), exp["version"], dep.Metadata.Version)
+		require.Truef(t, ok, "Unknown dependency %s", dep.Name())
+		assert.Equalf(t, exp["version"], dep.Metadata.Version, "Expected %s version %s, got %s", dep.Name(), exp["version"], dep.Metadata.Version)
 	}
 }
 
 func verifyDependencies(t *testing.T, c *chart.Chart) {
 	t.Helper()
-	assert.Len(t, c.Metadata.Dependencies, 2, "Expected 2 dependencies, got %d", len(c.Metadata.Dependencies))
+	assert.Lenf(t, c.Metadata.Dependencies, 2, "Expected 2 dependencies, got %d", len(c.Metadata.Dependencies))
 	tests := []*chart.Dependency{
 		{Name: "alpine", Version: "0.1.0", Repository: "https://example.com/charts"},
 		{Name: "mariner", Version: "4.3.2", Repository: "https://example.com/charts"},
 	}
 	for i, tt := range tests {
 		d := c.Metadata.Dependencies[i]
-		assert.Equal(t, tt.Name, d.Name, "Expected dependency named %q, got %q", tt.Name, d.Name)
-		assert.Equal(t, tt.Version, d.Version, "Expected dependency named %q to have version %q, got %q", tt.Name, tt.Version, d.Version)
-		assert.Equal(t, tt.Repository, d.Repository, "Expected dependency named %q to have repository %q, got %q", tt.Name, tt.Repository, d.Repository)
+		assert.Equalf(t, tt.Name, d.Name, "Expected dependency named %q, got %q", tt.Name, d.Name)
+		assert.Equalf(t, tt.Version, d.Version, "Expected dependency named %q to have version %q, got %q", tt.Name, tt.Version, d.Version)
+		assert.Equalf(t, tt.Repository, d.Repository, "Expected dependency named %q to have repository %q, got %q", tt.Name, tt.Repository, d.Repository)
 	}
 }
 
 func verifyDependenciesLock(t *testing.T, c *chart.Chart) {
 	t.Helper()
-	assert.Len(t, c.Metadata.Dependencies, 2, "Expected 2 dependencies, got %d", len(c.Metadata.Dependencies))
+	assert.Lenf(t, c.Metadata.Dependencies, 2, "Expected 2 dependencies, got %d", len(c.Metadata.Dependencies))
 	tests := []*chart.Dependency{
 		{Name: "alpine", Version: "0.1.0", Repository: "https://example.com/charts"},
 		{Name: "mariner", Version: "4.3.2", Repository: "https://example.com/charts"},
 	}
 	for i, tt := range tests {
 		d := c.Metadata.Dependencies[i]
-		assert.Equal(t, tt.Name, d.Name, "Expected dependency named %q, got %q", tt.Name, d.Name)
-		assert.Equal(t, tt.Version, d.Version, "Expected dependency named %q to have version %q, got %q", tt.Name, tt.Version, d.Version)
-		assert.Equal(t, tt.Repository, d.Repository, "Expected dependency named %q to have repository %q, got %q", tt.Name, tt.Repository, d.Repository)
+		assert.Equalf(t, tt.Name, d.Name, "Expected dependency named %q, got %q", tt.Name, d.Name)
+		assert.Equalf(t, tt.Version, d.Version, "Expected dependency named %q to have version %q, got %q", tt.Name, tt.Version, d.Version)
+		assert.Equalf(t, tt.Repository, d.Repository, "Expected dependency named %q to have repository %q, got %q", tt.Name, tt.Repository, d.Repository)
 	}
 }
 
@@ -544,25 +544,25 @@ func verifyFrobnitz(t *testing.T, c *chart.Chart) {
 
 func verifyChartFileAndTemplate(t *testing.T, c *chart.Chart, name string) {
 	t.Helper()
-	require.NotNil(t, c.Metadata, "Metadata is nil")
-	assert.Equal(t, name, c.Name(), "Expected %s, got %s", name, c.Name())
-	require.Len(t, c.Templates, 1, "Expected 1 template, got %d", len(c.Templates))
-	assert.Equal(t, "templates/template.tpl", c.Templates[0].Name, "Unexpected template: %s", c.Templates[0].Name)
-	assert.NotEmpty(t, c.Templates[0].Data, "No template data.")
-	require.Len(t, c.Files, 6, "Expected 6 Files, got %d", len(c.Files))
-	require.Len(t, c.Dependencies(), 2, "Expected 2 Dependency, got %d", len(c.Dependencies()))
-	require.Len(t, c.Metadata.Dependencies, 2, "Expected 2 Dependencies.Dependency, got %d", len(c.Metadata.Dependencies))
-	require.Len(t, c.Lock.Dependencies, 2, "Expected 2 Lock.Dependency, got %d", len(c.Lock.Dependencies))
+	require.NotNilf(t, c.Metadata, "Metadata is nil")
+	assert.Equalf(t, name, c.Name(), "Expected %s, got %s", name, c.Name())
+	require.Lenf(t, c.Templates, 1, "Expected 1 template, got %d", len(c.Templates))
+	assert.Equalf(t, "templates/template.tpl", c.Templates[0].Name, "Unexpected template: %s", c.Templates[0].Name)
+	assert.NotEmptyf(t, c.Templates[0].Data, "No template data.")
+	require.Lenf(t, c.Files, 6, "Expected 6 Files, got %d", len(c.Files))
+	require.Lenf(t, c.Dependencies(), 2, "Expected 2 Dependency, got %d", len(c.Dependencies()))
+	require.Lenf(t, c.Metadata.Dependencies, 2, "Expected 2 Dependencies.Dependency, got %d", len(c.Metadata.Dependencies))
+	require.Lenf(t, c.Lock.Dependencies, 2, "Expected 2 Lock.Dependency, got %d", len(c.Lock.Dependencies))
 
 	for _, dep := range c.Dependencies() {
 		switch dep.Name() {
 		case "mariner":
 		case "alpine":
-			require.Len(t, dep.Templates, 1, "Expected 1 template, got %d", len(dep.Templates))
-			assert.Equal(t, "templates/alpine-pod.yaml", dep.Templates[0].Name, "Unexpected template: %s", dep.Templates[0].Name)
-			assert.NotEmpty(t, dep.Templates[0].Data, "No template data.")
-			require.Len(t, dep.Files, 1, "Expected 1 Files, got %d", len(dep.Files))
-			require.Len(t, dep.Dependencies(), 2, "Expected 2 Dependency, got %d", len(dep.Dependencies()))
+			require.Lenf(t, dep.Templates, 1, "Expected 1 template, got %d", len(dep.Templates))
+			assert.Equalf(t, "templates/alpine-pod.yaml", dep.Templates[0].Name, "Unexpected template: %s", dep.Templates[0].Name)
+			assert.NotEmptyf(t, dep.Templates[0].Data, "No template data.")
+			require.Lenf(t, dep.Files, 1, "Expected 1 Files, got %d", len(dep.Files))
+			require.Lenf(t, dep.Dependencies(), 2, "Expected 2 Dependency, got %d", len(dep.Dependencies()))
 		default:
 			t.Errorf("Unexpected dependency %s", dep.Name())
 		}

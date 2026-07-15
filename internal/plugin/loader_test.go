@@ -115,7 +115,7 @@ func TestLoadDir(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			plug, err := LoadDir(tc.dirname)
-			require.NoError(t, err, "error loading plugin from %s", tc.dirname)
+			require.NoErrorf(t, err, "error loading plugin from %s", tc.dirname)
 
 			assert.Equal(t, tc.dirname, plug.Dir())
 			assert.Equal(t, tc.expect, plug.Metadata())
@@ -194,9 +194,9 @@ func TestDetectDuplicates(t *testing.T) {
 		mockSubprocessCLIPlugin(t, "foo"),
 		mockSubprocessCLIPlugin(t, "bar"),
 	}
-	require.NoError(t, detectDuplicates(plugs), "no duplicates in the first set")
+	require.NoErrorf(t, detectDuplicates(plugs), "no duplicates in the first set")
 	plugs = append(plugs, mockSubprocessCLIPlugin(t, "foo"))
-	assert.Error(t, detectDuplicates(plugs), "duplicates in the second set")
+	assert.Errorf(t, detectDuplicates(plugs), "duplicates in the second set")
 }
 
 func TestLoadAllDir_Empty(t *testing.T) {
@@ -210,7 +210,7 @@ func TestLoadAllPluginsDir(t *testing.T) {
 	basedir := "testdata/plugdir/good"
 	plugs, err := LoadAllDir(basedir, func(_ string, err error) error { return err })
 	require.NoError(t, err)
-	require.NotEmpty(t, plugs, "expected plugins to be loaded from %s", basedir)
+	require.NotEmptyf(t, plugs, "expected plugins to be loaded from %s", basedir)
 
 	plugsMap := map[string]Plugin{}
 	for _, p := range plugs {
@@ -250,7 +250,7 @@ func TestLoadAllPluginsDir_Zero(t *testing.T) {
 		t.Run(t.Name(), func(t *testing.T) {
 			plugin, err := LoadAllDir(c.plugdirs, func(_ string, err error) error { return err })
 			require.NoError(t, err)
-			assert.Len(t, plugin, c.expected, "expected %d plugins, got %d", c.expected, len(plugin))
+			assert.Lenf(t, plugin, c.expected, "expected %d plugins, got %d", c.expected, len(plugin))
 		})
 	}
 }

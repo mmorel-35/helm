@@ -169,7 +169,7 @@ func TestReleaseTesting_WaitOptionsPassedDownstream(t *testing.T) {
 	req.NoError(err)
 
 	// Verify that WaitOptions were passed to GetWaiter
-	is.NotEmpty(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
+	is.NotEmptyf(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
 }
 
 func TestGetContainerLogs_MultipleContainers(t *testing.T) {

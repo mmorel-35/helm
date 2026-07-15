@@ -81,7 +81,7 @@ func TestRollback_WaitOptionsPassedDownstream(t *testing.T) {
 	req.NoError(client.Run(rel.Name))
 
 	// Verify that WaitOptions were passed to GetWaiter
-	is.NotEmpty(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
+	is.NotEmptyf(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
 }
 
 func TestRollbackSetsRollbackRevision(t *testing.T) {

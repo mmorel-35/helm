@@ -37,7 +37,7 @@ func TestPluginVerifyCmd_NoArgs(t *testing.T) {
 	cmd := newPluginVerifyCmd(out)
 	cmd.SetArgs([]string{})
 
-	assert.ErrorContains(t, cmd.Execute(), "requires 1 argument", "expected 'requires 1 argument' error")
+	assert.ErrorContainsf(t, cmd.Execute(), "requires 1 argument", "expected 'requires 1 argument' error")
 }
 
 func TestPluginVerifyCmd_TooManyArgs(t *testing.T) {
@@ -47,7 +47,7 @@ func TestPluginVerifyCmd_TooManyArgs(t *testing.T) {
 	cmd := newPluginVerifyCmd(out)
 	cmd.SetArgs([]string{"plugin1", "plugin2"})
 
-	assert.ErrorContains(t, cmd.Execute(), "requires 1 argument", "expected 'requires 1 argument' error")
+	assert.ErrorContainsf(t, cmd.Execute(), "requires 1 argument", "expected 'requires 1 argument' error")
 }
 
 func TestPluginVerifyCmd_NonexistentFile(t *testing.T) {
@@ -57,7 +57,7 @@ func TestPluginVerifyCmd_NonexistentFile(t *testing.T) {
 	cmd := newPluginVerifyCmd(out)
 	cmd.SetArgs([]string{"/nonexistent/plugin.tgz"})
 
-	assert.Error(t, cmd.Execute(), "expected error when plugin file doesn't exist")
+	assert.Errorf(t, cmd.Execute(), "expected error when plugin file doesn't exist")
 }
 
 func TestPluginVerifyCmd_MissingProvenance(t *testing.T) {
@@ -71,7 +71,7 @@ func TestPluginVerifyCmd_MissingProvenance(t *testing.T) {
 	cmd := newPluginVerifyCmd(out)
 	cmd.SetArgs([]string{pluginTgz})
 
-	assert.ErrorContains(t, cmd.Execute(), "could not find provenance file", "expected 'could not find provenance file' error")
+	assert.ErrorContainsf(t, cmd.Execute(), "could not find provenance file", "expected 'could not find provenance file' error")
 }
 
 func TestPluginVerifyCmd_InvalidProvenance(t *testing.T) {
@@ -90,7 +90,7 @@ func TestPluginVerifyCmd_InvalidProvenance(t *testing.T) {
 	cmd := newPluginVerifyCmd(out)
 	cmd.SetArgs([]string{pluginTgz})
 
-	assert.Error(t, cmd.Execute(), "expected error when .prov file is invalid")
+	assert.Errorf(t, cmd.Execute(), "expected error when .prov file is invalid")
 }
 
 func TestPluginVerifyCmd_DirectoryNotSupported(t *testing.T) {
@@ -103,7 +103,7 @@ func TestPluginVerifyCmd_DirectoryNotSupported(t *testing.T) {
 	cmd := newPluginVerifyCmd(out)
 	cmd.SetArgs([]string{pluginDir})
 
-	assert.ErrorContains(t, cmd.Execute(), "directory verification not supported", "expected 'directory verification not supported' error")
+	assert.ErrorContainsf(t, cmd.Execute(), "directory verification not supported", "expected 'directory verification not supported' error")
 }
 
 func TestPluginVerifyCmd_KeyringFlag(t *testing.T) {
@@ -127,7 +127,7 @@ func TestPluginVerifyCmd_KeyringFlag(t *testing.T) {
 	cmd.SetArgs([]string{"--keyring", keyring, pluginTgz})
 
 	// Should fail with keyring error but command parsing should work
-	assert.Error(t, cmd.Execute(), "expected error with empty keyring")
+	assert.Errorf(t, cmd.Execute(), "expected error with empty keyring")
 	// The important thing is that the keyring flag was parsed and used
 }
 
@@ -162,7 +162,7 @@ func createTestPluginTarball(t *testing.T) string {
 	tmpDir := filepath.Dir(pluginDir)
 	tgzPath := filepath.Join(tmpDir, "test-plugin-1.0.0.tgz")
 	tarFile, err := os.Create(tgzPath)
-	require.NoError(t, err, "Failed to create tarball file")
+	require.NoErrorf(t, err, "Failed to create tarball file")
 	defer tarFile.Close()
 
 	require.NoErrorf(t, plugin.CreatePluginTarball(pluginDir, "test-plugin", tarFile), "Failed to create tarball")
@@ -177,7 +177,7 @@ func createProvFile(t *testing.T, provFile, pluginTgz, hash string) {
 	if hash == "" {
 		// Calculate actual hash of the tarball
 		data, err := os.ReadFile(pluginTgz)
-		require.NoError(t, err, "Failed to read tarball for hashing")
+		require.NoErrorf(t, err, "Failed to read tarball for hashing")
 		hashSum := sha256.Sum256(data)
 		hashStr = fmt.Sprintf("sha256:%x", hashSum)
 	} else {

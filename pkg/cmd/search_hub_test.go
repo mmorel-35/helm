@@ -164,12 +164,12 @@ func TestSearchHubCmd_FailOnNoResponseTests(t *testing.T) {
 
 			_, out, err := executeActionCommandC(storage, tt.cmd)
 			if tt.wantErr {
-				require.Error(t, err, "expected error due to no record in response, got nil")
+				require.Errorf(t, err, "expected error due to no record in response, got nil")
 			} else {
 				require.NoError(t, err)
 			}
 
-			assert.Equal(t, tt.expected, out, "expected and actual output did not match\n"+
+			assert.Equalf(t, tt.expected, out, "expected and actual output did not match\n"+
 				"expected: %q\n"+
 				"actual  : %q", tt.expected, out)
 		})

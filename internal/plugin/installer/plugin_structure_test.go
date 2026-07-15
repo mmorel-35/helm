@@ -87,7 +87,7 @@ func TestDetectPluginRoot(t *testing.T) {
 				if tt.expectRoot != "." {
 					expectedPath = filepath.Join(dir, tt.expectRoot)
 				}
-				assert.Equal(t, expectedPath, root, "Expected root %s but got %s", expectedPath, root)
+				assert.Equalf(t, expectedPath, root, "Expected root %s but got %s", expectedPath, root)
 			}
 		})
 	}

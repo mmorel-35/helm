@@ -76,11 +76,11 @@ func TestVerifyCmd(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, out, err := executeActionCommand(tt.cmd)
 			if tt.wantError {
-				require.Error(t, err, "Expected error, but got none: %q", out)
-				assert.EqualError(t, err, tt.expect, "Expected error %q", tt.expect)
+				require.Errorf(t, err, "Expected error, but got none: %q", out)
+				assert.EqualErrorf(t, err, tt.expect, "Expected error %q", tt.expect)
 			} else {
 				require.NoError(t, err)
-				assert.Equal(t, tt.expect, out, "Expected %q, got %q", tt.expect, out)
+				assert.Equalf(t, tt.expect, out, "Expected %q, got %q", tt.expect, out)
 			}
 		})
 	}

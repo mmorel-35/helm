@@ -77,7 +77,7 @@ func TestSubprocessPluginRuntime(t *testing.T) {
 
 	require.Error(t, err)
 	ieerr := &InvokeExecError{}
-	require.ErrorAs(t, err, &ieerr, "expected InvokeExecError")
+	require.ErrorAsf(t, err, &ieerr, "expected InvokeExecError")
 	assert.Equal(t, 56, ieerr.ExitCode)
 
 	assert.Nil(t, output)

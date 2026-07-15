@@ -39,14 +39,14 @@ func TestFile(t *testing.T) {
 		},
 	)
 
-	require.Len(t, rf.Repositories, 2, "Expected 2 repositories")
+	require.Lenf(t, rf.Repositories, 2, "Expected 2 repositories")
 
-	assert.False(t, rf.Has("nosuchrepo"), "Found nonexistent repo")
-	assert.True(t, rf.Has("incubator"), "incubator repo is missing")
+	assert.Falsef(t, rf.Has("nosuchrepo"), "Found nonexistent repo")
+	assert.Truef(t, rf.Has("incubator"), "incubator repo is missing")
 
 	stable := rf.Repositories[0]
-	assert.Equal(t, "stable", stable.Name, "stable is not named stable")
-	assert.Equal(t, "https://example.com/stable/charts", stable.URL, "Wrong URL for stable")
+	assert.Equalf(t, "stable", stable.Name, "stable is not named stable")
+	assert.Equalf(t, "https://example.com/stable/charts", stable.URL, "Wrong URL for stable")
 }
 
 func TestNewFile(t *testing.T) {
@@ -181,8 +181,8 @@ func TestWriteFile(t *testing.T) {
 
 func TestRepoNotExists(t *testing.T) {
 	_, err := LoadFile("/this/path/does/not/exist.yaml")
-	require.Error(t, err, "expected err to be non-nil when path does not exist")
-	assert.ErrorContains(t, err, "couldn't load repositories file", "expected prompt `couldn't load repositories file`")
+	require.Errorf(t, err, "expected err to be non-nil when path does not exist")
+	assert.ErrorContainsf(t, err, "couldn't load repositories file", "expected prompt `couldn't load repositories file`")
 }
 
 func TestRemoveRepositoryInvalidEntries(t *testing.T) {

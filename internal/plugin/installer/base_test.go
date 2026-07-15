@@ -40,6 +40,6 @@ func TestPath(t *testing.T) {
 		t.Setenv("HELM_PLUGINS", tt.helmPluginsDir)
 		baseIns := newBase(tt.source)
 		baseInsPath := baseIns.Path()
-		assert.Equal(t, tt.expectPath, baseInsPath, "expected name %s, got %s", tt.expectPath, baseInsPath)
+		assert.Equalf(t, tt.expectPath, baseInsPath, "expected name %s, got %s", tt.expectPath, baseInsPath)
 	}
 }

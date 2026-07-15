@@ -70,7 +70,7 @@ func TestServer(t *testing.T) {
 	require.Len(t, m.Entries, 1)
 
 	expect := "examplechart"
-	assert.True(t, m.Has(expect, "0.1.0"), "missing %q", expect)
+	assert.Truef(t, m.Has(expect, "0.1.0"), "missing %q", expect)
 
 	req, err = http.NewRequestWithContext(t.Context(), http.MethodGet, srv.URL()+"/index.yaml-nosuchthing", http.NoBody)
 	require.NoError(t, err)
@@ -109,7 +109,7 @@ func TestNewTempServer(t *testing.T) {
 			)
 			defer srv.Stop()
 
-			require.NotEmpty(t, srv.srv.URL, "unstarted server")
+			require.NotEmptyf(t, srv.srv.URL, "unstarted server")
 
 			client := srv.Client()
 
@@ -146,7 +146,7 @@ func TestNewTempServer(t *testing.T) {
 			require.NoError(t, yaml.Unmarshal(data, m))
 			require.Len(t, m.Entries, 1)
 			expect := "examplechart"
-			assert.True(t, m.Has(expect, "0.1.0"), "missing %q", expect)
+			assert.Truef(t, m.Has(expect, "0.1.0"), "missing %q", expect)
 			req, err = http.NewRequestWithContext(t.Context(), http.MethodGet, srv.URL()+"/index.yaml-nosuchthing", http.NoBody)
 			require.NoError(t, err)
 			res, err = client.Do(req)
@@ -167,5 +167,5 @@ func TestNewTempServer_TLS(t *testing.T) {
 	)
 	defer srv.Stop()
 
-	require.True(t, strings.HasPrefix(srv.URL(), "https://"), "non-TLS server")
+	require.Truef(t, strings.HasPrefix(srv.URL(), "https://"), "non-TLS server")
 }

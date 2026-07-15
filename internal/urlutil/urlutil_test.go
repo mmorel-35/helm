@@ -37,8 +37,8 @@ func TestURLJoin(t *testing.T) {
 
 	for _, tt := range tests {
 		got, err := URLJoin(tt.url, tt.paths...)
-		require.NoError(t, err, tt.name)
-		assert.Equal(t, tt.expect, got, tt.name)
+		require.NoErrorf(t, err, tt.name)
+		assert.Equalf(t, tt.expect, got, tt.name)
 	}
 }
 
@@ -63,7 +63,7 @@ func TestEqual(t *testing.T) {
 		{"%/1234", "%/123", false},
 		{"/1234", "%/1234", false},
 	} {
-		assert.Equal(t, tt.match, Equal(tt.a, tt.b), "Expected %q==%q to be %t", tt.a, tt.b, tt.match)
+		assert.Equalf(t, tt.match, Equal(tt.a, tt.b), "Expected %q==%q to be %t", tt.a, tt.b, tt.match)
 	}
 }
 

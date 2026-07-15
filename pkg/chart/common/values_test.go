@@ -106,7 +106,7 @@ chapter:
 	require.NoErrorf(t, err, "Failed to parse the White Whale")
 
 	_, err = d.Table("title")
-	require.Error(t, err, "Title is not a table.")
+	require.Errorf(t, err, "Title is not a table.")
 
 	_, err = d.Table("chapter")
 	require.NoErrorf(t, err, "Failed to get the chapter table: %v", d)
@@ -119,7 +119,7 @@ chapter:
 	require.NoErrorf(t, err, "Chapter three is missing: %v", d)
 
 	_, err = d.Table("chapter.OneHundredThirtySix")
-	assert.Error(t, err, "I think you mean 'Epilogue'")
+	assert.Errorf(t, err, "I think you mean 'Epilogue'")
 }
 
 func matchValues(t *testing.T, data map[string]any) {
@@ -132,11 +132,11 @@ func matchValues(t *testing.T, data map[string]any) {
 
 	o, err = ttpl("{{.mariner.shot}}", data)
 	require.NoErrorf(t, err, ".mariner.shot")
-	assert.Equal(t, "ALBATROSS", o, "Expected that mariner shot ALBATROSS")
+	assert.Equalf(t, "ALBATROSS", o, "Expected that mariner shot ALBATROSS")
 
 	o, err = ttpl("{{.water.water.where}}", data)
 	require.NoErrorf(t, err, ".water.water.where")
-	assert.Equal(t, "everywhere", o, "Expected water water everywhere")
+	assert.Equalf(t, "everywhere", o, "Expected water water everywhere")
 }
 
 func ttpl(tpl string, v map[string]any) (string, error) {
@@ -168,7 +168,7 @@ chapter:
 	_, err = d.PathValue("chapter.doesnotexist.one")
 	require.Errorf(t, err, "Non-existent key in middle of path should return error: %v", d)
 	_, err = d.PathValue("")
-	require.Error(t, err, "Asking for the value from an empty path should yield an error")
+	require.Errorf(t, err, "Asking for the value from an empty path should yield an error")
 	v, err = d.PathValue("title")
 	require.NoErrorf(t, err, "Failed to get title: %v", d)
 	assert.Equalf(t, "Moby Dick", v, "Failed to return values for root key title: got %s\n%v", v, d)

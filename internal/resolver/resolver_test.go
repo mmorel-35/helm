@@ -161,15 +161,15 @@ func TestResolve(t *testing.T) {
 
 			h, err := HashReq(tt.req, tt.expect.Dependencies)
 			require.NoError(t, err)
-			assert.Equal(t, l.Digest, h, "%q: hashes don't match.", tt.name)
+			assert.Equalf(t, l.Digest, h, "%q: hashes don't match.", tt.name)
 
 			// Check fields.
-			assert.Len(t, l.Dependencies, len(tt.req), "%s: wrong number of dependencies in lock", tt.name)
+			assert.Lenf(t, l.Dependencies, len(tt.req), "%s: wrong number of dependencies in lock", tt.name)
 			d0 := l.Dependencies[0]
 			e0 := tt.expect.Dependencies[0]
-			assert.Equal(t, e0.Name, d0.Name, tt.name)
-			assert.Equal(t, e0.Repository, d0.Repository, tt.name)
-			assert.Equal(t, e0.Version, d0.Version, tt.name)
+			assert.Equalf(t, e0.Name, d0.Name, tt.name)
+			assert.Equalf(t, e0.Repository, d0.Repository, tt.name)
+			assert.Equalf(t, e0.Version, d0.Version, tt.name)
 		})
 	}
 }
@@ -228,7 +228,7 @@ func TestHashReq(t *testing.T) {
 			if !tt.wantError {
 				assert.Equal(t, expect, h)
 			} else {
-				assert.NotEqual(t, expect, h, "Expected not %q, but same", expect)
+				assert.NotEqualf(t, expect, h, "Expected not %q, but same", expect)
 			}
 		})
 	}
@@ -293,7 +293,7 @@ func TestGetLocalPath(t *testing.T) {
 			if runtime.GOOS == "windows" {
 				expect = tt.winExpect
 			}
-			assert.Equal(t, expect, p, tt.name)
+			assert.Equalf(t, expect, p, tt.name)
 		})
 	}
 }

@@ -51,7 +51,7 @@ func TestSortTemplates(t *testing.T) {
 		"/mychart/templates/charts/bar/templates/foo.tpl":            {},
 	}
 	got := sortTemplates(tpls)
-	require.Len(t, got, len(tpls), "Sorted results are missing templates")
+	require.Lenf(t, got, len(tpls), "Sorted results are missing templates")
 
 	expect := []string{
 		"/mychart/templates/charts/foo/charts/bar/templates/foo.tpl",
@@ -63,7 +63,7 @@ func TestSortTemplates(t *testing.T) {
 		"/mychart/templates/_foo.tpl",
 	}
 	for i, e := range expect {
-		require.Equal(t, e, got[i], "\n\tExp:\n%s\n\tGot:\n%s", strings.Join(expect, "\n"), strings.Join(got, "\n"))
+		require.Equalf(t, e, got[i], "\n\tExp:\n%s\n\tGot:\n%s", strings.Join(expect, "\n"), strings.Join(got, "\n"))
 	}
 }
 
@@ -111,9 +111,9 @@ func TestRender(t *testing.T) {
 	}
 
 	v, err := util.CoalesceValues(c, vals)
-	require.NoError(t, err, "Failed to coalesce values")
+	require.NoErrorf(t, err, "Failed to coalesce values")
 	out, err := Render(c, v)
-	require.NoError(t, err, "Failed to render templates")
+	require.NoErrorf(t, err, "Failed to render templates")
 
 	expect := map[string]string{
 		"moby/templates/test1": "Spouter Inn",
@@ -124,7 +124,7 @@ func TestRender(t *testing.T) {
 	}
 
 	for name, data := range expect {
-		assert.Equal(t, data, out[name], "Expected %q, got %q", data, out[name])
+		assert.Equalf(t, data, out[name], "Expected %q, got %q", data, out[name])
 	}
 }
 
@@ -158,10 +158,10 @@ func TestRenderRefsOrdering(t *testing.T) {
 
 	for i := range 100 {
 		out, err := Render(parentChart, common.Values{})
-		require.NoError(t, err, "Failed to render templates")
+		require.NoErrorf(t, err, "Failed to render templates")
 
 		for name, data := range expect {
-			require.Equal(t, data, out[name], "Expected %q, got %q (iteration %d)", data, out[name], i+1)
+			require.Equalf(t, data, out[name], "Expected %q, got %q (iteration %d)", data, out[name], i+1)
 		}
 	}
 }
@@ -180,8 +180,8 @@ func TestRenderInternals(t *testing.T) {
 
 	out, err := new(Engine).render(t.Context(), tpls)
 
-	require.NoError(t, err, "Failed template rendering")
-	require.Len(t, out, 3, "Expected 3 templates, got %d", len(out))
+	require.NoErrorf(t, err, "Failed template rendering")
+	require.Lenf(t, out, 3, "Expected 3 templates, got %d", len(out))
 	assert.Equal(t, "Hello One", out["one"])
 	assert.Equal(t, "Goodbye TWO", out["two"])
 	assert.Equal(t, "Goodbye THREE", out["three"])
@@ -204,16 +204,16 @@ func TestRenderWithDNS(t *testing.T) {
 	}
 
 	v, err := util.CoalesceValues(c, vals)
-	require.NoError(t, err, "Failed to coalesce values")
+	require.NoErrorf(t, err, "Failed to coalesce values")
 
 	var e Engine
 	e.EnableDNS = true
 	out, err := e.Render(c, v)
-	require.NoError(t, err, "Failed to render templates")
+	require.NoErrorf(t, err, "Failed to render templates")
 
 	for _, val := range c.Templates {
 		fp := path.Join("moby", val.Name)
-		assert.NotEmpty(t, out[fp], "Expected IP address, got %q", out[fp])
+		assert.NotEmptyf(t, out[fp], "Expected IP address, got %q", out[fp])
 	}
 }
 
@@ -337,15 +337,15 @@ func TestRenderWithClientProvider(t *testing.T) {
 	}
 
 	v, err := util.CoalesceValues(c, vals)
-	require.NoError(t, err, "Failed to coalesce values")
+	require.NoErrorf(t, err, "Failed to coalesce values")
 
 	out, err := RenderWithClientProvider(c, v, provider)
-	require.NoError(t, err, "Failed to render templates")
+	require.NoErrorf(t, err, "Failed to render templates")
 
 	for name, want := range cases {
 		t.Run(name, func(t *testing.T) {
 			key := path.Join("moby/templates", name)
-			assert.Equal(t, want.output, out[key], "Expected %q, got %q", want, out[key])
+			assert.Equalf(t, want.output, out[key], "Expected %q, got %q", want, out[key])
 		})
 	}
 }
@@ -367,7 +367,7 @@ func TestRenderWithClientProvider_error(t *testing.T) {
 	}
 
 	v, err := util.CoalesceValues(c, vals)
-	require.NoError(t, err, "Failed to coalesce values")
+	require.NoErrorf(t, err, "Failed to coalesce values")
 
 	provider := &testClientProvider{
 		t: t,
@@ -396,8 +396,8 @@ func TestParallelRenderInternals(t *testing.T) {
 				},
 			}
 			out, err := e.render(t.Context(), tpls)
-			assert.NoError(t, err, "Failed to render %s", tt)
-			assert.Equal(t, tt, out["t"], "Expected %q, got %q", tt, out["t"])
+			assert.NoErrorf(t, err, "Failed to render %s", tt)
+			assert.Equalf(t, tt, out["t"], "Expected %q, got %q", tt, out["t"])
 			wg.Done()
 		}(i)
 	}
@@ -411,7 +411,7 @@ func TestParseErrors(t *testing.T) {
 		"undefined_function": {tpl: `{{foo}}`, vals: vals},
 	}
 	_, err := new(Engine).render(t.Context(), tplsUndefinedFunction)
-	require.Error(t, err, "Expected failures while rendering")
+	require.Errorf(t, err, "Expected failures while rendering")
 	expected := `parse error at (undefined_function:1): function "foo" not defined`
 	assert.EqualError(t, err, expected)
 }
@@ -470,7 +470,7 @@ linebreak`,
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := new(Engine).render(t.Context(), tt.tpls)
-			require.Error(t, err, "Expected failures while rendering")
+			require.Errorf(t, err, "Expected failures while rendering")
 			assert.EqualError(t, err, tt.expected)
 		})
 	}
@@ -484,7 +484,7 @@ func TestFailErrors(t *testing.T) {
 		"failtpl": {tpl: failtpl, vals: vals},
 	}
 	_, err := new(Engine).render(t.Context(), tplsFailed)
-	require.Error(t, err, "Expected failures while rendering")
+	require.Errorf(t, err, "Expected failures while rendering")
 	expected := `execution error at (failtpl:1:33): This is an error`
 	require.EqualError(t, err, expected)
 
@@ -522,7 +522,7 @@ func TestAllTemplates(t *testing.T) {
 	dep1.AddDependency(dep2)
 
 	tpls := allTemplates(ch1, common.Values{})
-	assert.Len(t, tpls, 5, "Expected 5 charts, got %d", len(tpls))
+	assert.Lenf(t, tpls, 5, "Expected 5 charts, got %d", len(tpls))
 }
 
 func TestChartValuesContainsIsRoot(t *testing.T) {
@@ -542,13 +542,13 @@ func TestChartValuesContainsIsRoot(t *testing.T) {
 	ch1.AddDependency(dep1)
 
 	out, err := Render(ch1, common.Values{})
-	require.NoError(t, err, "failed to render templates")
+	require.NoErrorf(t, err, "failed to render templates")
 	expects := map[string]string{
 		"parent/charts/child/templates/isroot": "false",
 		"parent/templates/isroot":              "true",
 	}
 	for file, expect := range expects {
-		assert.Equal(t, expect, out[file], "Expected %q, got %q", expect, out[file])
+		assert.Equalf(t, expect, out[file], "Expected %q, got %q", expect, out[file])
 	}
 }
 
@@ -570,9 +570,9 @@ func TestRenderDependency(t *testing.T) {
 	})
 
 	out, err := Render(ch, map[string]any{})
-	require.NoError(t, err, "failed to render chart")
+	require.NoErrorf(t, err, "failed to render chart")
 
-	assert.Len(t, out, 2, "Expected 2, got %d", len(out))
+	assert.Lenf(t, out, 2, "Expected 2, got %d", len(out))
 	assert.Equal(t, "Hello World", out["outerchart/templates/outer"])
 }
 
@@ -635,7 +635,7 @@ func TestRenderNestedValues(t *testing.T) {
 	}
 
 	tmp, err := util.CoalesceValues(outer, injValues)
-	require.NoError(t, err, "Failed to coalesce values")
+	require.NoErrorf(t, err, "Failed to coalesce values")
 
 	inject := common.Values{
 		"Values": tmp,
@@ -648,22 +648,22 @@ func TestRenderNestedValues(t *testing.T) {
 	t.Logf("Calculated values: %v", inject)
 
 	out, err := Render(outer, inject)
-	require.NoError(t, err, "failed to render templates")
+	require.NoErrorf(t, err, "failed to render templates")
 
 	fullouterpath := "top/" + outerpath
-	assert.Equal(t, "Gather ye rosebuds while ye may", out[fullouterpath], "Unexpected outer: %q", out[fullouterpath])
+	assert.Equalf(t, "Gather ye rosebuds while ye may", out[fullouterpath], "Unexpected outer: %q", out[fullouterpath])
 
 	fullinnerpath := "top/charts/herrick/" + innerpath
-	assert.Equal(t, "Old time is still a-flyin'", out[fullinnerpath], "Unexpected inner: %q", out[fullinnerpath])
+	assert.Equalf(t, "Old time is still a-flyin'", out[fullinnerpath], "Unexpected inner: %q", out[fullinnerpath])
 
 	fulldeepestpath := "top/charts/herrick/charts/deepest/" + deepestpath
-	assert.Equal(t, "And this same flower that smiles to-day", out[fulldeepestpath], "Unexpected deepest: %q", out[fulldeepestpath])
+	assert.Equalf(t, "And this same flower that smiles to-day", out[fulldeepestpath], "Unexpected deepest: %q", out[fulldeepestpath])
 
 	fullcheckrelease := "top/charts/herrick/charts/deepest/" + checkrelease
-	assert.Equal(t, "Tomorrow will be dyin", out[fullcheckrelease], "Unexpected release: %q", out[fullcheckrelease])
+	assert.Equalf(t, "Tomorrow will be dyin", out[fullcheckrelease], "Unexpected release: %q", out[fullcheckrelease])
 
 	fullchecksubcharts := "top/" + subchartspath
-	assert.Equal(t, "The glorious Lamp of Heaven, the Sun", out[fullchecksubcharts], "Unexpected subcharts: %q", out[fullchecksubcharts])
+	assert.Equalf(t, "The glorious Lamp of Heaven, the Sun", out[fullchecksubcharts], "Unexpected subcharts: %q", out[fullchecksubcharts])
 }
 
 func TestRenderBuiltinValues(t *testing.T) {
@@ -700,7 +700,7 @@ func TestRenderBuiltinValues(t *testing.T) {
 	t.Logf("Calculated values: %v", outer)
 
 	out, err := Render(outer, inject)
-	require.NoError(t, err, "failed to render templates")
+	require.NoErrorf(t, err, "failed to render templates")
 
 	expects := map[string]string{
 		"Troy/charts/Latium/templates/Lavinia": "Troy/charts/Latium/templates/LaviniaLatiumAeneid",
@@ -709,7 +709,7 @@ func TestRenderBuiltinValues(t *testing.T) {
 		"Troy/charts/Latium/templates/From":    "Virgil Aeneid",
 	}
 	for file, expect := range expects {
-		assert.Equal(t, expect, out[file], "Expected %q, got %q", expect, out[file])
+		assert.Equalf(t, expect, out[file], "Expected %q, got %q", expect, out[file])
 	}
 }
 
@@ -746,7 +746,7 @@ func TestAlterFuncMap_include(t *testing.T) {
 
 	_, err = Render(d, v)
 	expectErrName := "nested/templates/quote"
-	assert.Error(t, err, "Expected err of nested reference name: %v", expectErrName)
+	assert.Errorf(t, err, "Expected err of nested reference name: %v", expectErrName)
 }
 
 func TestAlterFuncMap_require(t *testing.T) {
@@ -976,7 +976,7 @@ func TestRenderTplEmpty(t *testing.T) {
 		"TplEmpty/templates/only-defines": "",
 	}
 	for file, expect := range expects {
-		assert.Equal(t, expect, out[file], "Expected %q, got %q", expect, out[file])
+		assert.Equalf(t, expect, out[file], "Expected %q, got %q", expect, out[file])
 	}
 }
 
@@ -1020,7 +1020,7 @@ func TestRenderTplTemplateNames(t *testing.T) {
 		"TplTemplateNames/templates/modified-field":    "extra-field",
 	}
 	for file, expect := range expects {
-		assert.Equal(t, expect, out[file], "Expected %q, got %q", expect, out[file])
+		assert.Equalf(t, expect, out[file], "Expected %q, got %q", expect, out[file])
 	}
 }
 
@@ -1083,7 +1083,7 @@ func TestRenderTplRedefines(t *testing.T) {
 			`after: original-in-manifest original-outer-in-manifest`,
 	}
 	for file, expect := range expects {
-		assert.Equal(t, expect, out[file], "Expected %q, got %q", expect, out[file])
+		assert.Equalf(t, expect, out[file], "Expected %q, got %q", expect, out[file])
 	}
 }
 
@@ -1112,7 +1112,7 @@ func TestRenderTplMissingKey(t *testing.T) {
 		"TplMissingKey/templates/manifest": `missingValue: `,
 	}
 	for file, expect := range expects {
-		assert.Equal(t, expect, out[file], "Expected %q, got %q", expect, out[file])
+		assert.Equalf(t, expect, out[file], "Expected %q, got %q", expect, out[file])
 	}
 }
 
@@ -1281,8 +1281,8 @@ func TestTraceableError_SimpleForm(t *testing.T) {
 	}
 	for _, errString := range testStrings {
 		trace, done := parseTemplateSimpleErrorString(errString)
-		assert.True(t, done, "Expected parse to pass but did not")
-		assert.Equal(t, "error calling include", trace.message, "Expected %q, got %q", errString, trace.message)
+		assert.Truef(t, done, "Expected parse to pass but did not")
+		assert.Equalf(t, "error calling include", trace.message, "Expected %q, got %q", errString, trace.message)
 	}
 }
 func TestTraceableError_ExecutingForm(t *testing.T) {
@@ -1294,8 +1294,8 @@ func TestTraceableError_ExecutingForm(t *testing.T) {
 		errString := errTuple[0]
 		expectedLocation := errTuple[1]
 		trace, done := parseTemplateExecutingAtErrorType(errString)
-		assert.True(t, done, "Expected parse to pass but did not")
-		assert.Equal(t, expectedLocation, trace.location, "Expected %q, got %q", expectedLocation, trace.location)
+		assert.Truef(t, done, "Expected parse to pass but did not")
+		assert.Equalf(t, expectedLocation, trace.location, "Expected %q, got %q", expectedLocation, trace.location)
 	}
 }
 
@@ -1305,8 +1305,8 @@ func TestTraceableError_NoTemplateForm(t *testing.T) {
 	}
 	for _, errString := range testStrings {
 		trace, done := parseTemplateNoTemplateError(errString, errString)
-		assert.True(t, done, "Expected parse to pass but did not")
-		assert.Equal(t, errString, trace.message, "Expected %q, got %q", errString, trace.message)
+		assert.Truef(t, done, "Expected parse to pass but did not")
+		assert.Equalf(t, errString, trace.message, "Expected %q, got %q", errString, trace.message)
 	}
 }
 
@@ -1343,7 +1343,7 @@ func TestRenderSubchartDefaultNilNoStringify(t *testing.T) {
 	injValues := map[string]any{}
 
 	tmp, err := util.CoalesceValues(parent, injValues)
-	require.NoError(t, err, "Failed to coalesce values")
+	require.NoErrorf(t, err, "Failed to coalesce values")
 
 	inject := common.Values{
 		"Values": tmp,
@@ -1354,9 +1354,9 @@ func TestRenderSubchartDefaultNilNoStringify(t *testing.T) {
 	}
 
 	out, err := Render(parent, inject)
-	require.NoError(t, err, "Failed to render templates")
+	require.NoErrorf(t, err, "Failed to render templates")
 
 	rendered := out["parent/charts/child/templates/test.yaml"]
-	assert.NotContains(t, rendered, "%!s(<nil>)", "Rendered output contains %%!s(<nil>), got: %q", rendered)
+	assert.NotContainsf(t, rendered, "%!s(<nil>)", "Rendered output contains %%!s(<nil>), got: %q", rendered)
 	assert.Equal(t, "subPath: fallback", rendered)
 }

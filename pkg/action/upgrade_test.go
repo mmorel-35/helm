@@ -329,7 +329,7 @@ func TestUpgradeRelease_ReuseValues(t *testing.T) {
 		req.NoError(err)
 
 		is.Equal(common.StatusDeployed, updatedRes.Info.Status)
-		is.Empty(updatedRes.Chart.Dependencies(), "expected 0 dependencies")
+		is.Emptyf(updatedRes.Chart.Dependencies(), "expected 0 dependencies")
 
 		expectedValues := map[string]any{
 			"subchart": map[string]any{
@@ -570,7 +570,7 @@ func TestUpgradeRelease_SystemLabels(t *testing.T) {
 	}
 	// setting newValues and upgrading
 	_, err := upAction.Run(rel.Name, buildChart(), nil)
-	require.Error(t, err, "expected an error")
+	require.Errorf(t, err, "expected an error")
 
 	is.EqualError(err, fmt.Sprintf("user supplied labels contains system reserved label name. System labels: %+v", driver.GetSystemLabels()))
 }
@@ -795,5 +795,5 @@ func TestUpgradeRelease_WaitOptionsPassedDownstream(t *testing.T) {
 	req.NoError(err)
 
 	// Verify that WaitOptions were passed to GetWaiter
-	is.NotEmpty(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
+	is.NotEmptyf(failer.RecordedWaitOptions, "WaitOptions should be passed to GetWaiter")
 }

@@ -106,9 +106,9 @@ func TestRootCmd(t *testing.T) {
 				tt.dataPath = filepath.Join(os.Getenv(xdg.DataHomeEnvVar), "helm")
 			}
 
-			assert.Equal(t, tt.cachePath, helmpath.CachePath(), "expected cache path %q, got %q", tt.cachePath, helmpath.CachePath())
-			assert.Equal(t, tt.configPath, helmpath.ConfigPath(), "expected config path %q, got %q", tt.configPath, helmpath.ConfigPath())
-			assert.Equal(t, tt.dataPath, helmpath.DataPath(), "expected data path %q, got %q", tt.dataPath, helmpath.DataPath())
+			assert.Equalf(t, tt.cachePath, helmpath.CachePath(), "expected cache path %q, got %q", tt.cachePath, helmpath.CachePath())
+			assert.Equalf(t, tt.configPath, helmpath.ConfigPath(), "expected config path %q, got %q", tt.configPath, helmpath.ConfigPath())
+			assert.Equalf(t, tt.dataPath, helmpath.DataPath(), "expected data path %q, got %q", tt.dataPath, helmpath.DataPath())
 		})
 	}
 }
@@ -137,5 +137,5 @@ func TestRootCmdLogger(t *testing.T) {
 	l1 := actionConfig.Logger()
 	l2 := slog.Default()
 
-	assert.Equal(t, l2.Handler(), l1.Handler(), "expected actionConfig logger to be the slog default logger")
+	assert.Equalf(t, l2.Handler(), l1.Handler(), "expected actionConfig logger to be the slog default logger")
 }

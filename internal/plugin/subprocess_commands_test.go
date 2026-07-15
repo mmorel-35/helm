@@ -38,7 +38,7 @@ func TestPrepareCommand(t *testing.T) {
 	env := map[string]string{}
 	cmd, args, err := PrepareCommands(platformCommand, true, []string{}, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, cmdArgs), "Expected %v, got %v", cmdArgs, args)
 }
 
@@ -90,8 +90,8 @@ func TestPrepareCommandExtraArgs(t *testing.T) {
 			env := map[string]string{}
 			cmd, args, err := PrepareCommands(platformCommand, true, testExtraArgs, env)
 			require.NoError(t, err)
-			assert.Equal(t, tc.expected.cmdMain, cmd, "Expected command to match")
-			assert.Equal(t, tc.expected.args, args, "Expected args to match")
+			assert.Equalf(t, tc.expected.cmdMain, cmd, "Expected command to match")
+			assert.Equalf(t, tc.expected.args, args, "Expected args to match")
 		})
 	}
 }
@@ -110,7 +110,7 @@ func TestPrepareCommands(t *testing.T) {
 	env := map[string]string{}
 	cmd, args, err := PrepareCommands(cmds, true, []string{}, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, cmdArgs), "Expected %v, got %v", cmdArgs, args)
 }
 
@@ -131,7 +131,7 @@ func TestPrepareCommandsExtraArgs(t *testing.T) {
 	env := map[string]string{}
 	cmd, args, err := PrepareCommands(cmds, true, extraArgs, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, expectedArgs), "Expected %v, got %v", expectedArgs, args)
 }
 
@@ -148,7 +148,7 @@ func TestPrepareCommandsNoArch(t *testing.T) {
 	env := map[string]string{}
 	cmd, args, err := PrepareCommands(cmds, true, []string{}, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, cmdArgs), "Expected %v, got %v", cmdArgs, args)
 }
 
@@ -165,7 +165,7 @@ func TestPrepareCommandsNoOsNoArch(t *testing.T) {
 	env := map[string]string{}
 	cmd, args, err := PrepareCommands(cmds, true, []string{}, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, cmdArgs), "Expected %v, got %v", cmdArgs, args)
 }
 
@@ -178,7 +178,7 @@ func TestPrepareCommandsNoMatch(t *testing.T) {
 
 	env := map[string]string{}
 	_, _, err := PrepareCommands(cmds, true, []string{}, env)
-	require.Error(t, err, "Expected error to be returned")
+	require.Errorf(t, err, "Expected error to be returned")
 }
 
 func TestPrepareCommandsNoCommands(t *testing.T) {
@@ -186,7 +186,7 @@ func TestPrepareCommandsNoCommands(t *testing.T) {
 
 	env := map[string]string{}
 	_, _, err := PrepareCommands(cmds, true, []string{}, env)
-	require.Error(t, err, "Expected error to be returned")
+	require.Errorf(t, err, "Expected error to be returned")
 }
 
 func TestPrepareCommandsExpand(t *testing.T) {
@@ -205,7 +205,7 @@ func TestPrepareCommandsExpand(t *testing.T) {
 
 	cmd, args, err := PrepareCommands(cmds, true, []string{}, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, expectedArgs), "Expected %v, got %v", expectedArgs, args)
 }
 
@@ -222,6 +222,6 @@ func TestPrepareCommandsNoExpand(t *testing.T) {
 
 	cmd, args, err := PrepareCommands(cmds, false, []string{}, env)
 	require.NoError(t, err)
-	require.Equal(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
+	require.Equalf(t, cmdMain, cmd, "Expected %q, got %q", cmdMain, cmd)
 	require.Truef(t, reflect.DeepEqual(args, cmdArgs), "Expected %v, got %v", cmdArgs, args)
 }

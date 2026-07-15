@@ -520,7 +520,7 @@ metadata:
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := SplitManifests(tt.input)
-			assert.Equal(t, tt.expected, result, "SplitManifests() =\n%v\nwant:\n%v", result, tt.expected)
+			assert.Equalf(t, tt.expected, result, "SplitManifests() =\n%v\nwant:\n%v", result, tt.expected)
 		})
 	}
 }

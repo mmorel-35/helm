@@ -48,17 +48,17 @@ func TestRepoIndexCmd(t *testing.T) {
 	index, err := repo.LoadIndexFile(destIndex)
 	require.NoError(t, err)
 
-	assert.Len(t, index.Entries, 1, "expected 1 entry, got %d: %#v", len(index.Entries), index.Entries)
+	assert.Lenf(t, index.Entries, 1, "expected 1 entry, got %d: %#v", len(index.Entries), index.Entries)
 
 	vs := index.Entries["compressedchart"]
-	assert.Len(t, vs, 2, "expected 2 versions, got %d: %#v", len(vs), vs)
+	assert.Lenf(t, vs, 2, "expected 2 versions, got %d: %#v", len(vs), vs)
 
 	expectedVersion := "0.2.0"
-	assert.Equal(t, expectedVersion, vs[0].Version, "expected %q, got %q", expectedVersion, vs[0].Version)
+	assert.Equalf(t, expectedVersion, vs[0].Version, "expected %q, got %q", expectedVersion, vs[0].Version)
 
 	b, err := os.ReadFile(destIndex)
 	require.NoError(t, err)
-	assert.False(t, json.Valid(b), "did not expect index file to be valid json")
+	assert.Falsef(t, json.Valid(b), "did not expect index file to be valid json")
 
 	// Test with `--json`
 
@@ -67,7 +67,7 @@ func TestRepoIndexCmd(t *testing.T) {
 
 	b, err = os.ReadFile(destIndex)
 	require.NoError(t, err)
-	assert.True(t, json.Valid(b), "index file is not valid json")
+	assert.Truef(t, json.Valid(b), "index file is not valid json")
 
 	// Test with `--merge`
 
@@ -84,13 +84,13 @@ func TestRepoIndexCmd(t *testing.T) {
 	index, err = repo.LoadIndexFile(destIndex)
 	require.NoError(t, err)
 
-	assert.Len(t, index.Entries, 2, "expected 2 entries, got %d: %#v", len(index.Entries), index.Entries)
+	assert.Lenf(t, index.Entries, 2, "expected 2 entries, got %d: %#v", len(index.Entries), index.Entries)
 
 	vs = index.Entries["compressedchart"]
-	assert.Len(t, vs, 3, "expected 3 versions, got %d: %#v", len(vs), vs)
+	assert.Lenf(t, vs, 3, "expected 3 versions, got %d: %#v", len(vs), vs)
 
 	expectedVersion = "0.3.0"
-	assert.Equal(t, expectedVersion, vs[0].Version, "expected %q, got %q", expectedVersion, vs[0].Version)
+	assert.Equalf(t, expectedVersion, vs[0].Version, "expected %q, got %q", expectedVersion, vs[0].Version)
 
 	// test that index.yaml gets generated on merge even when it doesn't exist
 	require.NoError(t, os.Remove(destIndex))
@@ -102,13 +102,13 @@ func TestRepoIndexCmd(t *testing.T) {
 	require.NoError(t, err)
 
 	// verify it didn't create an empty index.yaml and the merged happened
-	assert.Len(t, index.Entries, 2, "expected 2 entries, got %d: %#v", len(index.Entries), index.Entries)
+	assert.Lenf(t, index.Entries, 2, "expected 2 entries, got %d: %#v", len(index.Entries), index.Entries)
 
 	vs = index.Entries["compressedchart"]
-	assert.Len(t, vs, 1, "expected 1 versions, got %d: %#v", len(vs), vs)
+	assert.Lenf(t, vs, 1, "expected 1 versions, got %d: %#v", len(vs), vs)
 
 	expectedVersion = "0.3.0"
-	assert.Equal(t, expectedVersion, vs[0].Version, "expected %q, got %q", expectedVersion, vs[0].Version)
+	assert.Equalf(t, expectedVersion, vs[0].Version, "expected %q, got %q", expectedVersion, vs[0].Version)
 }
 
 func linkOrCopy(source, target string) error {

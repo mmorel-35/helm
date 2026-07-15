@@ -96,7 +96,7 @@ func TestColorizeStatus(t *testing.T) {
 			// In test environment, term.IsTerminal will be false, so we won't get color
 			// unless we're testing the logic without terminal detection
 			if hasColor {
-				assert.True(t, tt.wantColor, "ColorizeStatus() returned color when none expected: %q", result)
+				assert.Truef(t, tt.wantColor, "ColorizeStatus() returned color when none expected: %q", result)
 			}
 
 			// Always check the status text is present

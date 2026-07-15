@@ -160,19 +160,19 @@ metadata:
 					nameFound = true
 				}
 			}
-			assert.True(t, nameFound, "Got unexpected name %s", out.Name)
+			assert.Truef(t, nameFound, "Got unexpected name %s", out.Name)
 			kindFound := false
 			for _, expectedKind := range expect.kind {
 				if out.Kind == expectedKind {
 					kindFound = true
 				}
 			}
-			assert.True(t, kindFound, "Got unexpected kind %s", out.Kind)
+			assert.Truef(t, kindFound, "Got unexpected kind %s", out.Kind)
 
 			expectedHooks := expect.hooks[out.Name]
-			assert.Equal(t, expectedHooks, out.Events, "expected events: %v but got: %v", expectedHooks, out.Events)
+			assert.Equalf(t, expectedHooks, out.Events, "expected events: %v but got: %v", expectedHooks, out.Events)
 		}
-		assert.True(t, found, "Result not found: %v", out)
+		assert.Truef(t, found, "Result not found: %v", out)
 	}
 
 	// Verify the sort order

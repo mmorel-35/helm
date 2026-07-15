@@ -178,8 +178,8 @@ func TestSetAppVersion(t *testing.T) {
 	require.NoErrorf(t, err, "expected file %q", chartPath)
 	assert.NotEqualf(t, 0, fi.Size(), "file %q has zero bytes.", chartPath)
 	ch, err = loader.Load(chartPath)
-	require.NoError(t, err, "unexpected error loading packaged chart")
-	assert.Equal(t, expectedAppVersion, ch.Metadata.AppVersion, "expected app-version %q, found %q", expectedAppVersion, ch.Metadata.AppVersion)
+	require.NoErrorf(t, err, "unexpected error loading packaged chart")
+	assert.Equalf(t, expectedAppVersion, ch.Metadata.AppVersion, "expected app-version %q, found %q", expectedAppVersion, ch.Metadata.AppVersion)
 }
 
 func TestPackageFileCompletion(t *testing.T) {

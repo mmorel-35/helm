@@ -43,21 +43,21 @@ func TestDiskCache_PutAndGet(t *testing.T) {
 	t.Run("PutAndGetTgz", func(t *testing.T) {
 		// Put the data into the cache
 		path, err := cache.Put(key, bytes.NewReader(content), CacheChart)
-		require.NoError(t, err, "Put should not return an error")
+		require.NoErrorf(t, err, "Put should not return an error")
 
 		// Verify the file exists at the returned path
 		_, err = os.Stat(path)
-		require.NoError(t, err, "File should exist after Put")
+		require.NoErrorf(t, err, "File should exist after Put")
 
 		// Get the file from the cache
 		retrievedPath, err := cache.Get(key, CacheChart)
-		require.NoError(t, err, "Get should not return an error for existing file")
-		assert.Equal(t, path, retrievedPath, "Get should return the same path as Put")
+		require.NoErrorf(t, err, "Get should not return an error for existing file")
+		assert.Equalf(t, path, retrievedPath, "Get should return the same path as Put")
 
 		// Verify content
 		data, err := os.ReadFile(retrievedPath)
 		require.NoError(t, err)
-		assert.Equal(t, content, data, "Content of retrieved file should match original content")
+		assert.Equalf(t, content, data, "Content of retrieved file should match original content")
 	})
 
 	// --- Test case 2: Put and Get a provenance file (prov=true) ---
@@ -81,7 +81,7 @@ func TestDiskCache_PutAndGet(t *testing.T) {
 	t.Run("GetNonExistent", func(t *testing.T) {
 		nonExistentKey := sha256.Sum256([]byte("does not exist"))
 		_, err := cache.Get(nonExistentKey, CacheChart)
-		assert.ErrorIs(t, err, os.ErrNotExist, "Get for a non-existent key should return os.ErrNotExist")
+		assert.ErrorIsf(t, err, os.ErrNotExist, "Get for a non-existent key should return os.ErrNotExist")
 	})
 
 	// --- Test case 4: Put an empty file ---
@@ -94,11 +94,11 @@ func TestDiskCache_PutAndGet(t *testing.T) {
 
 		// Get should return ErrNotExist for empty files
 		_, err = cache.Get(emptyKey, CacheChart)
-		require.ErrorIs(t, err, os.ErrNotExist, "Get for an empty file should return os.ErrNotExist")
+		require.ErrorIsf(t, err, os.ErrNotExist, "Get for an empty file should return os.ErrNotExist")
 
 		// But the file should exist
 		_, err = os.Stat(path)
-		require.NoError(t, err, "Empty file should still exist on disk")
+		require.NoErrorf(t, err, "Empty file should still exist on disk")
 	})
 
 	// --- Test case 5: Get a directory ---

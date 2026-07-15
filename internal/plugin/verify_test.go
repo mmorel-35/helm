@@ -86,14 +86,14 @@ func TestVerifyPlugin(t *testing.T) {
 
 	// Now verify the plugin
 	verification, err := VerifyPlugin(archiveData, provData, filepath.Base(tarballPath), testPubFile)
-	require.NoError(t, err, "Failed to verify plugin")
+	require.NoErrorf(t, err, "Failed to verify plugin")
 
 	// Check verification results
-	assert.NotNil(t, verification.SignedBy, "SignedBy is nil")
+	assert.NotNilf(t, verification.SignedBy, "SignedBy is nil")
 
-	assert.Equal(t, "verify-test-plugin.tar.gz", verification.FileName, "Expected filename 'verify-test-plugin.tar.gz', got %s", verification.FileName)
+	assert.Equalf(t, "verify-test-plugin.tar.gz", verification.FileName, "Expected filename 'verify-test-plugin.tar.gz', got %s", verification.FileName)
 
-	assert.NotEmpty(t, verification.FileHash, "FileHash is empty")
+	assert.NotEmptyf(t, verification.FileHash, "FileHash is empty")
 }
 
 func TestVerifyPluginBadSignature(t *testing.T) {
@@ -138,7 +138,7 @@ InvalidSignatureData
 
 	// Try to verify - should fail
 	_, err = VerifyPlugin(archiveData, provData, filepath.Base(tarballPath), testPubFile)
-	assert.Error(t, err, "Expected verification to fail with bad signature")
+	assert.Errorf(t, err, "Expected verification to fail with bad signature")
 }
 
 func TestVerifyPluginMissingProvenance(t *testing.T) {
@@ -154,7 +154,7 @@ func TestVerifyPluginMissingProvenance(t *testing.T) {
 
 	// Try to verify with empty provenance data
 	_, err = VerifyPlugin(archiveData, nil, filepath.Base(tarballPath), testPubFile)
-	assert.Error(t, err, "Expected verification to fail with empty provenance data")
+	assert.Errorf(t, err, "Expected verification to fail with empty provenance data")
 }
 
 func TestVerifyPluginMalformedData(t *testing.T) {
@@ -163,5 +163,5 @@ func TestVerifyPluginMalformedData(t *testing.T) {
 	provData := []byte("fake provenance")
 
 	_, err := VerifyPlugin(malformedData, provData, "malformed.tar.gz", testPubFile)
-	assert.Error(t, err, "Expected malformed data verification to fail, but it succeeded")
+	assert.Errorf(t, err, "Expected malformed data verification to fail, but it succeeded")
 }
