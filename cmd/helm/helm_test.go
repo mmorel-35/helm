@@ -59,10 +59,9 @@ func TestCliPluginExitCode(t *testing.T) {
 		stderr := &bytes.Buffer{}
 		cmd.Stdout = stdout
 		cmd.Stderr = stderr
-		err := cmd.Run()
 
 		exiterr := &exec.ExitError{}
-		require.ErrorAs(t, err, &exiterr)
+		require.ErrorAs(t, cmd.Run(), &exiterr)
 
 		assert.Empty(t, stdout.String())
 
