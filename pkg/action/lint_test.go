@@ -106,10 +106,8 @@ func TestNonExistentChart(t *testing.T) {
 		testLint := NewLint()
 
 		result := testLint.Run(testCharts, values)
-		assert.Len(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
-
-		actual := result.Errors[0].Error()
-		assert.EqualError(t, result.Errors[0], expectedError, "expected '%s', but got '%s'", expectedError, actual)
+		require.Len(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
+		assert.EqualError(t, result.Errors[0], expectedError)
 	})
 
 	t.Run("should error out for corrupted tgz chart", func(t *testing.T) {
@@ -118,10 +116,8 @@ func TestNonExistentChart(t *testing.T) {
 		testLint := NewLint()
 
 		result := testLint.Run(testCharts, values)
-		assert.Len(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
-
-		actual := result.Errors[0].Error()
-		assert.EqualError(t, result.Errors[0], expectedEOFError, "expected '%s', but got '%s'", expectedEOFError, actual)
+		require.Len(t, result.Errors, 1, "expected one error, but got", len(result.Errors))
+		assert.EqualError(t, result.Errors[0], expectedEOFError)
 	})
 }
 

@@ -42,13 +42,11 @@ func TestResourceList(t *testing.T) {
 
 	diff := r1.Difference(r2)
 	assert.Len(t, diff, 1, "expected 1 result")
-
-	assert.True(t, diff.Contains(info("foo")), "expected diff to return foo")
+	assert.Contains(t, diff, info("foo"), "expected diff to return foo")
 
 	inter := r1.Intersect(r2)
 	assert.Len(t, inter, 1, "expected 1 result")
-
-	assert.True(t, inter.Contains(info("bar")), "expected intersect to return bar")
+	assert.Contains(t, inter, info("bar"), "expected intersect to return bar")
 }
 
 func TestIsMatchingInfo(t *testing.T) {

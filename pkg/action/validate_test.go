@@ -132,7 +132,7 @@ func TestRequireAdoption(t *testing.T) {
 	// Verify that a resource that lacks labels/annotations can be adopted
 	found, err := requireAdoption(resources)
 	require.NoError(t, err)
-	assert.Len(t, found, 1)
+	require.Len(t, found, 1)
 	assert.Equal(t, found[0], existing)
 	assert.NotSame(t, found[0], existing)
 }
@@ -157,7 +157,7 @@ func TestExistingResourceConflict(t *testing.T) {
 	// Verify only existing resources are returned
 	found, err := existingResourceConflict(resources, releaseName, releaseNamespace)
 	require.NoError(t, err)
-	assert.Len(t, found, 1)
+	require.Len(t, found, 1)
 	assert.Equal(t, found[0], existing)
 	assert.NotSame(t, found[0], existing)
 
@@ -242,8 +242,8 @@ func TestVerifyOwnershipBeforeDelete(t *testing.T) {
 
 		ownedList, unownedList, _, err := verifyOwnershipBeforeDelete(resources, releaseName, releaseNamespace)
 		require.NoError(t, err)
-		assert.Len(t, ownedList, 1)
-		assert.Len(t, unownedList, 1)
+		require.Len(t, ownedList, 1)
+		require.Len(t, unownedList, 1)
 		assert.Equal(t, "owned", ownedList[0].Name)
 		assert.Equal(t, "unowned", unownedList[0].Name)
 	})
@@ -290,8 +290,8 @@ func TestVerifyOwnershipBeforeDelete(t *testing.T) {
 
 		ownedList, unownedList, _, err := verifyOwnershipBeforeDelete(resources, releaseName, releaseNamespace)
 		require.NoError(t, err)
-		assert.Len(t, ownedList, 1)
-		assert.Len(t, unownedList, 1)
+		require.Len(t, ownedList, 1)
+		require.Len(t, unownedList, 1)
 		assert.Equal(t, "owned", ownedList[0].Name)
 		assert.Equal(t, "unowned", unownedList[0].Name)
 	})

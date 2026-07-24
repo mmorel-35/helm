@@ -36,12 +36,9 @@ func TestCliPluginExitCode(t *testing.T) {
 
 		// As main calls os.Exit, we never reach this line.
 		// But the test called this block of code catches and verifies the exit code.
-		return
-	}
-
-	// Currently, plugins assume a Linux subsystem. Skip the execution
-	// tests until this is fixed
-	if runtime.GOOS != "windows" {
+	} else if runtime.GOOS != "windows" {
+		// Currently, plugins assume a Linux subsystem. Skip the execution
+		// tests until this is fixed
 		// Do a second run of this specific test(TestPluginExitCode) with RUN_MAIN_FOR_TESTING=1 set,
 		// So that the second run is able to run main() and this first run can verify the exit status returned by that.
 		//

@@ -1044,9 +1044,10 @@ func Test_ReadyChecker_jobReady(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewReadyChecker(fake.NewClientset())
 			got, err := c.jobReady(tt.args.job)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("jobReady() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if tt.wantErr {
+				require.Error(t, err, "jobReady()")
+			} else {
+				require.NoError(t, err, "jobReady()")
 			}
 			assert.Equal(t, tt.want, got, "jobReady() = %v, want %v", got, tt.want)
 		})

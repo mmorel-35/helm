@@ -17,7 +17,6 @@ limitations under the License.
 package driver
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -132,7 +131,7 @@ func TestRecordsGet(t *testing.T) {
 
 	for _, tt := range tests {
 		got := rs.Get(tt.key)
-		require.Truef(t, reflect.DeepEqual(tt.rec, got), "Expected %v, got %v", tt.rec, got)
+		require.Equal(t, tt.rec, got, "Expected %v, got %v", tt.rec, got)
 	}
 }
 
@@ -222,6 +221,6 @@ func TestRecordsReplace(t *testing.T) {
 
 	for _, tt := range tests {
 		got := rs.Replace(tt.key, tt.rec)
-		require.Truef(t, reflect.DeepEqual(tt.expected, got), "Expected %v, got %v", tt.expected, got)
+		require.Equalf(t, tt.expected, got, "Expected %v, got %v", tt.expected, got)
 	}
 }
