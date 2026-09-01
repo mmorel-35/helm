@@ -72,7 +72,7 @@ func TestShowOCIRegistryMessagesNotOnStdout(t *testing.T) {
 	require.Contains(t, stderr, "Digest:")
 }
 
-func runOCIChartCommand(t *testing.T, argsFn func(ref, registryConfig, contentCache string) []string) (string, string) {
+func runOCIChartCommand(t *testing.T, argsFn func(ref, registryConfig, contentCache string) []string) (o, e string) {
 	t.Helper()
 
 	srv := repotest.NewTempServer(

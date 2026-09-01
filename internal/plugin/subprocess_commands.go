@@ -36,8 +36,7 @@ type PlatformCommand struct {
 // - From the PlatformCommand where OS is empty/unspecified and Arch matches the current platform
 // - From the PlatformCommand where OS and Arch are both empty/unspecified
 // - Return nil, nil
-func getPlatformCommand(cmds []PlatformCommand) ([]string, []string) {
-	var command, args []string
+func getPlatformCommand(cmds []PlatformCommand) (command, args []string) {
 	found := false
 	foundOs := false
 
@@ -77,7 +76,7 @@ func getPlatformCommand(cmds []PlatformCommand) ([]string, []string) {
 // returns the main command and an args array.
 //
 // The result is suitable to pass to exec.Command.
-func PrepareCommands(cmds []PlatformCommand, expandArgs bool, extraArgs []string, env map[string]string) (string, []string, error) {
+func PrepareCommands(cmds []PlatformCommand, expandArgs bool, extraArgs []string, env map[string]string) (main string, baseArgs []string, err error) {
 	cmdParts, args := getPlatformCommand(cmds)
 	if len(cmdParts) == 0 || cmdParts[0] == "" {
 		return "", nil, errors.New("no plugin command is applicable")
@@ -86,8 +85,8 @@ func PrepareCommands(cmds []PlatformCommand, expandArgs bool, extraArgs []string
 		return env[key]
 	}
 
-	main := os.Expand(cmdParts[0], envMappingFunc)
-	baseArgs := []string{}
+	main = os.Expand(cmdParts[0], envMappingFunc)
+	baseArgs = []string{}
 	if len(cmdParts) > 1 {
 		for _, cmdPart := range cmdParts[1:] {
 			if expandArgs {

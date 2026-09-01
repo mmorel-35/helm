@@ -120,12 +120,8 @@ type unverifiableResource struct {
 //
 // Resources that are not found on the server are excluded from all returned lists,
 // since they have already been deleted and require no further action.
-func verifyOwnershipBeforeDelete(resources kube.ResourceList, releaseName, releaseNamespace string) (kube.ResourceList, kube.ResourceList, []unverifiableResource, error) {
-	var owned kube.ResourceList
-	var unowned kube.ResourceList
-	var unverifiable []unverifiableResource
-
-	err := resources.Visit(func(info *resource.Info, err error) error {
+func verifyOwnershipBeforeDelete(resources kube.ResourceList, releaseName, releaseNamespace string) (owned, unowned kube.ResourceList, unverifiable []unverifiableResource, err error) {
+	err = resources.Visit(func(info *resource.Info, err error) error {
 		if err != nil {
 			return err
 		}

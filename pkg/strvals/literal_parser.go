@@ -74,8 +74,8 @@ func (t *literalParser) parse() error {
 	}
 }
 
-func runesUntilLiteral(in io.RuneReader, stop map[rune]bool) ([]rune, rune, error) {
-	v := []rune{}
+func runesUntilLiteral(in io.RuneReader, stop map[rune]bool) (v []rune, r rune, e error) {
+	v = []rune{}
 	for {
 		switch r, _, e := in.ReadRune(); {
 		case e != nil:

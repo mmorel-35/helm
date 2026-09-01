@@ -498,8 +498,7 @@ func (t *parser) valList() ([]any, error) {
 	}
 }
 
-func runesUntil(in io.RuneReader, stop map[rune]bool) ([]rune, rune, error) {
-	v := []rune{}
+func runesUntil(in io.RuneReader, stop map[rune]bool) (v []rune, last rune, err error) {
 	for {
 		switch r, _, e := in.ReadRune(); {
 		case e != nil:

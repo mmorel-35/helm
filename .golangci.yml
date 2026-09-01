@@ -99,7 +99,6 @@ linters:
         - todoCommentWithoutDetail
         - tooManyResultsChecker
         - uncheckedInlineErr
-        - unnamedResult
         - whyNoLint
       enable-all: true
 

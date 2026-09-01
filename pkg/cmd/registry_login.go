@@ -91,10 +91,9 @@ func newRegistryLoginCmd(cfg *action.Configuration, out io.Writer) *cobra.Comman
 }
 
 // Adapted from https://github.com/oras-project/oras
-func getUsernamePassword(usernameOpt, passwordOpt string, passwordFromStdinOpt bool) (string, string, error) {
-	var err error
-	username := usernameOpt
-	password := passwordOpt
+func getUsernamePassword(usernameOpt, passwordOpt string, passwordFromStdinOpt bool) (username, password string, err error) {
+	username = usernameOpt
+	password = passwordOpt
 
 	switch {
 	case passwordFromStdinOpt:

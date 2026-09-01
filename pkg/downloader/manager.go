@@ -376,16 +376,16 @@ func (m *Manager) downloadAll(deps []*chart.Dependency) error {
 	return m.safeMoveDeps(deps, tmpPath, destPath)
 }
 
-func parseOCIRef(chartRef string) (string, string, error) {
+func parseOCIRef(chartRef string) (ref, tag string, err error) {
 	refTagRegexp := regexp.MustCompile(`^(oci://[^:]+(:\d{1,5})?[^:]+):(.*)$`)
 	caps := refTagRegexp.FindStringSubmatch(chartRef)
 	if len(caps) != 4 {
 		return "", "", fmt.Errorf("improperly formatted oci chart reference: %s", chartRef)
 	}
-	chartRef = caps[1]
-	tag := caps[3]
+	ref = caps[1]
+	tag = caps[3]
 
-	return chartRef, tag, nil
+	return ref, tag, nil
 }
 
 // safeMoveDeps moves all dependencies in the source and moves them into dest.

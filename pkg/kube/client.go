@@ -491,7 +491,7 @@ func (c *Client) getSelectRelationPod(info *resource.Info, objs map[string][]run
 	return objs, nil
 }
 
-func getSelectorFromObject(obj runtime.Object) (map[string]string, bool, error) {
+func getSelectorFromObject(obj runtime.Object) (selector map[string]string, ok bool, err error) {
 	typed := obj.(*unstructured.Unstructured)
 	kind := typed.Object["kind"]
 	switch kind {

@@ -167,9 +167,7 @@ func processParent(cmd *cobra.Command, args []string) ([]string, error) {
 // manuallyProcessArgs processes an arg array, removing special args.
 //
 // Returns two sets of args: known and unknown (in that order)
-func manuallyProcessArgs(args []string) ([]string, []string) {
-	known := []string{}
-	unknown := []string{}
+func manuallyProcessArgs(args []string) (known, unknown []string) {
 	kvargs := []string{"--kube-context", "--namespace", "-n", "--kubeconfig", "--kube-apiserver", "--kube-token", "--kube-as-user", "--kube-as-group", "--kube-ca-file", "--registry-config", "--repository-cache", "--repository-config", "--kube-insecure-skip-tls-verify", "--kube-tls-server-name"}
 	knownArg := func(a string) bool {
 		for _, pre := range kvargs {

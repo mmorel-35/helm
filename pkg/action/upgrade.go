@@ -218,7 +218,7 @@ func (u *Upgrade) RunWithContext(ctx context.Context, name string, ch chart.Char
 }
 
 // prepareUpgrade builds an upgraded release for an upgrade operation.
-func (u *Upgrade) prepareUpgrade(ctx context.Context, name string, chart *chartv2.Chart, vals map[string]any) (*release.Release, *release.Release, bool, error) {
+func (u *Upgrade) prepareUpgrade(ctx context.Context, name string, chart *chartv2.Chart, vals map[string]any) (currentRelease, upgradedRelease *release.Release, serverSideApply bool, err error) {
 	if chart == nil {
 		return nil, nil, false, errMissingChart
 	}
@@ -248,7 +248,6 @@ func (u *Upgrade) prepareUpgrade(ctx context.Context, name string, chart *chartv
 		return nil, nil, false, errPending
 	}
 
-	var currentRelease *release.Release
 	if lastRelease.Info.Status == rcommon.StatusDeployed {
 		// no need to retrieve the last deployed release from storage as the last release is deployed
 		currentRelease = lastRelease
@@ -308,7 +307,7 @@ func (u *Upgrade) prepareUpgrade(ctx context.Context, name string, chart *chartv
 		return nil, nil, false, fmt.Errorf("user supplied labels contains system reserved label name. System labels: %+v", driver.GetSystemLabels())
 	}
 
-	serverSideApply, err := getUpgradeServerSideValue(u.ServerSideApply, lastRelease.ApplyMethod)
+	serverSideApply, err = getUpgradeServerSideValue(u.ServerSideApply, lastRelease.ApplyMethod)
 	if err != nil {
 		return nil, nil, false, err
 	}
@@ -316,7 +315,7 @@ func (u *Upgrade) prepareUpgrade(ctx context.Context, name string, chart *chartv
 	u.cfg.Logger().Debug("determined release apply method", slog.Bool("server_side_apply", serverSideApply), slog.String("previous_release_apply_method", lastRelease.ApplyMethod))
 
 	// Store an upgraded release.
-	upgradedRelease := &release.Release{
+	upgradedRelease = &release.Release{
 		Name:      name,
 		Namespace: currentRelease.Namespace,
 		Chart:     chart,

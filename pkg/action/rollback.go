@@ -118,7 +118,7 @@ func (r *Rollback) Run(name string) error {
 
 // prepareRollback finds the previous release and prepares a new release object with
 // the previous release's configuration
-func (r *Rollback) prepareRollback(name string) (*release.Release, *release.Release, bool, error) {
+func (r *Rollback) prepareRollback(name string) (currentRelease, targetRelease *release.Release, serverSideApply bool, err error) {
 	if err := chartutil.ValidateReleaseName(name); err != nil {
 		return nil, nil, false, fmt.Errorf("prepareRollback: Release name is invalid: %s", name)
 	}
@@ -132,7 +132,7 @@ func (r *Rollback) prepareRollback(name string) (*release.Release, *release.Rele
 		return nil, nil, false, err
 	}
 
-	currentRelease, err := releaserToV1Release(currentReleasei)
+	currentRelease, err = releaserToV1Release(currentReleasei)
 	if err != nil {
 		return nil, nil, false, err
 	}
@@ -175,7 +175,7 @@ func (r *Rollback) prepareRollback(name string) (*release.Release, *release.Rele
 		return nil, nil, false, err
 	}
 
-	serverSideApply, err := getUpgradeServerSideValue(r.ServerSideApply, previousRelease.ApplyMethod)
+	serverSideApply, err = getUpgradeServerSideValue(r.ServerSideApply, previousRelease.ApplyMethod)
 	if err != nil {
 		return nil, nil, false, err
 	}
@@ -187,7 +187,7 @@ func (r *Rollback) prepareRollback(name string) (*release.Release, *release.Rele
 	}
 
 	// Store a new release object with previous release's configuration
-	targetRelease := &release.Release{
+	targetRelease = &release.Release{
 		Name:      name,
 		Namespace: currentRelease.Namespace,
 		Chart:     previousRelease.Chart,

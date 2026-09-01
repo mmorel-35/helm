@@ -373,7 +373,7 @@ func TestUpgradeInstallWithValuesFromStdin(t *testing.T) {
 	assert.Contains(t, updatedRel.Manifest, "drink: beer", "The value is not set correctly. manifest: %s", updatedRel.Manifest)
 }
 
-func prepareMockRelease(t *testing.T, releaseName string) (func(n string, v int, ch *chart.Chart) *release.Release, *chart.Chart, string) {
+func prepareMockRelease(t *testing.T, releaseName string) (relMock func(n string, v int, ch *chart.Chart) *release.Release, ch *chart.Chart, chartPath string) {
 	t.Helper()
 	tmpChart := t.TempDir()
 	configmapData, err := os.ReadFile("testdata/testcharts/upgradetest/templates/configmap.yaml")
@@ -387,16 +387,16 @@ func prepareMockRelease(t *testing.T, releaseName string) (func(n string, v int,
 		},
 		Templates: []*common.File{{Name: "templates/configmap.yaml", ModTime: time.Now(), Data: configmapData}},
 	}
-	chartPath := filepath.Join(tmpChart, cfile.Metadata.Name)
+	chartPath = filepath.Join(tmpChart, cfile.Metadata.Name)
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart for upgrade")
-	ch, err := loader.Load(chartPath)
+	ch, err = loader.Load(chartPath)
 	require.NoError(t, err, "Error loading chart")
 	_ = release.Mock(&release.MockReleaseOptions{
 		Name:  releaseName,
 		Chart: ch,
 	})
 
-	relMock := func(n string, v int, ch *chart.Chart) *release.Release {
+	relMock = func(n string, v int, ch *chart.Chart) *release.Release {
 		return release.Mock(&release.MockReleaseOptions{Name: n, Version: v, Chart: ch})
 	}
 
@@ -467,7 +467,7 @@ func TestUpgradeInstallWithLabels(t *testing.T) {
 	assert.Equal(t, expectedLabels, updatedRel.Labels)
 }
 
-func prepareMockReleaseWithSecret(t *testing.T, releaseName string) (func(n string, v int, ch *chart.Chart) *release.Release, *chart.Chart, string) {
+func prepareMockReleaseWithSecret(t *testing.T, releaseName string) (relMock func(n string, v int, ch *chart.Chart) *release.Release, ch *chart.Chart, chartPath string) {
 	t.Helper()
 	tmpChart := t.TempDir()
 	configmapData, err := os.ReadFile("testdata/testcharts/chart-with-secret/templates/configmap.yaml")
@@ -484,16 +484,16 @@ func prepareMockReleaseWithSecret(t *testing.T, releaseName string) (func(n stri
 		},
 		Templates: []*common.File{{Name: "templates/configmap.yaml", ModTime: modTime, Data: configmapData}, {Name: "templates/secret.yaml", ModTime: modTime, Data: secretData}},
 	}
-	chartPath := filepath.Join(tmpChart, cfile.Metadata.Name)
+	chartPath = filepath.Join(tmpChart, cfile.Metadata.Name)
 	require.NoErrorf(t, chartutil.SaveDir(cfile, tmpChart), "Error creating chart for upgrade")
-	ch, err := loader.Load(chartPath)
+	ch, err = loader.Load(chartPath)
 	require.NoError(t, err, "Error loading chart")
 	_ = release.Mock(&release.MockReleaseOptions{
 		Name:  releaseName,
 		Chart: ch,
 	})
 
-	relMock := func(n string, v int, ch *chart.Chart) *release.Release {
+	relMock = func(n string, v int, ch *chart.Chart) *release.Release {
 		return release.Mock(&release.MockReleaseOptions{Name: n, Version: v, Chart: ch})
 	}
 

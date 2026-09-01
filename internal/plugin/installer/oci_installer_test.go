@@ -95,7 +95,7 @@ command: "$HELM_PLUGIN_DIR/bin/%s"
 }
 
 // mockOCIRegistryWithArtifactType creates a mock OCI registry server using the new artifact type approach
-func mockOCIRegistryWithArtifactType(t *testing.T, pluginName string) (*httptest.Server, string) {
+func mockOCIRegistryWithArtifactType(t *testing.T, pluginName string) (server *httptest.Server, registryHost string) {
 	t.Helper()
 
 	pluginData := createTestPluginTarGz(t, pluginName)
@@ -130,7 +130,7 @@ func mockOCIRegistryWithArtifactType(t *testing.T, pluginName string) (*httptest
 	require.NoError(t, err)
 	manifestDigest := fmt.Sprintf("sha256:%x", sha256Sum(manifestData))
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case r.Method == http.MethodGet && strings.Contains(r.URL.Path, "/v2/") && !strings.Contains(r.URL.Path, "/manifests/") && !strings.Contains(r.URL.Path, "/blobs/"):
 			// API version check
@@ -166,7 +166,7 @@ func mockOCIRegistryWithArtifactType(t *testing.T, pluginName string) (*httptest
 	// Parse server URL to get host:port format for OCI reference
 	serverURL, err := url.Parse(server.URL)
 	require.NoError(t, err)
-	registryHost := serverURL.Host
+	registryHost = serverURL.Host
 
 	return server, registryHost
 }

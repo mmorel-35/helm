@@ -762,7 +762,7 @@ func ensureDirectoryForFile(file string) error {
 // NameAndChart returns the name and chart that should be used.
 //
 // This will read the flags and handle name generation if necessary.
-func (i *Install) NameAndChart(args []string) (string, string, error) {
+func (i *Install) NameAndChart(args []string) (name, ref string, err error) {
 	flagsNotSet := func() error {
 		if i.GenerateName {
 			return errors.New("cannot set --generate-name and also specify a name")
