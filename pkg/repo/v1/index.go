@@ -386,7 +386,7 @@ func loadIndex(data []byte, source string) (*IndexFile, error) {
 			if v.APIVersion == "" {
 				v.APIVersion = chart.APIVersionV1
 			}
-			if err := v.Validate(); ignoreSkippableChartValidationError(err) != nil {
+			if err := v.Validate(); ignoreSkippableChartValidationError(err) != nil { //nolint:gocritic // Already checked error
 				slog.Warn("skipping loading invalid entry for chart", "name", name, "version", v.Version, "source", source, "error", err)
 				cvs = append(cvs[:idx], cvs[idx+1:]...)
 			}

@@ -98,7 +98,6 @@ linters:
         - rangeValCopy
         - todoCommentWithoutDetail
         - tooManyResultsChecker
-        - uncheckedInlineErr
         - whyNoLint
       enable-all: true
 
