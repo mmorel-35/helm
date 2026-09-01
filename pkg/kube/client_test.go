@@ -1567,7 +1567,7 @@ func TestPatchResourceClientSide(t *testing.T) {
 				}
 
 				t.Fail()
-				return nil, nil // newResponse(http.StatusOK, &tc.TargetPods.Items[0])
+				return nil, nil
 			},
 		},
 	}

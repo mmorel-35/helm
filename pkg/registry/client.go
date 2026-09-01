@@ -905,8 +905,6 @@ func (c *Client) ValidateReference(ref, version string, u *url.URL) (string, *ur
 	}
 
 	u.Path = fmt.Sprintf("%s:%s", registryReference.Repository, tag)
-	// desc, err := c.Resolve(u.Path)
-
 	return "", u, err
 }
 
