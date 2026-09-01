@@ -185,8 +185,8 @@ func (o *outputValue) Set(s string) error {
 }
 
 // TODO there is probably a better way to pass cobra settings than as a param
-func bindPostRenderFlag(cmd *cobra.Command, varRef *postrenderer.PostRenderer, settings *cli.EnvSettings) {
-	p := &postRendererOptions{varRef, "", []string{}, settings}
+func bindPostRenderFlag(cmd *cobra.Command, varRef postrenderer.PostRenderer, settings *cli.EnvSettings) {
+	p := &postRendererOptions{&varRef, "", []string{}, settings}
 	cmd.Flags().Var(&postRendererString{p}, postRenderFlag, "the name of a postrenderer type plugin to be used for post rendering. If it exists, the plugin will be used")
 	cmd.Flags().Var(&postRendererArgsSlice{p}, postRenderArgsFlag, "an argument to the post-renderer (can specify multiple)")
 }

@@ -223,7 +223,7 @@ func newTemplateCmd(cfg *action.Configuration, out io.Writer) *cobra.Command {
 		"client",
 		`simulates the operation either client-side or server-side. Must be either: "client", or "server". '--dry-run=client simulates the operation client-side only and avoids cluster connections. '--dry-run=server' simulates/validates the operation on the server, requiring cluster connectivity.`)
 	f.Lookup("dry-run").NoOptDefVal = "unset"
-	bindPostRenderFlag(cmd, &client.PostRenderer, settings)
+	bindPostRenderFlag(cmd, client.PostRenderer, settings)
 	cmd.MarkFlagsMutuallyExclusive("validate", "dry-run")
 
 	return cmd

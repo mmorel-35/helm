@@ -179,7 +179,7 @@ func newInstallCmd(cfg *action.Configuration, out io.Writer) *cobra.Command {
 	f.BoolVar(&client.HideSecret, "hide-secret", false, "hide Kubernetes Secrets when also using the --dry-run flag")
 	addDryRunFlag(cmd)
 	bindOutputFlag(cmd, &outfmt)
-	bindPostRenderFlag(cmd, &client.PostRenderer, settings)
+	bindPostRenderFlag(cmd, client.PostRenderer, settings)
 
 	return cmd
 }

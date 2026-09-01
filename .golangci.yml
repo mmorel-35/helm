@@ -95,7 +95,6 @@ linters:
         - exposedSyncMutex
         - hugeParam
         - importShadow
-        - ptrToRefParam
         - rangeValCopy
         - todoCommentWithoutDetail
         - tooManyResultsChecker
